@@ -18,6 +18,11 @@ export const LOGIN_FAILED = {
     message: 'Incorrent password'
 }
 
+export const AUTHENTICATION_FAILED = {
+    code: 401,
+    message: 'Invalid token'
+}
+
 export const NOT_FOUND = {
     code: 404,
     message: 'Endpoint not found',

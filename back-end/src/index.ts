@@ -2,9 +2,10 @@ import express, { Express, NextFunction, Request, Response } from 'express'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import 'dotenv/config'
-import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from './status-codes'
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from './helpers/status-codes'
 import { z } from 'zod'
 import { AccountRouter } from './routers/account-router'
+import auth from './middleware/auth'
 
 const corsOptions = {
     origin: ['http://localhost'],

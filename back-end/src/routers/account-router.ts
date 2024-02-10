@@ -1,11 +1,9 @@
 import { Router, Request, Response } from 'express'
-import { pool } from '../pg-pool'
+import { pool } from '../helpers/pg-pool'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { z } from 'zod'
-import { CONFLICT, ACCOUNT_NOT_FOUND, BAD_REQUEST, LOGIN_FAILED, OK, CREATED } from '../status-codes'
-import { QueryResult } from 'pg'
-
+import { CONFLICT, ACCOUNT_NOT_FOUND, BAD_REQUEST, LOGIN_FAILED, OK, CREATED, INTERNAL_SERVER_ERROR } from '../helpers/status-codes'
 const saltRounds = 10
 const AccountRouter = Router()
 
@@ -44,14 +42,20 @@ AccountRouter.post('/login', (req, res) => {
     const { email, accountName, password } = LoginValidator.parse(req.body)
     
     if (email) {
-        const sql = 'SELECT password, account_name FROM user_account WHERE email = $1'
+        const sql = 'SELECT password, account_name, id FROM user_account WHERE email = $1'
 
         pool.query(sql, [email])
             .then(result => {
                 if (result.rowCount === 0) res.status(404).json(ACCOUNT_NOT_FOUND)
+
                 if (async () => await bcrypt.compare(result.rows[0].password, password)) {
-                    // token authentication TBA
-                    res.status(200).json(OK)
+                    const secret = process.env.JWT_SECRET
+                    
+                    if (secret === undefined) res.status(502).json(INTERNAL_SERVER_ERROR) 
+                    else {
+                        res.cookie('login_token', jwt.sign({ id: result.rows[0].id }, secret))
+                        res.status(200).json(OK)
+                    }
                 } else res.status(401).json(LOGIN_FAILED)
             })
     } else if (accountName) {
@@ -61,8 +65,13 @@ AccountRouter.post('/login', (req, res) => {
             .then(result => {
                 if (result.rowCount === 0) res.status(404).json(ACCOUNT_NOT_FOUND)
                 if (async () => await bcrypt.compare(result.rows[0].password, password)) {
-                    // token authentication TBA
-                    res.status(200).json(OK)
+                    const secret = process.env.JWT_SECRET
+                    
+                    if (secret === undefined) res.status(502).json(INTERNAL_SERVER_ERROR) 
+                    else {
+                        res.cookie('login_token', jwt.sign({ id: result.rows[0].id }, secret))
+                        res.status(200).json(OK)
+                    }
                 } else res.status(401).json(LOGIN_FAILED)
             })
     } else res.send(400).json(BAD_REQUEST)

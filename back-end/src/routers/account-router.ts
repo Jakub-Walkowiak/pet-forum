@@ -1,26 +1,12 @@
-import { Router, Request, Response } from 'express'
+import { Router } from 'express'
 import { pool } from '../helpers/pg-pool'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { z } from 'zod'
 import { CONFLICT, ACCOUNT_NOT_FOUND, BAD_REQUEST, LOGIN_FAILED, OK, CREATED, INTERNAL_SERVER_ERROR } from '../helpers/status-codes'
+import { RegistrationValidator, LoginValidator } from '../validators/account-validators'
+
 const saltRounds = 10
 const AccountRouter = Router()
-
-const RegistrationValidator = z.object({
-    email: z.string().email(),
-    password: z.string().min(10).max(32).regex(/([\w~`!@#$%^&*()_\-\+={[}\]\|\\:;"',.?\/]+)/),
-    accountName: z.string().min(1).max(50),
-    displayName: z.string().min(1).max(50),
-})
-
-const LoginValidator = z
-    .object({
-        email: z.string().email().max(254).optional(),
-        accountName: z.string().min(1).max(50).optional(),
-        password: z.string().min(10).max(32).regex(/([\w~`!@#$%^&*()_\-\+={[}\]\|\\:;"',.?\/]+)/),
-    })
-    .refine(data => data.email || data.accountName, { message: "Either account name or email must be provided" })
 
 AccountRouter.post('/register', async (req, res, next) => {
     try {

@@ -1,9 +1,9 @@
-import { Router } from 'express'
-import { pool } from '../helpers/pg-pool'
 import bcrypt from 'bcrypt'
+import { Router } from 'express'
 import jwt from 'jsonwebtoken'
-import { CONFLICT, ACCOUNT_NOT_FOUND, BAD_REQUEST, LOGIN_FAILED, OK, CREATED, INTERNAL_SERVER_ERROR } from '../helpers/status-codes'
-import { RegistrationValidator, LoginValidator } from '../validators/account-validators'
+import { pool } from '../helpers/pg-pool'
+import { ACCOUNT_NOT_FOUND, BAD_REQUEST, CONFLICT, CREATED, INTERNAL_SERVER_ERROR, LOGIN_FAILED, OK } from '../helpers/status-codes'
+import { LoginValidator, RegistrationValidator } from '../validators/account-validators'
 
 const saltRounds = 10
 const AccountRouter = Router()

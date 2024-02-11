@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import { AUTHENTICATION_FAILED, INTERNAL_SERVER_ERROR } from '../helpers/status-codes'
 

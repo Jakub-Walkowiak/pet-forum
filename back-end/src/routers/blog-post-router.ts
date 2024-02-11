@@ -1,10 +1,10 @@
 import { Router } from 'express'
-import { pool } from '../helpers/pg-pool'
-import { BlogPostAddValidator, BlogPostFetchData, BlogPostFetchValidator } from '../validators/blog-post-validators'
-import { CREATED } from '../helpers/status-codes'
 import { OK } from 'zod'
+import { pool } from '../helpers/pg-pool'
+import { generateBlogPostFetchQuery } from '../helpers/post-fetch-query-generators/generate-blog-post-fetch-query'
+import { CREATED } from '../helpers/status-codes'
 import { authOptional } from '../middleware/auth'
-import { generatePostFetchQuery } from '../helpers/generate-post-fetch-query'
+import { BlogPostAddValidator, BlogPostFetchData, BlogPostFetchValidator } from '../validators/blog-post-validator'
 
 const BlogPostRouter = Router()
 
@@ -25,7 +25,7 @@ BlogPostRouter.delete('/:id', (req, res) => {
 
 BlogPostRouter.get('/', authOptional, (req, res) => {
     const data: BlogPostFetchData = BlogPostFetchValidator.parse(req.query)
-    const sql = generatePostFetchQuery(data, req.body.auth ? req.body.id : undefined)
+    const sql = generateBlogPostFetchQuery(data, req.body.auth ? req.body.id : undefined)
 
     pool.query(sql)
         .then(result => res.status(200).json(result.rows))

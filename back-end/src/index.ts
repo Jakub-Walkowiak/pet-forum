@@ -1,9 +1,9 @@
-import express, { NextFunction, Request, Response } from 'express'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import 'dotenv/config'
-import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from './helpers/status-codes'
+import express, { NextFunction, Request, Response } from 'express'
 import { z } from 'zod'
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } from './helpers/status-codes'
 import { AccountRouter } from './routers/account-router'
 
 const corsOptions = {

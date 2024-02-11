@@ -23,9 +23,19 @@ export const AUTHENTICATION_FAILED = {
     message: 'Invalid token'
 }
 
-export const NOT_FOUND = {
+export const FORBIDDEN = {
+    code: 403,
+    message: 'Forbidden'
+}
+
+export const ENDPOINT_NOT_FOUND = {
     code: 404,
     message: 'Endpoint not found',
+}
+
+export const RESOURCE_NOT_FOUND = {
+    code: 404,
+    message: 'Resource not found'
 }
 
 export const ACCOUNT_NOT_FOUND = {

@@ -10,14 +10,14 @@ export enum OrderByMode {
 }
 
 export enum UserTypeOption {
-    FOLLOWED,
-    MUTUTALS,
-    NONE,
+    FOLLOWED = 'followed',
+    MUTUTALS = 'mutuals',
+    NONE = 'none',
 }
 
 export enum TagMode {
-    ANY,
-    ALL,
+    ANY = 'any',
+    ALL = 'all',
 }
 
 export enum PostType {

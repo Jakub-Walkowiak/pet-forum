@@ -23,7 +23,7 @@ export const getUserTypeFilterString = (input: UserTypeOption, forUser: number |
 }
 
 export const getTagFilterString = (mode: TagMode, tags: Array<number> | undefined, postType: PostType) => {
-    if (tags === undefined) return ''
+    if (tags === undefined || tags.length === 0) return ''
 
     if (mode === TagMode.ANY) return `--sql
         id IN (

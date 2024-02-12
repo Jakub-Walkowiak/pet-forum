@@ -1,25 +1,22 @@
 import { Router } from 'express'
 import { pool } from '../helpers/pg-pool'
 import { generateBlogPostFetchQuery } from '../helpers/post-fetch-query-generators/generate-blog-post-fetch-query'
-import { CREATED, FORBIDDEN, NO_CONTENT, RESOURCE_NOT_FOUND } from '../helpers/status-codes'
+import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../helpers/status-codes'
 import { authMandatory, authOptional } from '../middleware/auth'
 import { BlogPostAddValidator, BlogPostFetchData, BlogPostFetchValidator } from '../validators/blog-post-validators'
 
 const BlogPostRouter = Router()
 
-BlogPostRouter.post('/', authMandatory, (req, res) => {
+BlogPostRouter.post('/', authMandatory, (req, res, next) => {
     const { contents, replyTo } = BlogPostAddValidator.parse(req.body)
 
-    const replyToVerifySql = 'SELECT id FROM blog_post WHERE id = $1'
-    pool.query(replyToVerifySql, [replyTo])
-        .then(result => {
-            if (replyTo !== undefined && result.rowCount === 0) res.status(404).json(RESOURCE_NOT_FOUND)
-            else {
-                const insertSql = 'INSERT INTO blog_post (poster_id, contents, reply_to) VALUES ($1, $2, $3)'
+    const sql = 'INSERT INTO blog_post (poster_id, contents, reply_to) VALUES ($1, $2, $3)'
 
-                pool.query(insertSql, [req.body.id, contents, replyTo])
-                    .then(() => res.status(201).json(CREATED))
-            }
+    pool.query(sql, [req.body.id, contents, replyTo])
+        .then(() => res.status(201).json(CREATED))
+        .catch(err => {
+            if (err.code = 23503) res.status(404).json(RESOURCE_NOT_FOUND)
+            else next(err)
         })
 
     
@@ -36,11 +33,9 @@ BlogPostRouter.delete('/:id', authMandatory, (req, res) => {
                 const deleteSql = 'DELETE FROM blog_post WHERE id = $1'
 
                 pool.query(deleteSql, [req.params.id])
-                    .then(() => res.status(204).json(NO_CONTENT))
+                    .then(() => res.status(204))
             }
         })
-
-    
 })
 
 BlogPostRouter.get('/', authOptional, (req, res) => {

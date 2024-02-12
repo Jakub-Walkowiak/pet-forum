@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt'
 import { Router } from 'express'
 import jwt from 'jsonwebtoken'
 import { pool } from '../helpers/pg-pool'
-import { ACCOUNT_NOT_FOUND, BAD_REQUEST, CONFLICT, CREATED, INTERNAL_SERVER_ERROR, LOGIN_FAILED, OK } from '../helpers/status-codes'
+import { ACCOUNT_NOT_FOUND, BAD_REQUEST, CONFLICT, CREATED, INTERNAL_SERVER_ERROR, LOGIN_FAILED } from '../helpers/status-codes'
 import { LoginValidator, RegistrationValidator } from '../validators/account-validators'
 
 const saltRounds = 10
@@ -40,7 +40,7 @@ AccountRouter.post('/login', (req, res) => {
                     if (secret === undefined) res.status(502).json(INTERNAL_SERVER_ERROR) 
                     else {
                         res.cookie('login_token', jwt.sign({ id: result.rows[0].id }, secret))
-                        res.status(200).json(OK)
+                        res.status(204)
                     }
                 } else res.status(401).json(LOGIN_FAILED)
             })
@@ -56,7 +56,7 @@ AccountRouter.post('/login', (req, res) => {
                     if (secret === undefined) res.status(502).json(INTERNAL_SERVER_ERROR) 
                     else {
                         res.cookie('login_token', jwt.sign({ id: result.rows[0].id }, secret))
-                        res.status(200).json(OK)
+                        res.status(204)
                     }
                 } else res.status(401).json(LOGIN_FAILED)
             })
@@ -64,3 +64,4 @@ AccountRouter.post('/login', (req, res) => {
 })
 
 export { AccountRouter }
+

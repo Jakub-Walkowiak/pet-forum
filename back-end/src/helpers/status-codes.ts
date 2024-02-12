@@ -1,5 +1,5 @@
-export const OK = {
-    code: 200,
+export const NO_CONTENT = {
+    code: 204,
     message: 'Request success'
 }
 

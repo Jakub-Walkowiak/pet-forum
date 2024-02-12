@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { pool } from '../helpers/pg-pool'
 import { generateBlogPostFetchQuery } from '../helpers/post-fetch-query-generators/generate-blog-post-fetch-query'
-import { CREATED, FORBIDDEN, OK, RESOURCE_NOT_FOUND } from '../helpers/status-codes'
+import { CREATED, FORBIDDEN, NO_CONTENT, RESOURCE_NOT_FOUND } from '../helpers/status-codes'
 import { authMandatory, authOptional } from '../middleware/auth'
 import { BlogPostAddValidator, BlogPostFetchData, BlogPostFetchValidator } from '../validators/blog-post-validators'
 
@@ -36,7 +36,7 @@ BlogPostRouter.delete('/:id', authMandatory, (req, res) => {
                 const deleteSql = 'DELETE FROM blog_post WHERE id = $1'
 
                 pool.query(deleteSql, [req.params.id])
-                    .then(() => res.status(200).json(OK))
+                    .then(() => res.status(204).json(NO_CONTENT))
             }
         })
 

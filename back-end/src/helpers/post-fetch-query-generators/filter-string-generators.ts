@@ -49,3 +49,5 @@ export const getReplyFilterString = (replies: ReplyOption, to: number | undefine
         case ReplyOption.BOTH: return `${to === undefined ? '' : `reply_to = ${to}`}`
     }
 }
+
+export const getContainsFilterString = (contains: string | undefined) => contains === undefined ? '' : `LOWER(contents) LIKE LOWER(\'%${contains}%\')`

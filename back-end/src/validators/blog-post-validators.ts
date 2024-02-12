@@ -19,6 +19,7 @@ export const BlogPostFetchValidator = z.
         tagMode: z.nativeEnum(TagMode).default(TagMode.ANY),
         limit: z.coerce.number().max(100),
         offset: z.coerce.number(),
+        contains: z.string().optional(),
     })
 
 export type BlogPostFetchData = z.infer<typeof BlogPostFetchValidator>

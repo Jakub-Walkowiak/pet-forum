@@ -1,4 +1,4 @@
-import { getOrderByString, getReplyFilterString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from "../src/helpers/post-fetch-query-generators/filter-string-generators"
+import { getContainsFilterString, getOrderByString, getReplyFilterString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from "../src/helpers/post-fetch-query-generators/filter-string-generators"
 import { OrderByMode, OrderByOption, PostType, ReplyOption, TagMode, UserTypeOption } from "../src/types/post-fetch-options"
 
 describe('Testing partial query assembly', () => {
@@ -88,6 +88,16 @@ describe('Testing partial query assembly', () => {
 
         it('Replies=yes result should contain IS NOT NULL if no replyTo is provided', () => {
             expect(getReplyFilterString(ReplyOption.YES, undefined)).toEqual(expect.stringContaining('IS NOT NULL'))
+        })
+    })
+
+    describe('Contains filter string generation', () => {
+        it('Undefined should return empty string', () => {
+            expect(getContainsFilterString(undefined)).toBe('')
+        })
+
+        it('Clause should be of form LIKE LOWER(\'%input%\')', () => {
+            expect(getContainsFilterString('input')).toEqual(expect.stringContaining('LIKE LOWER(\'%input%\')'))
         })
     })
 })

@@ -1,4 +1,4 @@
-import { OrderByMode, OrderByOption, PostType, PostTypeProperties, TagMode, UserTypeOption } from "../../types/post-fetch-options"
+import { OrderByMode, OrderByOption, PostType, PostTypeProperties, ReplyOption, TagMode, UserTypeOption } from "../../types/post-fetch-options"
 
 export const getOrderByString = (by: OrderByOption, mode: OrderByMode) => `${by} ${mode}`
 
@@ -42,4 +42,10 @@ export const getTagFilterString = (mode: TagMode, tags: Array<number> | undefine
 
 export const getUserFilterString = (user: number | undefined) => user !== undefined ? `poster_id = \'${user}\'` : ''
 
-export const getReplyFilterString = (replies: boolean) => `reply_to IS ${replies ? 'NOT NULL' : 'NULL'}`
+export const getReplyFilterString = (replies: ReplyOption, to: number | undefined) =>  {
+    switch (replies) {
+        case ReplyOption.NO: return 'reply_to IS NULL'
+        case ReplyOption.YES: return `reply_to ${to === undefined ? 'IS NOT NULL' : `= ${to}`}`
+        case ReplyOption.BOTH: return `${to === undefined ? '' : `reply_to = ${to}`}`
+    }
+}

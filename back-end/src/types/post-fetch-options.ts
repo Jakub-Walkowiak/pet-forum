@@ -25,6 +25,12 @@ export enum PostType {
     ADVICE,
 }
 
+export enum ReplyOption {
+    NO = 'no',
+    YES = 'yes',
+    BOTH = 'both',
+}
+
 interface PostProperties {
     table: string,
     tagTable: string,

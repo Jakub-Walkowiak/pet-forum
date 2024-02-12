@@ -1,5 +1,5 @@
 import { getOrderByString, getReplyFilterString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from "../src/helpers/post-fetch-query-generators/filter-string-generators"
-import { OrderByMode, OrderByOption, PostType, TagMode, UserTypeOption } from "../src/types/post-fetch-options"
+import { OrderByMode, OrderByOption, PostType, ReplyOption, TagMode, UserTypeOption } from "../src/types/post-fetch-options"
 
 describe('Testing partial query assembly', () => {
     describe('\'ORDER BY\' string generation', () => {
@@ -74,12 +74,20 @@ describe('Testing partial query assembly', () => {
     })
 
     describe('Reply filter string generation', () => {
-        it('Replies=false should return check for NULL reply_to', () => {
-            expect(getReplyFilterString(false)).toBe('reply_to IS NULL')
+        it('Replies=no should ignore replyTo parameter', () => {
+            expect(getReplyFilterString(ReplyOption.NO, 3)).toEqual(expect.not.stringContaining('3'))
         })
 
-        it('Replies=true should return check for NOT NULL reply_to', () => {
-            expect(getReplyFilterString(true)).toBe('reply_to IS NOT NULL')
+        it('Replies=both without replyTo should produce empty string', () => {
+            expect(getReplyFilterString(ReplyOption.BOTH, undefined)).toBe('')
+        })
+
+        it('Replies=yes and Replies=both with replyTo should produce identical result', () => {
+            expect(getReplyFilterString(ReplyOption.BOTH, 3)).toEqual(getReplyFilterString(ReplyOption.YES, 3))
+        })
+
+        it('Replies=yes result should contain IS NOT NULL if no replyTo is provided', () => {
+            expect(getReplyFilterString(ReplyOption.YES, undefined)).toEqual(expect.stringContaining('IS NOT NULL'))
         })
     })
 })

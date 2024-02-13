@@ -1,6 +1,6 @@
-import { PostType } from "../../types/post-fetch-options";
-import { BlogPostFetchData } from "../../validators/blog-post-validators";
-import { getContainsFilterString, getOrderByString, getReplyFilterString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from "./filter-string-generators";
+import { PostType } from "../../../types/post-fetch-options";
+import { BlogPostFetchData } from "../../../validators/blog-post-validators";
+import { getContainsFilterString, getOrderByString, getReplyFilterString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from "./post-filter-string-generators";
 
 export const generateBlogPostFetchQuery = (data: BlogPostFetchData, forUser: number | undefined) => {
     const whereBlock = [

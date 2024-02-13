@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { pool } from '../helpers/pg-pool'
-import { generateBlogPostFetchQuery } from '../helpers/post-fetch-query-generators/generate-blog-post-fetch-query'
+import { generateBlogPostFetchQuery } from '../helpers/query-generators/posts/generate-blog-post-fetch-query'
 import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../helpers/status-codes'
 import { authMandatory, authOptional } from '../middleware/auth'
 import { BlogPostAddValidator, BlogPostFetchData, BlogPostFetchValidator } from '../validators/blog-post-validators'

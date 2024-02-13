@@ -1,4 +1,4 @@
-import { getContainsFilterString, getOrderByString, getReplyFilterString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from "../src/helpers/post-fetch-query-generators/filter-string-generators"
+import { getContainsFilterString, getOrderByString, getReplyFilterString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from "../src/helpers/query-generators/posts/post-filter-string-generators"
 import { OrderByMode, OrderByOption, PostType, ReplyOption, TagMode, UserTypeOption } from "../src/types/post-fetch-options"
 
 describe('Testing partial query assembly', () => {

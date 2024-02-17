@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { BAD_REQUEST, ENDPOINT_NOT_FOUND, INTERNAL_SERVER_ERROR } from './helpers/status-codes'
 import { AccountRouter } from './routers/account-router'
 import { BlogPostRouter } from './routers/blog-post-router'
+import { FollowRouter } from './routers/follow-router'
 import { LikeRouter } from './routers/like-router'
 
 const corsOptions = {
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/accounts', AccountRouter)
 app.use('/blog-posts', BlogPostRouter)
 app.use('/likes', LikeRouter)
+app.use('/follows', FollowRouter)
 
 app.all('*', (req, res) => {
     res.status(404).json(ENDPOINT_NOT_FOUND)

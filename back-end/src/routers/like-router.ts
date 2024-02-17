@@ -11,8 +11,8 @@ LikeRouter.post('/:post_id(\\d+)', authMandatory, (req, res, next) => {
     pool.query(sql, [req.params.post_id, req.body.id])
         .then(() => res.status(204).send())
         .catch(err => {
-            if (err.code == 23505) res.status(409).json(CONFLICT)
-            else if (err.code == 23503) res.status(404).json(RESOURCE_NOT_FOUND)
+            if (err.code === 23505) res.status(409).json(CONFLICT)
+            else if (err.code === 23503) res.status(404).json(RESOURCE_NOT_FOUND)
             else next(err)
         })
 })

@@ -20,6 +20,7 @@ export const EditValidator = z
         displayName: z.string().min(1).max(50).optional(),
         email: z.string().email().optional(),
         likeVisibility: z.coerce.boolean().optional(),
+        followedVisibility: z.coerce.boolean().optional(),
     })
 
 export type AccountEditData = z.infer<typeof EditValidator>

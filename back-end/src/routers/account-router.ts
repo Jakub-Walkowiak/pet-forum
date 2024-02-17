@@ -4,27 +4,11 @@ import jwt from 'jsonwebtoken'
 import { pool } from '../helpers/pg-pool'
 import { generateAccountEditQuery } from '../helpers/query-generators/generate-account-edit-query'
 import { ACCOUNT_NOT_FOUND, CONFLICT, CREATED, FORBIDDEN, INTERNAL_SERVER_ERROR, LOGIN_FAILED } from '../helpers/status-codes'
-import { authMandatory } from '../middleware/auth'
+import { authMandatory, authOptional } from '../middleware/auth'
 import { ChangePasswordValidator, EditValidator, LoginValidator, RegistrationValidator } from '../validators/account-validators'
 
 const saltRounds = 10
 const AccountRouter = Router()
-
-AccountRouter.post('/register', async (req, res, next) => {
-    try {
-        const { email, password, accountName, displayName } = RegistrationValidator.parse(req.body)
-
-        const sql = 'INSERT INTO user_account (email, password, account_name, display_name) VALUES ($1, $2, $3, $4)'
-
-        const hashedPassword = await bcrypt.hash(password, saltRounds)
-        pool.query(sql, [email, hashedPassword, accountName, displayName])
-            .then(() => res.status(201).json(CREATED))
-            .catch(err => {
-                if (err.code === '23505') res.status(409).json(CONFLICT)
-                else next(err)
-            })
-    } catch (err) { next(err) }
-})
 
 const attemptLogin = async (sql: string, indentifier: string, password: string, res: Response) => {
     const result = await pool.query(sql, [indentifier])
@@ -42,6 +26,58 @@ const attemptLogin = async (sql: string, indentifier: string, password: string, 
         }
     } else res.status(401).json(LOGIN_FAILED)
 }
+
+const getFollowed = async (of: string) => {
+    const sql = `--sql
+        SELECT id FROM user_account
+        WHERE id IN (
+            SELECT followed_id FROM follow
+            WHERE follower_id = $1
+        )`
+
+    return (await pool.query(sql, [of])).rows
+}
+
+const getFollowers = async (of: string, as: number | undefined) => {
+    let selfHasPrivateFollowsAppendix: Array<{id: number}> = []
+    if (as !== undefined) {
+        const appendixSql = `--sql
+            SELECT id FROM user_account 
+            WHERE NOT followed_visible AND id = $1
+            AND id IN (
+                SELECT follower_id FROM follow WHERE followed_id = $2
+            )`
+        
+        selfHasPrivateFollowsAppendix = (await pool.query(appendixSql, [as, of])).rows
+    }
+
+    const fetchSql = `--sql
+        SELECT id FROM user_account
+        WHERE id IN (
+            SELECT follower_id FROM follow
+            WHERE followed_id = $1
+        ) AND id NOT IN (
+            SELECT id FROM user_account WHERE NOT followed_visible
+        )`
+
+    return (await pool.query(fetchSql, [of])).rows.concat(selfHasPrivateFollowsAppendix)
+}
+
+AccountRouter.post('/register', async (req, res, next) => {
+    try {
+        const { email, password, accountName, displayName } = RegistrationValidator.parse(req.body)
+
+        const sql = 'INSERT INTO user_account (email, password, account_name, display_name) VALUES ($1, $2, $3, $4)'
+
+        const hashedPassword = await bcrypt.hash(password, saltRounds)
+        pool.query(sql, [email, hashedPassword, accountName, displayName])
+            .then(() => res.status(201).json(CREATED))
+            .catch(err => {
+                if (err.code === '23505') res.status(409).json(CONFLICT)
+                else next(err)
+            })
+    } catch (err) { next(err) }
+})
 
 AccountRouter.post('/login', (req, res) => {
     const { email, accountName, password } = LoginValidator.parse(req.body)
@@ -112,7 +148,40 @@ AccountRouter.get('/:id(\\d+)', (req, res) => {
         WHERE id = $1`
 
     pool.query(sql, [req.params.id])
-        .then(result => res.status(200).send(result.rows))
+        .then(result => res.status(200).json(result.rows))
+})
+
+AccountRouter.get('/:id(\\d+)/followed', authOptional, async (req, res, next) => {
+    try {
+        const privacySql = 'SELECT followed_visible FROM user_account WHERE id = $1'
+        const shouldFetch = (req.body.auth && req.body.id === req.params.id) || (await pool.query(privacySql, [req.params.id])).rows[0].followed_visible
+
+        if (shouldFetch) res.status(200).json(await getFollowed(req.params.id))
+        else res.status(403).json(FORBIDDEN)
+    } catch (err) { next(err) }
+})
+
+AccountRouter.get('/:id(\\d+)/followers', authOptional, async (req, res, next) => {
+    try {
+        if (req.body.auth) res.status(200).json(await getFollowers(req.params.id, req.body.id))
+        else res.status(200).json(await getFollowers(req.params.id, undefined))
+    } catch (err) { next(err) }
+})
+
+AccountRouter.get('/:id(\\d+)/mutuals', authOptional, async (req, res, next) => {
+    try {
+        const privacySql = 'SELECT followed_visible FROM user_account WHERE id = $1'
+        const shouldFetch = (req.body.auth && req.body.id === req.params.id) || (await pool.query(privacySql, [req.params.id])).rows[0].followed_visible
+
+        if (shouldFetch) {
+            const followed = await getFollowed(req.params.id)
+            const followers = req.body.auth
+                ? await getFollowers(req.params.id, req.body.id)
+                : await getFollowers(req.params.id, undefined)
+
+            res.status(200).json(followed.filter(value => followers.includes(value)))
+        } else res.status(403).json(FORBIDDEN)
+    } catch (err) { next(err) }
 })
 
 export { AccountRouter }

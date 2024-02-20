@@ -1,7 +1,7 @@
-import { Router } from "express";
-import { pool } from "../../helpers/pg-pool";
-import { CONFLICT, RESOURCE_NOT_FOUND } from "../../helpers/status-codes";
-import { authMandatory } from "../../middleware/auth";
+import { Router } from "express"
+import { pool } from "../../helpers/pg-pool"
+import { CONFLICT, RESOURCE_NOT_FOUND } from "../../helpers/status-codes"
+import { authMandatory } from "../../middleware/auth"
 
 const LikeRouter = Router()
 
@@ -28,5 +28,5 @@ LikeRouter.delete('/', authMandatory, (req, res, next) => {
         })
 })
 
-export { LikeRouter };
+export { LikeRouter }
 

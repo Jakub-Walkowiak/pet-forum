@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt'
 import { Router } from 'express'
 import { pool } from '../../helpers/pg-pool'
 import { generateAccountEditQuery } from '../../helpers/query-generators/generate-account-edit-query'
-import { CONFLICT, CREATED, FORBIDDEN } from '../../helpers/status-codes'
+import { CONFLICT, CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory, authOptional } from '../../middleware/auth'
 import { ChangePasswordValidator, EditValidator, LoginValidator, RegistrationValidator } from '../../validators/account-validators'
 import { FollowRouter } from './follows'
@@ -98,7 +98,10 @@ AccountRouter.get('/:id(\\d+)', (req, res) => {
         WHERE id = $1`
 
     pool.query(sql, [req.params.id])
-        .then(result => res.status(200).json(result.rows))
+        .then(result => {
+            if (result.rowCount === 0) res.status(404).send(RESOURCE_NOT_FOUND)
+            else res.status(200).json(result.rows)
+        })
 })
 
 AccountRouter.get('/:id(\\d+)/followed', authOptional, async (req, res, next) => {
@@ -106,15 +109,23 @@ AccountRouter.get('/:id(\\d+)/followed', authOptional, async (req, res, next) =>
         const privacySql = 'SELECT followed_visible FROM user_account WHERE id = $1'
         const shouldFetch = (req.body.auth && req.body.id === req.params.id) || (await pool.query(privacySql, [req.params.id])).rows[0].followed_visible
 
-        if (shouldFetch) res.status(200).json(await getFollowed(req.params.id))
-        else res.status(403).json(FORBIDDEN)
+        if (shouldFetch) {
+            const result = await getFollowed(req.params.id)
+            if (result.length === 0) res.status(404).send(RESOURCE_NOT_FOUND)
+            else res.status(200).json(result)
+        } else res.status(403).json(FORBIDDEN)
     } catch (err) { next(err) }
 })
 
 AccountRouter.get('/:id(\\d+)/followers', authOptional, async (req, res, next) => {
     try {
-        if (req.body.auth) res.status(200).json(await getFollowers(req.params.id, req.body.id))
-        else res.status(200).json(await getFollowers(req.params.id, undefined))
+        let result
+
+        if (req.body.auth) result = await getFollowers(req.params.id, req.body.id)
+        else result = await getFollowers(req.params.id, undefined)
+
+        if (result.length === 0) res.status(404).send(RESOURCE_NOT_FOUND)
+        else res.status(200).json(result)
     } catch (err) { next(err) }
 })
 
@@ -129,7 +140,9 @@ AccountRouter.get('/:id(\\d+)/mutuals', authOptional, async (req, res, next) => 
                 ? await getFollowers(req.params.id, req.body.id)
                 : await getFollowers(req.params.id, undefined)
 
-            res.status(200).json(followed.filter(value => followers.includes(value)))
+            const result = followed.filter(value => followers.includes(value))
+            if (result.length === 0) res.status(404).send(RESOURCE_NOT_FOUND)
+            else res.status(200).json(result)
         } else res.status(403).json(FORBIDDEN)
     } catch (err) { next(err) }
 })

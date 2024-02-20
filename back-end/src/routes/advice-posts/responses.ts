@@ -51,7 +51,10 @@ ResponseRouter.get('/:id(\\d+)', (req, res) => {
     const sql = 'SELECT * FROM advice_response'
 
     pool.query(sql, [req.params.id])
-        .then(result => res.status(200).json(result.rows))
+        .then(result => {
+            if (result.rowCount === 0) res.status(404).send(RESOURCE_NOT_FOUND)
+            else res.status(200).json(result.rows)
+        })
 })
 
 export { ResponseRouter }

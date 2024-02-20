@@ -1,6 +1,6 @@
-import { OrderByMode, OrderByOption, PostType, PostTypeProperties, ReplyOption, TagMode, UserTypeOption } from "../../../types/post-fetch-options"
+import { AdvicePostOrderByOption, BlogPostOrderByOption, OrderByMode, PostType, PostTypeProperties, ReplyOption, ResponseOrderByOption, TagMode, UserTypeOption } from "../../../types/post-fetch-options"
 
-export const getOrderByString = (by: OrderByOption, mode: OrderByMode) => `${by} ${mode}`
+export const getOrderByString = (by: BlogPostOrderByOption | AdvicePostOrderByOption | ResponseOrderByOption, mode: OrderByMode) => `${by} ${mode}`
 
 export const getUserTypeFilterString = (input: UserTypeOption, forUser: number | undefined) => {
     if (forUser === undefined) return ''
@@ -51,3 +51,7 @@ export const getReplyFilterString = (replies: ReplyOption, to: number | undefine
 }
 
 export const getContainsFilterString = (contains: string | undefined) => contains === undefined ? '' : `LOWER(contents) LIKE LOWER(\'%${contains}%\')`
+
+export const getResolvedString = (resolved: boolean | undefined) => resolved === undefined ? '' : `WHERE ${resolved ? '' : 'NOT'} resolved`
+
+export const getBestFilterString = (isBest: boolean | undefined) => isBest === undefined ? '' : `WHERE ${isBest ? '' : 'NOT'} marked_as_best`

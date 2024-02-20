@@ -1,7 +1,17 @@
-export enum OrderByOption {
+export enum BlogPostOrderByOption {
     LIKES = 'like_count',
     DATE = 'date_posted',
     REPLIES = 'reply_count',
+}
+
+export enum AdvicePostOrderByOption {
+    DATE = 'date_posted',
+    RESPONSES = 'response_count',
+}
+
+export enum ResponseOrderByOption {
+    DATE = 'date_posted',
+    SCORE = 'score',
 }
 
 export enum OrderByMode {
@@ -25,6 +35,7 @@ export enum PostType {
     ADVICE,
 }
 
+// remove these
 export enum ReplyOption {
     NO = 'no',
     YES = 'yes',

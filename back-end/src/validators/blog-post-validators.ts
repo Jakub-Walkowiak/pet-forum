@@ -1,5 +1,5 @@
 import z from 'zod'
-import { OrderByMode, OrderByOption, ReplyOption, TagMode, UserTypeOption } from '../types/post-fetch-options'
+import { BlogPostOrderByOption, OrderByMode, ReplyOption, TagMode, UserTypeOption } from '../types/post-fetch-options'
 
 export const BlogPostAddValidator = z.
     object({
@@ -9,7 +9,7 @@ export const BlogPostAddValidator = z.
 
 export const BlogPostFetchValidator = z.
     object({
-        orderBy: z.nativeEnum(OrderByOption).default(OrderByOption.LIKES),
+        orderBy: z.nativeEnum(BlogPostOrderByOption).default(BlogPostOrderByOption.LIKES),
         orderMode: z.nativeEnum(OrderByMode).default(OrderByMode.DESC),
         fromUser: z.coerce.number().optional(),
         replies: z.nativeEnum(ReplyOption).default(ReplyOption.BOTH),
@@ -17,8 +17,8 @@ export const BlogPostFetchValidator = z.
         desiredUsers: z.nativeEnum(UserTypeOption).default(UserTypeOption.NONE),
         tags: z.coerce.number().array().optional(),
         tagMode: z.nativeEnum(TagMode).default(TagMode.ANY),
-        limit: z.coerce.number().max(100),
-        offset: z.coerce.number(),
+        limit: z.coerce.number().max(100).default(100),
+        offset: z.coerce.number().default(0),
         contains: z.string().optional(),
     })
 

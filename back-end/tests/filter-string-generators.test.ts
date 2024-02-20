@@ -1,21 +1,21 @@
-import { getContainsFilterString, getOrderByString, getReplyFilterString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from "../src/helpers/query-generators/posts/post-filter-string-generators"
-import { OrderByMode, OrderByOption, PostType, ReplyOption, TagMode, UserTypeOption } from "../src/types/post-fetch-options"
+import { getBlogOrderByString, getContainsFilterString, getReplyFilterString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from "../src/helpers/query-generators/posts/post-filter-string-generators"
+import { BlogPostOrderByOption, OrderByMode, PostType, ReplyOption, TagMode, UserTypeOption } from "../src/types/post-fetch-options"
 
 describe('Testing partial query assembly', () => {
     describe('\'ORDER BY\' string generation', () => {
         it.each([
-            [OrderByOption.LIKES, 'like_count'],
-            [OrderByOption.REPLIES, 'reply_count'],
-            [OrderByOption.DATE, 'date_posted'],
-        ])('With %p, should contain %p', (by: OrderByOption, expected: string) => {
-            expect(getOrderByString(by, OrderByMode.ASC)).toEqual(expect.stringContaining(expected))
+            [BlogPostOrderByOption.LIKES, 'like_count'],
+            [BlogPostOrderByOption.REPLIES, 'reply_count'],
+            [BlogPostOrderByOption.DATE, 'date_posted'],
+        ])('With %p, should contain %p', (by: BlogPostOrderByOption, expected: string) => {
+            expect(getBlogOrderByString(by, OrderByMode.ASC)).toEqual(expect.stringContaining(expected))
         })
 
         it.each([
             [OrderByMode.ASC, 'ASC'],
             [OrderByMode.DESC, 'DESC'],
         ])('With %p, should contain %p', (mode: OrderByMode, expected: string) => {
-            expect(getOrderByString(OrderByOption.DATE, mode)).toEqual(expect.stringContaining(expected))
+            expect(getBlogOrderByString(BlogPostOrderByOption.DATE, mode)).toEqual(expect.stringContaining(expected))
         })
     })
     

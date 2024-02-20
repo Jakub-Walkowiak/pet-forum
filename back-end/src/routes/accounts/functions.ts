@@ -22,12 +22,7 @@ export const attemptLogin = async (sql: string, indentifier: string, password: s
 }
 
 export const getFollowed = async (of: string) => {
-    const sql = `--sql
-        SELECT id FROM user_account
-        WHERE id IN (
-            SELECT followed_id FROM follow
-            WHERE follower_id = $1
-        )`
+    const sql = 'SELECT followed_id FROM follow WHERE follower_id = $1'
 
     return (await pool.query(sql, [of])).rows
 }
@@ -46,11 +41,9 @@ export const getFollowers = async (of: string, as: number | undefined) => {
     }
 
     const fetchSql = `--sql
-        SELECT id FROM user_account
-        WHERE id IN (
-            SELECT follower_id FROM follow
-            WHERE followed_id = $1
-        ) AND id NOT IN (
+        SELECT follower_id FROM follow
+        WHERE followed_id = $1 
+        AND id NOT IN (
             SELECT id FROM user_account WHERE NOT followed_visible
         )`
 

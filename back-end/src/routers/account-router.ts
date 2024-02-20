@@ -133,7 +133,7 @@ AccountRouter.get('/:id(\\d+)', (req, res) => {
         SELECT account_name,
                display_name,
                follower_count,
-               following_count,
+               followed_count,
                date_created,
                running_response_score,
                net_positive_responses,

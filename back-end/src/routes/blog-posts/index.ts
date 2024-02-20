@@ -1,11 +1,14 @@
 import { Router } from 'express'
-import { pool } from '../helpers/pg-pool'
-import { generateBlogPostFetchQuery } from '../helpers/query-generators/posts/generate-blog-post-fetch-query'
-import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../helpers/status-codes'
-import { authMandatory, authOptional } from '../middleware/auth'
-import { BlogPostAddValidator, BlogPostFetchData, BlogPostFetchValidator } from '../validators/blog-post-validators'
+import { pool } from '../../helpers/pg-pool'
+import { generateBlogPostFetchQuery } from '../../helpers/query-generators/posts/generate-blog-post-fetch-query'
+import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
+import { authMandatory, authOptional } from '../../middleware/auth'
+import { BlogPostAddValidator, BlogPostFetchData, BlogPostFetchValidator } from '../../validators/blog-post-validators'
+import { LikeRouter } from './likes'
 
 const BlogPostRouter = Router()
+
+BlogPostRouter.use('/like', LikeRouter)
 
 BlogPostRouter.post('/', authMandatory, (req, res, next) => {
     const { contents, replyTo } = BlogPostAddValidator.parse(req.body)
@@ -22,7 +25,15 @@ BlogPostRouter.post('/', authMandatory, (req, res, next) => {
     
 })
 
-BlogPostRouter.delete('/:id', authMandatory, (req, res) => {
+BlogPostRouter.get('/', authOptional, (req, res) => {
+    const data: BlogPostFetchData = BlogPostFetchValidator.parse(req.query)
+    const sql = generateBlogPostFetchQuery(data, req.body.auth ? req.body.id : undefined)
+
+    pool.query(sql)
+        .then(result => res.status(200).json(result.rows))
+})
+
+BlogPostRouter.delete('/:id(\\d+)', authMandatory, (req, res) => {
     const idVerifySql = 'SELECT poster_id FROM blog_post WHERE id = $1'
 
     pool.query(idVerifySql, [req.params.id])
@@ -36,14 +47,6 @@ BlogPostRouter.delete('/:id', authMandatory, (req, res) => {
                     .then(() => res.status(204))
             }
         })
-})
-
-BlogPostRouter.get('/', authOptional, (req, res) => {
-    const data: BlogPostFetchData = BlogPostFetchValidator.parse(req.query)
-    const sql = generateBlogPostFetchQuery(data, req.body.auth ? req.body.id : undefined)
-
-    pool.query(sql)
-        .then(result => res.status(200).json(result.rows))
 })
 
 BlogPostRouter.get('/:id(\\d+)', (req, res) => {

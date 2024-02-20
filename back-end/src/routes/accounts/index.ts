@@ -1,67 +1,17 @@
 import bcrypt from 'bcrypt'
-import { Response, Router } from 'express'
-import jwt from 'jsonwebtoken'
-import { pool } from '../helpers/pg-pool'
-import { generateAccountEditQuery } from '../helpers/query-generators/generate-account-edit-query'
-import { ACCOUNT_NOT_FOUND, CONFLICT, CREATED, FORBIDDEN, INTERNAL_SERVER_ERROR, LOGIN_FAILED } from '../helpers/status-codes'
-import { authMandatory, authOptional } from '../middleware/auth'
-import { ChangePasswordValidator, EditValidator, LoginValidator, RegistrationValidator } from '../validators/account-validators'
+import { Router } from 'express'
+import { pool } from '../../helpers/pg-pool'
+import { generateAccountEditQuery } from '../../helpers/query-generators/generate-account-edit-query'
+import { CONFLICT, CREATED, FORBIDDEN } from '../../helpers/status-codes'
+import { authMandatory, authOptional } from '../../middleware/auth'
+import { ChangePasswordValidator, EditValidator, LoginValidator, RegistrationValidator } from '../../validators/account-validators'
+import { FollowRouter } from './follows'
+import { attemptLogin, getFollowed, getFollowers } from './functions'
 
 const saltRounds = 10
 const AccountRouter = Router()
 
-const attemptLogin = async (sql: string, indentifier: string, password: string, res: Response) => {
-    const result = await pool.query(sql, [indentifier])
-
-    if (result.rowCount === 0) res.status(404).json(ACCOUNT_NOT_FOUND)
-    const verified = await bcrypt.compare(password, result.rows[0].password)
-
-    if (verified) {
-        const secret = process.env.JWT_SECRET
-        
-        if (secret === undefined) res.status(502).json(INTERNAL_SERVER_ERROR) 
-        else {
-            res.cookie('login_token', jwt.sign({ id: result.rows[0].id }, secret))
-            res.status(204).send()
-        }
-    } else res.status(401).json(LOGIN_FAILED)
-}
-
-const getFollowed = async (of: string) => {
-    const sql = `--sql
-        SELECT id FROM user_account
-        WHERE id IN (
-            SELECT followed_id FROM follow
-            WHERE follower_id = $1
-        )`
-
-    return (await pool.query(sql, [of])).rows
-}
-
-const getFollowers = async (of: string, as: number | undefined) => {
-    let selfHasPrivateFollowsAppendix: Array<{id: number}> = []
-    if (as !== undefined) {
-        const appendixSql = `--sql
-            SELECT id FROM user_account 
-            WHERE NOT followed_visible AND id = $1
-            AND id IN (
-                SELECT follower_id FROM follow WHERE followed_id = $2
-            )`
-        
-        selfHasPrivateFollowsAppendix = (await pool.query(appendixSql, [as, of])).rows
-    }
-
-    const fetchSql = `--sql
-        SELECT id FROM user_account
-        WHERE id IN (
-            SELECT follower_id FROM follow
-            WHERE followed_id = $1
-        ) AND id NOT IN (
-            SELECT id FROM user_account WHERE NOT followed_visible
-        )`
-
-    return (await pool.query(fetchSql, [of])).rows.concat(selfHasPrivateFollowsAppendix)
-}
+AccountRouter.use('/id(\\d+)/follow', FollowRouter)
 
 AccountRouter.post('/register', async (req, res, next) => {
     try {

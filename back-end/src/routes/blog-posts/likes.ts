@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { pool } from "../../helpers/pg-pool"
 import { CONFLICT, RESOURCE_NOT_FOUND } from "../../helpers/status-codes"
-import { authMandatory } from "../../middleware/auth"
+import { authMandatory, authOptional } from "../../middleware/auth"
 
 const LikeRouter = Router()
 
@@ -26,6 +26,31 @@ LikeRouter.delete('/', authMandatory, (req, res, next) => {
             if (err.code = 23503) res.status(404).json(RESOURCE_NOT_FOUND)
             else next(err)
         })
+})
+
+LikeRouter.get('/', authOptional, async (req, res, next) => {
+    try {
+        let selfHasPrivateLikesAppendix: Array<{id: number}> = []
+        if (req.body.auth) {
+            const appendixSql = `--sql
+                SELECT id FROM user_account 
+                WHERE NOT likes_visible AND id = $1
+                AND id IN (
+                    SELECT user_account_id FROM post_like WHERE post_id = $2
+                )`
+            
+            selfHasPrivateLikesAppendix = (await pool.query(appendixSql, [req.body.id, req.params.id])).rows
+        }
+
+        const fetchSql = `--sql
+            SELECT user_account_id FROM post_like
+            WHERE post_id = $1
+            AND id NOT IN (
+                SELECT id FROM user_account WHERE NOT likes_visible
+            )`
+
+        return (await pool.query(fetchSql, [req.params.id])).rows.concat(selfHasPrivateLikesAppendix)
+    } catch (err) { next(err) }
 })
 
 export { LikeRouter }

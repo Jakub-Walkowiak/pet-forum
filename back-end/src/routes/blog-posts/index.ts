@@ -8,7 +8,7 @@ import { LikeRouter } from './likes'
 
 const BlogPostRouter = Router()
 
-BlogPostRouter.use('/like', LikeRouter)
+BlogPostRouter.use('/likes', LikeRouter)
 
 BlogPostRouter.post('/', authMandatory, (req, res, next) => {
     const { contents, replyTo } = BlogPostAddValidator.parse(req.body)

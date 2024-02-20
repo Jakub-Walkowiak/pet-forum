@@ -134,5 +134,19 @@ AccountRouter.get('/:id(\\d+)/mutuals', authOptional, async (req, res, next) => 
     } catch (err) { next(err) }
 })
 
+AccountRouter.get('/:id(\\d+)/likes', authOptional, async (req, res, next) => {
+    try {
+        if (!req.body.auth) {
+            const verifyPrivacySql = 'SELECT likes_visible FROM user_account WHERE id = $1'
+            if (!(await pool.query(verifyPrivacySql, [req.params.id])).rows[0].likes_visible) res.status(403).send(FORBIDDEN)
+        }
+
+        const fetchSql = 'SELECT post_id FROM post_like WHERE user_account_id = $1'
+
+        pool.query(fetchSql, [req.params.id])
+            .then(result => res.status(200).send(result.rows))
+    } catch (err) { next(err) }
+})
+
 export { AccountRouter }
 

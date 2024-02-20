@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import format from 'pg-format'
 import { pool } from '../../helpers/pg-pool'
 import { generateBlogPostFetchQuery } from '../../helpers/query-generators/posts/generate-blog-post-fetch-query'
 import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
@@ -11,18 +12,24 @@ const BlogPostRouter = Router()
 BlogPostRouter.use('/likes', LikeRouter)
 
 BlogPostRouter.post('/', authMandatory, (req, res, next) => {
-    const { contents, replyTo } = BlogPostAddValidator.parse(req.body)
+    const { contents, replyTo, pictures } = BlogPostAddValidator.parse(req.body)
 
-    const sql = 'INSERT INTO blog_post (poster_id, contents, reply_to) VALUES ($1, $2, $3)'
+    const postSql = 'INSERT INTO blog_post (poster_id, contents, reply_to) VALUES ($1, $2, $3)'
 
-    pool.query(sql, [req.body.id, contents, replyTo])
-        .then(() => res.status(201).json(CREATED))
+    pool.query(postSql, [req.body.id, contents, replyTo])
+        .then(() => { 
+            if (pictures === undefined) res.status(201).json(CREATED)
+            else {
+                const picturesData = pictures.map(item => [item])
+                const picturesSql = format('INSERT INTO blog_post_picture VALUES %L', picturesData)
+                pool.query(picturesSql)
+                    .then(() => res.status(201).json(CREATED))
+            }
+        })
         .catch(err => {
             if (err.code = 23503) res.status(404).json(RESOURCE_NOT_FOUND)
             else next(err)
         })
-
-    
 })
 
 BlogPostRouter.get('/', authOptional, (req, res) => {

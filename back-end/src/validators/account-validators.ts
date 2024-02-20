@@ -30,3 +30,8 @@ export const ChangePasswordValidator = z
         currentPassword: z.string().min(10).max(32).regex(/([\w~`!@#$%^&*()_\-\+={[}\]\|\\:"',.?\/]+)/),
         newPassword: z.string().min(10).max(32).regex(/([\w~`!@#$%^&*()_\-\+={[}\]\|\\:"',.?\/]+)/),
     })
+
+export const AddProfilePictureValidator = z.
+    object({
+        pictureId: z.number(),
+    })

@@ -1,7 +1,7 @@
 import { Request, Router } from "express"
 import multer from "multer"
 import { pool } from "../../helpers/pg-pool"
-import { CREATED, RESOURCE_NOT_FOUND } from "../../helpers/status-codes"
+import { RESOURCE_NOT_FOUND } from "../../helpers/status-codes"
 
 const storage = multer.diskStorage({
     destination: (req: Request, file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
@@ -18,10 +18,10 @@ const upload = multer({ storage })
 const ImageRouter = Router()
 
 ImageRouter.post('/', upload.single('image'), (req, res) => {
-    const sql = 'INSERT INTO picture (picure_path) VALUES ($1)'
+    const sql = 'INSERT INTO picture (picure_path) VALUES ($1) RETURNING id'
 
     pool.query(sql, [req.file?.filename])
-        .then(() => res.status(201).send(CREATED))
+        .then(result => res.status(201).send(result.rows))
 })
 
 ImageRouter.get('/:id(\\d+)', (req, res) => {

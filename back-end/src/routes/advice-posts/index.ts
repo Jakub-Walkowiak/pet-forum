@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import format from 'pg-format'
 import { pool } from '../../helpers/pg-pool'
 import { generateAdvicePostFetchQuery } from '../../helpers/query-generators/posts/generate-advice-post-fetch-query'
 import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
@@ -11,12 +12,20 @@ const AdvicePostRouter = Router()
 AdvicePostRouter.use('/responses', ResponseRouter)
 
 AdvicePostRouter.post('/', authMandatory, (req, res, next) => {
-    const { contents } = AdvicePostAddValidator.parse(req.body)
+    const { contents, pictures } = AdvicePostAddValidator.parse(req.body)
 
     const sql = 'INSERT INTO advice_post (poster_id, contents) VALUES ($1, $2)'
 
     pool.query(sql, [req.body.id, contents])
-        .then(() => res.status(201).json(CREATED))
+        .then(() => { 
+            if (pictures === undefined) res.status(201).json(CREATED)
+            else {
+                const picturesData = pictures.map(item => [item])
+                const picturesSql = format('INSERT INTO advice_post_picture VALUES %L', picturesData)
+                pool.query(picturesSql)
+                    .then(() => res.status(201).json(CREATED))
+            }
+        })
         .catch(err => {
             if (err.code = 23503) res.status(404).json(RESOURCE_NOT_FOUND)
             else next(err)
@@ -61,7 +70,7 @@ AdvicePostRouter.get('/:id(\\d+)', async (req, res, next) => {
 
         const picturesSql = `--sql
             SELECT picture_id
-            FROM advice_post_picture
+            FROM blog_post_picture
             WHERE blog_post_id = $1`
 
         const pictures = (await pool.query(picturesSql, [req.params.id])).rows.map(row => row.picture_data)

@@ -4,7 +4,7 @@ import { pool } from '../../helpers/pg-pool'
 import { generateAccountEditQuery } from '../../helpers/query-generators/generate-account-edit-query'
 import { CONFLICT, CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory, authOptional } from '../../middleware/auth'
-import { ChangePasswordValidator, EditValidator, LoginValidator, RegistrationValidator } from '../../validators/account-validators'
+import { AddProfilePictureValidator, ChangePasswordValidator, EditValidator, LoginValidator, RegistrationValidator } from '../../validators/account-validators'
 import { FollowRouter } from './follows'
 import { attemptLogin, getFollowed, getFollowers } from './functions'
 
@@ -159,6 +159,15 @@ AccountRouter.get('/:id(\\d+)/likes', authOptional, async (req, res, next) => {
         pool.query(fetchSql, [req.params.id])
             .then(result => res.status(200).send(result.rows))
     } catch (err) { next(err) }
+})
+
+AccountRouter.post('/:id(\\d+)/pfp', authMandatory, (req, res) => {
+    const { pictureId } = AddProfilePictureValidator.parse(req.body)
+
+    const sql = 'INSERT INTO profile_picture (user_account_id, picture_id) VALUES ($1, $2)'
+
+    pool.query(sql, [req.params.id, pictureId])
+        .then(() => res.status(201).json(CREATED))
 })
 
 export { AccountRouter }

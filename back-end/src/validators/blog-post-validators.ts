@@ -5,6 +5,7 @@ export const BlogPostAddValidator = z.
     object({
         contents: z.string().min(1).max(300),
         replyTo: z.coerce.number().optional(),
+        pictures: z.coerce.number().array().optional(),
     })
 
 export const BlogPostFetchValidator = z.

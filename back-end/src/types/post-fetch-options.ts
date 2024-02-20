@@ -35,12 +35,6 @@ export enum PostType {
     ADVICE,
 }
 
-// remove these
-export enum ReplyOption {
-    NO = 'no',
-    YES = 'yes',
-    BOTH = 'both',
-}
 
 interface PostProperties {
     table: string,

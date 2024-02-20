@@ -1,4 +1,4 @@
-import { AdvicePostOrderByOption, BlogPostOrderByOption, OrderByMode, PostType, PostTypeProperties, ReplyOption, ResponseOrderByOption, TagMode, UserTypeOption } from "../../../types/post-fetch-options"
+import { AdvicePostOrderByOption, BlogPostOrderByOption, OrderByMode, PostType, PostTypeProperties, ResponseOrderByOption, TagMode, UserTypeOption } from "../../../types/post-fetch-options"
 
 export const getOrderByString = (by: BlogPostOrderByOption | AdvicePostOrderByOption | ResponseOrderByOption, mode: OrderByMode) => `${by} ${mode}`
 
@@ -42,13 +42,12 @@ export const getTagFilterString = (mode: TagMode, tags: Array<number> | undefine
 
 export const getUserFilterString = (user: number | undefined) => user !== undefined ? `poster_id = \'${user}\'` : ''
 
-export const getReplyFilterString = (replies: ReplyOption, to: number | undefined) =>  {
-    switch (replies) {
-        case ReplyOption.NO: return 'reply_to IS NULL'
-        case ReplyOption.YES: return `reply_to ${to === undefined ? 'IS NOT NULL' : `= ${to}`}`
-        case ReplyOption.BOTH: return `${to === undefined ? '' : `reply_to = ${to}`}`
-    }
-}
+export const getReplyFilterString = (replies: boolean | undefined, to: number | undefined) => 
+    replies === undefined 
+        ? `${to === undefined ? '' : `reply_to = ${to}`}`
+        : replies
+            ? `reply_to ${to === undefined ? 'IS NOT NULL' : `= ${to}`}`
+            : 'reply_to IS NULL'
 
 export const getContainsFilterString = (contains: string | undefined) => contains === undefined ? '' : `LOWER(contents) LIKE LOWER(\'%${contains}%\')`
 

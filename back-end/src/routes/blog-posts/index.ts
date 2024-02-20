@@ -49,11 +49,30 @@ BlogPostRouter.delete('/:id(\\d+)', authMandatory, (req, res) => {
         })
 })
 
-BlogPostRouter.get('/:id(\\d+)', (req, res) => {
-    const sql = 'SELECT * FROM blog_post WHERE id = $1'
+BlogPostRouter.get('/:id(\\d+)', async (req, res, next) => {
+    try {
+        const postSql = `--sql
+            SELECT poster_id,
+                contents,
+                like_count,
+                reply_to,
+                date_posted,
+                reply_count
+            FROM blog_post WHERE id = $1`
 
-    pool.query(sql, [req.params.id])
-        .then(result => res.status(200).json(result.rows))
+        const postPromise = pool.query(postSql, [req.params.id])
+            
+        const picturesSql = `--sql
+            SELECT picture_id
+            FROM blog_post_picture
+            WHERE blog_post_id = $1`
+
+        const pictures = (await pool.query(picturesSql, [req.params.id])).rows.map(row => row.picture_data)
+
+        const postData = await postPromise
+        if (postData.rowCount === 0) res.status(404).send(RESOURCE_NOT_FOUND)
+        else res.status(200).send({ ...postData, pictures })
+    } catch (err) { next(err) }
 })
 
 export { BlogPostRouter }

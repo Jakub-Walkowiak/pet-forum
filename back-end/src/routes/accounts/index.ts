@@ -4,7 +4,7 @@ import { pool } from '../../helpers/pg-pool'
 import { generateAccountEditQuery } from '../../helpers/query-generators/generate-account-edit-query'
 import { CONFLICT, CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory, authOptional } from '../../middleware/auth'
-import { AccountEditValidator, AddProfilePictureValidator, ChangePasswordValidator, LoginValidator, RegistrationValidator } from '../../validators/account-validators'
+import { AccountEditValidator, AccountFetchValidator, AddProfilePictureValidator, ChangePasswordValidator, LoginValidator, RegistrationValidator } from '../../validators/account-validators'
 import { FollowRouter } from './follows'
 import { attemptLogin, getFollowed, getFollowers } from './functions'
 
@@ -76,6 +76,23 @@ AccountRouter.patch('/password', authMandatory, async (req, res, next) => {
                 .then(() => res.status(204).send())
         } else { res.status(403).json(FORBIDDEN) }
     } catch (err) { next(err) }
+})
+
+AccountRouter.get('/', (req, res) => {
+    const { nameQuery, limit, offset, orderBy, orderMode } = AccountFetchValidator.parse(req.body)
+
+    const nameQueryString = nameQuery === undefined ? '' : `--sql
+        WHERE Lower(account_name) LIKE Lower(\'%${nameQuery}%\')
+        OR Lower(display_name) LIKE Lower(\'%${nameQuery}%\')`
+
+    const sql = `--sql
+        SELECT id FROM user_account
+        ${nameQueryString}
+        ORDER BY ${orderBy} ${orderMode}
+        LIMIT ${limit} OFFSET ${offset}`
+
+    pool.query(sql)
+        .then(result => res.status(200).json(result))
 })
 
 AccountRouter.get('/:id(\\d+)', (req, res) => {

@@ -7,6 +7,8 @@ export const BlogPostAddValidator = z.
         contents: z.string().min(1).max(300),
         replyTo: z.coerce.number().optional(),
         pictures: z.coerce.number().array().optional(),
+        tags: z.coerce.number().array().optional(),
+        pets: z.coerce.number().array().optional(),
     })
 
 export const BlogPostFetchValidator = z.

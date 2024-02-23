@@ -12,20 +12,36 @@ const AdvicePostRouter = Router()
 AdvicePostRouter.use('/responses', ResponseRouter)
 
 AdvicePostRouter.post('/', authMandatory, (req, res, next) => {
-    const { contents, pictures } = AdvicePostAddValidator.parse(req.body)
+    const { contents, pictures, tags, pets } = AdvicePostAddValidator.parse(req.body)
 
-    const sql = 'INSERT INTO advice_post (poster_id, contents) VALUES ($1, $2)'
+    const postSql = 'INSERT INTO advice_post (poster_id, contents) VALUES ($1, $2) RETURNING id'
 
-    pool.query(sql, [req.body.id, contents])
-        .then(() => { 
-            if (pictures === undefined) res.status(201).json(CREATED)
-            else {
-                const picturesData = pictures.map(item => [item])
-                const picturesSql = format('INSERT INTO advice_post_picture VALUES %L', picturesData)
-                pool.query(picturesSql)
-                    .then(() => res.status(201).json(CREATED))
+    pool.query(postSql, [req.body.id, contents])
+        .then(result => { 
+            let picturesPromise
+            let tagsPromise
+            let petsPromise
+
+            if (pictures !== undefined) {
+                const picturesData = pictures.map(item => [item, result.rows[0].id])
+                const picturesSql = format('INSERT INTO advice_post_picture (picture_path, post_id) VALUES %L', picturesData)
+                picturesPromise = pool.query(picturesSql)
+            } 
+
+            if (tags !== undefined) {
+                const tagsData = tags.map(item => [item, result.rows[0].id])
+                const tagsSql = format('INSERT INTO advice_tagged (tag_id, post_id) VALUES %L', tagsData)
+                tagsPromise = pool.query(tagsSql)
+            } 
+
+            if (pets !== undefined) {
+                const petsData = pets.map(item => [item, result.rows[0].id])
+                const petsSql = format('INSERT INTO advice_post_pet (pet_id, post_id) VALUES %L', petsData)
+                petsPromise = pool.query(petsSql)
             }
-        })
+
+            return Promise.all([picturesPromise, tagsPromise, petsPromise])
+        }).then(() => res.status(201).json(CREATED))
         .catch(err => {
             if (err.code = 23503) res.status(404).json(RESOURCE_NOT_FOUND)
             else next(err)

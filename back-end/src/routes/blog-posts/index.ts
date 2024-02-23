@@ -13,25 +13,43 @@ const BlogPostRouter = Router()
 BlogPostRouter.use('/:id(\\d+)/likes', LikeRouter)
 BlogPostRouter.use('/tags', TagRouter)
 
-BlogPostRouter.post('/', authMandatory, (req, res, next) => {
-    const { contents, replyTo, pictures } = BlogPostAddValidator.parse(req.body)
+BlogPostRouter.post('/', authMandatory, async (req, res, next) => {
+    try {
+        const { contents, replyTo, pictures, tags, pets } = BlogPostAddValidator.parse(req.body)
+    
+        const postSql = 'INSERT INTO blog_post (poster_id, contents, reply_to) VALUES ($1, $2, $3) RETURNING id'
+    
+        pool.query(postSql, [req.body.id, contents, replyTo])
+            .then(result => { 
+                let picturesPromise
+                let tagsPromise
+                let petsPromise
 
-    const postSql = 'INSERT INTO blog_post (poster_id, contents, reply_to) VALUES ($1, $2, $3)'
+                if (pictures !== undefined) {
+                    const picturesData = pictures.map(item => [item, result.rows[0].id])
+                    const picturesSql = format('INSERT INTO blog_post_picture (picture_path, post_id) VALUES %L', picturesData)
+                    picturesPromise = pool.query(picturesSql)
+                } 
 
-    pool.query(postSql, [req.body.id, contents, replyTo])
-        .then(() => { 
-            if (pictures === undefined) res.status(201).json(CREATED)
-            else {
-                const picturesData = pictures.map(item => [item])
-                const picturesSql = format('INSERT INTO blog_post_picture (picture_path) VALUES %L', picturesData)
-                pool.query(picturesSql)
-                    .then(() => res.status(201).json(CREATED))
-            }
-        })
-        .catch(err => {
-            if (err.code = 23503) res.status(404).json(RESOURCE_NOT_FOUND)
-            else next(err)
-        })
+                if (tags !== undefined) {
+                    const tagsData = tags.map(item => [item, result.rows[0].id])
+                    const tagsSql = format('INSERT INTO blog_tagged (tag_id, post_id) VALUES %L', tagsData)
+                    tagsPromise = pool.query(tagsSql)
+                } 
+
+                if (pets !== undefined) {
+                    const petsData = pets.map(item => [item, result.rows[0].id])
+                    const petsSql = format('INSERT INTO blog_post_pet (pet_id, post_id) VALUES %L', petsData)
+                    petsPromise = pool.query(petsSql)
+                }
+
+                return Promise.all([picturesPromise, tagsPromise, petsPromise])
+            }).then(() => res.status(201).json(CREATED))
+            .catch(err => {
+                if (err.code = 23503) res.status(404).json(RESOURCE_NOT_FOUND)
+                else next(err)
+            })
+    } catch (err) { next(err) }
 })
 
 BlogPostRouter.get('/', authOptional, (req, res) => {

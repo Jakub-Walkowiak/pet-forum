@@ -6,6 +6,8 @@ export const AdvicePostAddValidator = z.
     object({
         contents: z.string().min(1).max(10000),
         pictures: z.coerce.number().array().optional(),
+        tags: z.coerce.number().array().optional(),
+        pets: z.coerce.number().array().optional(),
     })
 
 export const AdvicePostFetchValidator = z.

@@ -15,11 +15,11 @@ PetRouter.use('/:pet_id(\\d+)/owners')
 PetRouter.post('/', authMandatory, (req, res) => {
     const { name, owners, sex, type } = PetAddValidator.parse(req.body)
 
-    const petSql = 'INSERT INTO pet (name, type_id, sex) VALUES ($1, $2, $3)'
+    const petSql = 'INSERT INTO pet (name, type_id, sex) VALUES ($1, $2, $3) RETURNING id'
 
     pool.query(petSql, [name, type, sex])
-        .then(() => {
-            const ownersData = owners.map(item => [item])
+        .then(result => {
+            const ownersData = owners.map(item => [result.rows[0].id, item])
             const ownersSql = format('INSERT INTO pet_own (owner_id, pet_id) VALUES %L', ownersData)
 
             return pool.query(ownersSql)
@@ -67,7 +67,7 @@ PetRouter.get('/:id(\\d+)', async (req, res, next) => {
         const ownersData = await ownersPromise
         
         if (petData.rowCount === 0) res.status(404).json(RESOURCE_NOT_FOUND)
-        else res.status(200).json({ ...petData, owners: ownersData})
+        else res.status(200).json({ ...petData, owners: ownersData })
     } catch (err) { next(err) }
 })
 

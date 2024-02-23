@@ -1,6 +1,6 @@
 import z from 'zod'
 import { OrderByMode } from "../types/order-by-mode"
-import { AdvicePostOrderByOption, ResponseOrderByOption, TagMode, UserTypeOption } from '../types/post-types'
+import { AdvicePostOrderByOption, MultipleMode, ResponseOrderByOption, UserTypeOption } from '../types/post-types'
 
 export const AdvicePostAddValidator = z.
     object({
@@ -17,11 +17,13 @@ export const AdvicePostFetchValidator = z.
         fromUser: z.coerce.number().optional(),
         desiredUsers: z.nativeEnum(UserTypeOption).default(UserTypeOption.NONE),
         tags: z.coerce.number().array().optional(),
-        tagMode: z.nativeEnum(TagMode).default(TagMode.ANY),
+        tagMode: z.nativeEnum(MultipleMode).default(MultipleMode.ANY),
         limit: z.coerce.number().max(100).default(100),
         offset: z.coerce.number().default(0),
         contains: z.string().optional(),
         resolved: z.coerce.boolean().optional(),
+        pets: z.coerce.number().array().optional(),
+        petMode: z.nativeEnum(MultipleMode).default(MultipleMode.ANY),
     })
 
 export type AdvicePostFetchData = z.infer<typeof AdvicePostFetchValidator>

@@ -20,7 +20,7 @@ export enum UserTypeOption {
     NONE = 'none',
 }
 
-export enum TagMode {
+export enum MultipleMode {
     ANY = 'any',
     ALL = 'all',
 }
@@ -34,9 +34,10 @@ interface PostProperties {
     table: string,
     tagTable: string,
     taggedTable: string,
+    petTable: string,
 }
 
 export const PostTypeProperties = new Map<PostType, PostProperties>([
-    [PostType.BLOG, { table: 'blog_post', tagTable: 'blog_tag', taggedTable: 'blog_tagged' }],
-    [PostType.ADVICE, { table: 'advice_post', tagTable: 'advice_tag', taggedTable: 'advice_tagged' }],
+    [PostType.BLOG, { table: 'blog_post', tagTable: 'blog_tag', taggedTable: 'blog_tagged', petTable: 'blog_post_pet' }],
+    [PostType.ADVICE, { table: 'advice_post', tagTable: 'advice_tag', taggedTable: 'advice_tagged', petTable: 'advice_post_pet' }],
 ])

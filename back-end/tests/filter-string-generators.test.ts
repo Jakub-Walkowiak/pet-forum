@@ -1,6 +1,6 @@
 import { getBlogOrderByString, getContainsFilterString, getReplyFilterString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from "../src/helpers/query-generators/posts/post-filter-string-generators"
 import { OrderByMode } from "../src/types/order-by-mode"
-import { BlogPostOrderByOption, PostType, ReplyOption, TagMode, UserTypeOption } from "../src/types/post-types"
+import { BlogPostOrderByOption, MultipleMode, PostType, ReplyOption, UserTypeOption } from "../src/types/post-types"
 
 describe('Testing partial query assembly', () => {
     describe('\'ORDER BY\' string generation', () => {
@@ -40,27 +40,27 @@ describe('Testing partial query assembly', () => {
 
     describe('Tag filter string generation', () => {
         it('Undefined tags should return empty string', () => {
-            expect(getTagFilterString(TagMode.ANY, undefined, PostType.BLOG)).toBe('')
+            expect(getTagFilterString(MultipleMode.ANY, undefined, PostType.BLOG)).toBe('')
         })
 
         it('Empty tags should return empty string', () => {
-            expect(getTagFilterString(TagMode.ANY, [], PostType.BLOG)).toBe('')
+            expect(getTagFilterString(MultipleMode.ANY, [], PostType.BLOG)).toBe('')
         })
 
         it('Any should create a single IN clause', () => {
-            expect(getTagFilterString(TagMode.ANY, [1, 2, 3], PostType.BLOG)).toEqual(expect.not.stringContaining('AND'))
+            expect(getTagFilterString(MultipleMode.ANY, [1, 2, 3], PostType.BLOG)).toEqual(expect.not.stringContaining('AND'))
         })
 
         it('All should create multiple in clauses', () => {
-            expect(getTagFilterString(TagMode.ALL, [1, 2, 3], PostType.BLOG)).toEqual(expect.stringContaining('AND'))
+            expect(getTagFilterString(MultipleMode.ALL, [1, 2, 3], PostType.BLOG)).toEqual(expect.stringContaining('AND'))
         })
 
         it('Blog type should contain proper table', () => {
-            expect(getTagFilterString(TagMode.ANY, [1, 2, 3], PostType.BLOG)).toEqual(expect.stringContaining('blog_tagged'))
+            expect(getTagFilterString(MultipleMode.ANY, [1, 2, 3], PostType.BLOG)).toEqual(expect.stringContaining('blog_tagged'))
         })
 
         it('Advice type should contain proper table', () => {
-            expect(getTagFilterString(TagMode.ALL, [1, 2, 3], PostType.ADVICE)).toEqual(expect.stringContaining('advice_tagged'))
+            expect(getTagFilterString(MultipleMode.ALL, [1, 2, 3], PostType.ADVICE)).toEqual(expect.stringContaining('advice_tagged'))
         })
     })
 

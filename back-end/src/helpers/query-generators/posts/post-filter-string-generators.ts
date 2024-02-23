@@ -1,5 +1,5 @@
 import { OrderByMode } from "../../../types/order-by-mode"
-import { AdvicePostOrderByOption, BlogPostOrderByOption, PostType, PostTypeProperties, ResponseOrderByOption, TagMode, UserTypeOption } from "../../../types/post-types"
+import { AdvicePostOrderByOption, BlogPostOrderByOption, MultipleMode, PostType, PostTypeProperties, ResponseOrderByOption, UserTypeOption } from "../../../types/post-types"
 
 export const getOrderByString = (by: BlogPostOrderByOption | AdvicePostOrderByOption | ResponseOrderByOption, mode: OrderByMode) => `${by} ${mode}`
 
@@ -23,20 +23,34 @@ export const getUserTypeFilterString = (input: UserTypeOption, forUser: number |
     }
 }
 
-export const getTagFilterString = (mode: TagMode, tags: Array<number> | undefined, postType: PostType) => {
+export const getTagFilterString = (mode: MultipleMode, tags: Array<number> | undefined, postType: PostType) => {
     if (tags === undefined || tags.length === 0) return ''
-
-    if (mode === TagMode.ANY) return `--sql
+    else if (mode === MultipleMode.ANY) return `--sql
         id IN (
             SELECT post_id FROM ${PostTypeProperties.get(postType)?.taggedTable}
             WHERE tag_id IN (${tags.join(',')})
         )`
-
     else return tags
         .map(tag => `--sql
             id IN (
                 SELECT post_id FROM ${PostTypeProperties.get(postType)?.taggedTable}
                 WHERE tag_id = ${tag}
+            )
+        `).join(' AND ')
+}
+
+export const getPetFilterString = (mode: MultipleMode, pets: Array<number> | undefined, postType: PostType) => {
+    if (pets === undefined || pets.length === 0) return ''
+    else if (mode === MultipleMode.ANY) return `--sql
+        id IN (
+            SELECT post_id FROM ${PostTypeProperties.get(postType)?.petTable}
+            WHERE pet_id IN (${pets.join(',')})
+        )`
+    else return pets
+        .map(pet => `--sql
+            id IN (
+                SELECT post_id FROM ${PostTypeProperties.get(postType)?.petTable}
+                WHERE pet_id = ${pet}
             )
         `).join(' AND ')
 }

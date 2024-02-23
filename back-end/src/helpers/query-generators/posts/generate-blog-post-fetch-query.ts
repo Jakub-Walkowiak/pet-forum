@@ -1,6 +1,6 @@
 import { PostType } from "../../../types/post-types"
 import { BlogPostFetchData } from "../../../validators/blog-post-validators"
-import { getContainsFilterString, getOrderByString, getReplyFilterString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from "./post-filter-string-generators"
+import { getContainsFilterString, getOrderByString, getPetFilterString, getReplyFilterString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from "./post-filter-string-generators"
 
 export const generateBlogPostFetchQuery = (data: BlogPostFetchData, forUser: number | undefined) => {
     const whereBlock = [
@@ -9,6 +9,7 @@ export const generateBlogPostFetchQuery = (data: BlogPostFetchData, forUser: num
         getUserTypeFilterString(data.desiredUsers, forUser),
         getTagFilterString(data.tagMode, data.tags, PostType.BLOG),
         getContainsFilterString(data.contains),
+        getPetFilterString(data.petMode, data.pets, PostType.BLOG),
     ].filter(filterString => filterString !== '').join(' AND ')
 
     return `--sql

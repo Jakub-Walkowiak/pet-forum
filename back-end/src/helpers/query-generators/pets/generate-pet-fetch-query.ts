@@ -2,7 +2,7 @@ import { PetFetchData } from "../../../validators/pet-validators";
 
 export const generatePetFetchQuery = (data: PetFetchData) => {
     const whereBlock = [
-        data.nameQuery !== undefined ? `name = \'${data.nameQuery}\'` : '',
+        data.nameQuery !== undefined ? `LOWER(name) LIKE LOWER(%\'${data.nameQuery}\'%)` : '',
         data.type !== undefined ? `type_id = \'${data.type}\'` : '',
         data.sex !== undefined ? `sex = ${data.sex}` : '',
         data.owner !== undefined ? `id IN (SELECT pet_id FROM pet_own WHERE owner_id = ${data.owner})` : '',

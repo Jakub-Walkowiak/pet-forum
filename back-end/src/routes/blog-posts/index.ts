@@ -10,7 +10,7 @@ import { TagRouter } from './tags'
 
 const BlogPostRouter = Router()
 
-BlogPostRouter.use('/likes', LikeRouter)
+BlogPostRouter.use('/:id(\\d+)/likes', LikeRouter)
 BlogPostRouter.use('/tags', TagRouter)
 
 BlogPostRouter.post('/', authMandatory, (req, res, next) => {

@@ -8,7 +8,7 @@ import { RateRouter } from "./response-rates"
 
 const ResponseRouter = Router()
 
-ResponseRouter.use('/rate', RateRouter)
+ResponseRouter.use('/:id(\\d+)/rate', RateRouter)
 
 ResponseRouter.post('/', authMandatory, (req, res, next) => {
     const { contents } = AdvicePostAddValidator.parse(req.body)

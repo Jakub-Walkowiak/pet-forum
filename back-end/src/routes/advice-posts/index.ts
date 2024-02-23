@@ -74,14 +74,18 @@ AdvicePostRouter.get('/:id(\\d+)', async (req, res, next) => {
             SELECT picture_id
             FROM blog_post_picture
             WHERE blog_post_id = $1`
-        const picturesPromise = await pool.query(picturesSql, [req.params.id])
+        const picturesPromise = pool.query(picturesSql, [req.params.id])
+
+        const responsesSql = 'SELECT id FROM advice_reponse WHERE response_to = $1'
+        const responsesPromise = pool.query(responsesSql, [req.params.id])
 
         const postData = await postPromise
         const tagsData = (await tagsPromise).rows.map(row => row.tag_id)
         const picturesData = (await picturesPromise).rows.map(row => row.picture_data)
+        const responsesData = (await responsesPromise).rows.map(row => row.id)
 
         if (postData.rowCount === 0) res.status(404).send(RESOURCE_NOT_FOUND)
-        else res.status(200).send({ ...postData, tags: tagsData, pictures: picturesData })
+        else res.status(200).send({ ...postData, tags: tagsData, pictures: picturesData, responses: responsesData })
     } catch (err) { next(err) }
 })
 

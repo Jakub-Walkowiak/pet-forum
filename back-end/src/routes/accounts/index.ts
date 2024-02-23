@@ -4,7 +4,7 @@ import { pool } from '../../helpers/pg-pool'
 import { generateAccountEditQuery } from '../../helpers/query-generators/generate-account-edit-query'
 import { CONFLICT, CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory, authOptional } from '../../middleware/auth'
-import { AccountEditValidator, AccountFetchValidator, AddProfilePictureValidator, ChangePasswordValidator, LoginValidator, RegistrationValidator } from '../../validators/account-validators'
+import { AccountEditValidator, AccountFetchValidator, AccountFollowFetchData, AccountFollowFetchValidator, AddProfilePictureValidator, ChangePasswordValidator, LoginValidator, RegistrationValidator } from '../../validators/account-validators'
 import { FollowRouter } from './follows'
 import { attemptLogin, getFollowed, getFollowers } from './functions'
 
@@ -127,7 +127,9 @@ AccountRouter.get('/:id(\\d+)/followed', authOptional, async (req, res, next) =>
         const shouldFetch = (req.body.auth && req.body.id === req.params.id) || (await pool.query(privacySql, [req.params.id])).rows[0].followed_visible
 
         if (shouldFetch) {
-            const result = await getFollowed(req.params.id)
+            const data: AccountFollowFetchData = AccountFollowFetchValidator.parse(req.body)
+
+            const result = await getFollowed(req.params.id, data)
             if (result.length === 0) res.status(404).send(RESOURCE_NOT_FOUND)
             else res.status(200).json(result)
         } else res.status(403).json(FORBIDDEN)
@@ -136,10 +138,12 @@ AccountRouter.get('/:id(\\d+)/followed', authOptional, async (req, res, next) =>
 
 AccountRouter.get('/:id(\\d+)/followers', authOptional, async (req, res, next) => {
     try {
+        const data: AccountFollowFetchData = AccountFollowFetchValidator.parse(req.body)
+
         let result
 
-        if (req.body.auth) result = await getFollowers(req.params.id, req.body.id)
-        else result = await getFollowers(req.params.id, undefined)
+        if (req.body.auth) result = await getFollowers(req.params.id, req.body.id, data)
+        else result = await getFollowers(req.params.id, undefined, data)
 
         if (result.length === 0) res.status(404).send(RESOURCE_NOT_FOUND)
         else res.status(200).json(result)
@@ -152,10 +156,12 @@ AccountRouter.get('/:id(\\d+)/mutuals', authOptional, async (req, res, next) => 
         const shouldFetch = (req.body.auth && req.body.id === req.params.id) || (await pool.query(privacySql, [req.params.id])).rows[0].followed_visible
 
         if (shouldFetch) {
-            const followed = await getFollowed(req.params.id)
+            const data: AccountFollowFetchData = AccountFollowFetchValidator.parse(req.body)
+
+            const followed = await getFollowed(req.params.id, data)
             const followers = req.body.auth
-                ? await getFollowers(req.params.id, req.body.id)
-                : await getFollowers(req.params.id, undefined)
+                ? await getFollowers(req.params.id, req.body.id, data)
+                : await getFollowers(req.params.id, undefined, data)
 
             const result = followed.filter(value => followers.includes(value))
             if (result.length === 0) res.status(404).send(RESOURCE_NOT_FOUND)

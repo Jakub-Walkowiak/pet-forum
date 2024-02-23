@@ -3,6 +3,7 @@ import { Response } from "express"
 import jwt from 'jsonwebtoken'
 import { pool } from "../../helpers/pg-pool"
 import { ACCOUNT_NOT_FOUND, INTERNAL_SERVER_ERROR, LOGIN_FAILED } from "../../helpers/status-codes"
+import { AccountFollowFetchData } from '../../validators/account-validators'
 
 export const attemptLogin = async (sql: string, indentifier: string, password: string, res: Response) => {
     const result = await pool.query(sql, [indentifier])
@@ -21,13 +22,13 @@ export const attemptLogin = async (sql: string, indentifier: string, password: s
     } else res.status(401).json(LOGIN_FAILED)
 }
 
-export const getFollowed = async (of: string) => {
-    const sql = 'SELECT followed_id FROM follow WHERE follower_id = $1'
+export const getFollowed = async (of: string, data: AccountFollowFetchData) => {
+    const sql = 'SELECT followed_id FROM follow WHERE follower_id = $1 ORDER BY $2 $3 LIMIT $4 OFFSET $5'
 
-    return (await pool.query(sql, [of])).rows
+    return (await pool.query(sql, [of, data.orderBy, data.orderMode, data.limit, data.offset])).rows
 }
 
-export const getFollowers = async (of: string, as: number | undefined) => {
+export const getFollowers = async (of: string, as: number | undefined, data: AccountFollowFetchData) => {
     let selfHasPrivateFollowsAppendix: Array<{id: number}> = []
     if (as !== undefined) {
         const appendixSql = `--sql
@@ -45,7 +46,7 @@ export const getFollowers = async (of: string, as: number | undefined) => {
         WHERE followed_id = $1 
         AND id NOT IN (
             SELECT id FROM user_account WHERE NOT followed_visible
-        )`
+        ) ORDER BY $2 $3 LIMIT $4 OFFSET $5`
 
-    return (await pool.query(fetchSql, [of])).rows.concat(selfHasPrivateFollowsAppendix)
+    return selfHasPrivateFollowsAppendix.concat((await pool.query(fetchSql, [of, data.orderBy, data.orderMode, data.limit, data.offset])).rows)
 }

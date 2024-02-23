@@ -26,6 +26,16 @@ export const AccountFetchValidator = z
         orderMode: z.nativeEnum(OrderByMode).default(OrderByMode.DESC),
     })
 
+export const AccountFollowFetchValidator = z
+    .object({
+        limit: z.coerce.number().max(100).default(25),
+        offset: z.coerce.number().default(0),
+        orderBy: z.nativeEnum(AccountOrderByOption).default(AccountOrderByOption.FOLLOWERS),
+        orderMode: z.nativeEnum(OrderByMode).default(OrderByMode.DESC),
+    })
+
+export type AccountFollowFetchData = z.infer<typeof AccountFollowFetchValidator>
+
 export const AccountEditValidator = z
     .object({
         displayName: z.string().min(1).max(50).optional(),

@@ -18,9 +18,21 @@ export const BlogPostFetchValidator = z.
         desiredUsers: z.nativeEnum(UserTypeOption).default(UserTypeOption.NONE),
         tags: z.coerce.number().array().optional(),
         tagMode: z.nativeEnum(TagMode).default(TagMode.ANY),
-        limit: z.coerce.number().max(100).default(100),
+        limit: z.coerce.number().max(100).default(25),
         offset: z.coerce.number().default(0),
         contains: z.string().optional(),
     })
 
 export type BlogPostFetchData = z.infer<typeof BlogPostFetchValidator>
+
+export const BlogTagFetchValidator = z.
+    object({
+        limit: z.coerce.number().max(100).default(25),
+        offset: z.coerce.number().default(0),
+        nameQuery: z.string().optional(),
+    })
+    
+export const BlogTagAddValidator = z.
+    object({
+        name: z.string().min(1).max(50)
+    })

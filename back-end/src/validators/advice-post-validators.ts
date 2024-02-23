@@ -47,3 +47,15 @@ export const ResponseRateAddValidator = z.
     object({
         isPositive: z.coerce.boolean(),
     })
+
+export const AdviceTagFetchValidator = z.
+    object({
+        limit: z.coerce.number().max(100).default(25),
+        offset: z.coerce.number().default(0),
+        nameQuery: z.string().optional(),
+    })
+    
+export const AdviceTagAddValidator = z.
+    object({
+        name: z.string().min(1).max(50)
+    })

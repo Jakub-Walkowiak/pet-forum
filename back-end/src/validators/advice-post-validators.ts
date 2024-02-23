@@ -1,5 +1,6 @@
 import z from 'zod'
-import { AdvicePostOrderByOption, OrderByMode, ResponseOrderByOption, TagMode, UserTypeOption } from '../types/post-fetch-options'
+import { OrderByMode } from "../types/order-by-mode"
+import { AdvicePostOrderByOption, ResponseOrderByOption, TagMode, UserTypeOption } from '../types/post-types'
 
 export const AdvicePostAddValidator = z.
     object({

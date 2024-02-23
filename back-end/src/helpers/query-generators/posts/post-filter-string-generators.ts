@@ -1,4 +1,5 @@
-import { AdvicePostOrderByOption, BlogPostOrderByOption, OrderByMode, PostType, PostTypeProperties, ResponseOrderByOption, TagMode, UserTypeOption } from "../../../types/post-fetch-options"
+import { OrderByMode } from "../../../types/order-by-mode"
+import { AdvicePostOrderByOption, BlogPostOrderByOption, PostType, PostTypeProperties, ResponseOrderByOption, TagMode, UserTypeOption } from "../../../types/post-types"
 
 export const getOrderByString = (by: BlogPostOrderByOption | AdvicePostOrderByOption | ResponseOrderByOption, mode: OrderByMode) => `${by} ${mode}`
 

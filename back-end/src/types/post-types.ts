@@ -14,11 +14,6 @@ export enum ResponseOrderByOption {
     SCORE = 'score',
 }
 
-export enum OrderByMode {
-    ASC = 'ASC',
-    DESC = 'DESC',
-}
-
 export enum UserTypeOption {
     FOLLOWED = 'followed',
     MUTUTALS = 'mutuals',
@@ -34,7 +29,6 @@ export enum PostType {
     BLOG,
     ADVICE,
 }
-
 
 interface PostProperties {
     table: string,

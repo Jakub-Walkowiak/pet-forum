@@ -4,7 +4,7 @@ import { pool } from '../../helpers/pg-pool'
 import { generateAccountEditQuery } from '../../helpers/query-generators/generate-account-edit-query'
 import { CONFLICT, CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory, authOptional } from '../../middleware/auth'
-import { AddProfilePictureValidator, ChangePasswordValidator, EditValidator, LoginValidator, RegistrationValidator } from '../../validators/account-validators'
+import { AccountEditValidator, AddProfilePictureValidator, ChangePasswordValidator, LoginValidator, RegistrationValidator } from '../../validators/account-validators'
 import { FollowRouter } from './follows'
 import { attemptLogin, getFollowed, getFollowers } from './functions'
 
@@ -49,7 +49,7 @@ AccountRouter.delete('/', authMandatory, (req, res) => {
 })
 
 AccountRouter.patch('/', authMandatory, (req, res, next) => {
-    const sql = generateAccountEditQuery(EditValidator.parse(req.body), req.body.id)
+    const sql = generateAccountEditQuery(AccountEditValidator.parse(req.body), req.body.id)
     
     if (sql !== '') {
         pool.query(sql)

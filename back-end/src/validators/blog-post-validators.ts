@@ -1,5 +1,6 @@
 import z from 'zod'
-import { BlogPostOrderByOption, OrderByMode, TagMode, UserTypeOption } from '../types/post-fetch-options'
+import { OrderByMode } from "../types/order-by-mode"
+import { BlogPostOrderByOption, TagMode, UserTypeOption } from '../types/post-types'
 
 export const BlogPostAddValidator = z.
     object({

@@ -23,7 +23,7 @@ BlogPostRouter.post('/', authMandatory, (req, res, next) => {
             if (pictures === undefined) res.status(201).json(CREATED)
             else {
                 const picturesData = pictures.map(item => [item])
-                const picturesSql = format('INSERT INTO blog_post_picture VALUES %L', picturesData)
+                const picturesSql = format('INSERT INTO blog_post_picture (picture_path) VALUES %L', picturesData)
                 pool.query(picturesSql)
                     .then(() => res.status(201).json(CREATED))
             }

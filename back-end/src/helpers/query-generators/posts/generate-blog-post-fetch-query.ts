@@ -1,4 +1,4 @@
-import { PostType } from "../../../types/post-fetch-options"
+import { PostType } from "../../../types/post-types"
 import { BlogPostFetchData } from "../../../validators/blog-post-validators"
 import { getContainsFilterString, getOrderByString, getReplyFilterString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from "./post-filter-string-generators"
 

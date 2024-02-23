@@ -15,7 +15,7 @@ export const LoginValidator = z
     })
     .refine(data => data.email || data.accountName, { message: 'Either account name or email must be provided' })
 
-export const EditValidator = z
+export const AccountEditValidator = z
     .object({
         displayName: z.string().min(1).max(50).optional(),
         email: z.string().email().optional(),
@@ -23,7 +23,7 @@ export const EditValidator = z
         followedVisibility: z.coerce.boolean().optional(),
     })
 
-export type AccountEditData = z.infer<typeof EditValidator>
+export type AccountEditData = z.infer<typeof AccountEditValidator>
 
 export const ChangePasswordValidator = z
     .object({

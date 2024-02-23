@@ -27,8 +27,8 @@ export const PetFetchValidator = z.
         owner: z.coerce.number().optional(),
         limit: z.coerce.number().max(100).default(25),
         offset: z.coerce.number().default(0),
-        orderByMode: z.nativeEnum(OrderByMode).default(OrderByMode.DESC),
-        orderByOption: z.nativeEnum(PetOrderByOption).default(PetOrderByOption.TYPE_USES),
+        orderMode: z.nativeEnum(OrderByMode).default(OrderByMode.DESC),
+        orderBy: z.nativeEnum(PetOrderByOption).default(PetOrderByOption.TYPE_USES),
     })
 
 export type PetFetchData = z.infer<typeof PetFetchValidator>

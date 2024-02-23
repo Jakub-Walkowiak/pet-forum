@@ -11,6 +11,6 @@ export const generatePetFetchQuery = (data: PetFetchData) => {
     return whereBlock.length === 0 ? '' : `--sql
         SELECT A.id FROM pet A JOIN pet_type B ON type_id = B.id
         ${whereBlock}
-        ORDER BY ${data.orderByMode} ${data.orderByOption}
+        ORDER BY ${data.orderBy} ${data.orderMode}
         LIMIT ${data.limit} OFFSET ${data.offset}`
 }

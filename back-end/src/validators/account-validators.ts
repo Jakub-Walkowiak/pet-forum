@@ -1,4 +1,6 @@
 import z from 'zod'
+import { AccountOrderByOption } from '../types/account-types'
+import { OrderByMode } from '../types/order-by-mode'
 
 export const RegistrationValidator = z.object({
     email: z.string().email(),
@@ -14,6 +16,15 @@ export const LoginValidator = z
         password: z.string().min(10).max(32).regex(/([\w~`!@#$%^&*()_\-\+={[}\]\|\\:"',.?\/]+)/),
     })
     .refine(data => data.email || data.accountName, { message: 'Either account name or email must be provided' })
+
+export const AccountFetchValidator = z
+    .object({
+        nameQuery: z.string().optional(),
+        limit: z.coerce.number().max(100).default(25),
+        offset: z.coerce.number().default(0),
+        orderBy: z.nativeEnum(AccountOrderByOption).default(AccountOrderByOption.FOLLOWERS),
+        orderMode: z.nativeEnum(OrderByMode).default(OrderByMode.DESC),
+    })
 
 export const AccountEditValidator = z
     .object({

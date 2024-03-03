@@ -131,6 +131,6 @@ dist
 
 .vscode
 
-*.sql
+*.backup
 
 imgs/

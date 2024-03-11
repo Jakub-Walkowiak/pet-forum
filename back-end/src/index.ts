@@ -5,7 +5,10 @@ import express, { NextFunction, Request, Response } from 'express'
 import { z } from 'zod'
 import { BAD_REQUEST, ENDPOINT_NOT_FOUND, INTERNAL_SERVER_ERROR } from './helpers/status-codes'
 import { AccountRouter } from './routes/accounts'
+import { AdvicePostRouter } from './routes/advice-posts'
 import { BlogPostRouter } from './routes/blog-posts'
+import { ImageRouter } from './routes/images'
+import { PetRouter } from './routes/pets'
 
 const corsOptions = {
     origin: ['http://localhost'],
@@ -22,6 +25,9 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use('/accounts', AccountRouter)
 app.use('/blog-posts', BlogPostRouter)
+app.use('/advice-posts', AdvicePostRouter)
+app.use('/images', ImageRouter)
+app.use('/pets', PetRouter)
 
 app.all('*', (req, res) => {
     res.status(404).json(ENDPOINT_NOT_FOUND)

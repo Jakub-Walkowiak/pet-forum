@@ -110,7 +110,8 @@ AccountRouter.get('/:id(\\d+)', (req, res) => {
                reply_count,
                advice_count,
                response_count,
-               owned_pet_count
+               owned_pet_count,
+               profile_picture
         FROM user_account
         WHERE id = $1`
 

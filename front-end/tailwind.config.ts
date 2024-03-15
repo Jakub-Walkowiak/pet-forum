@@ -15,9 +15,15 @@ const config: Config = {
                     '50%': { transform: 'scale(1.05)' },
                     '100%': { transform: 'scale(1)' },
                 },
+                fadeout: {
+                    '0%': { opacity: '100%', },
+                    '80%': { opacity: '100%' },
+                    '100%': { opacity: '0%', },
+                },
             },
             animation: {
-                'pop-in': 'popin 0.4s linear',
+                'pop-in': 'popin 0.4s ease-out',
+                'fade-out': 'fadeout 3s ease-out'
             },
         }
     }

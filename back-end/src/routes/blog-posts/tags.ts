@@ -1,8 +1,8 @@
-import { Router } from "express"
-import { pool } from "../../helpers/pg-pool"
-import { CONFLICT, CREATED, RESOURCE_NOT_FOUND } from "../../helpers/status-codes"
-import { authMandatory } from "../../middleware/auth"
-import { BlogTagAddValidator, BlogTagFetchValidator } from "../../validators/blog-post-validators"
+import { Router } from 'express'
+import { pool } from '../../helpers/pg-pool'
+import { CONFLICT, CREATED, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
+import { authMandatory } from '../../middleware/auth'
+import { BlogTagAddValidator, BlogTagFetchValidator } from '../../validators/blog-post-validators'
 
 const TagRouter = Router()
 
@@ -20,7 +20,7 @@ TagRouter.get('/', (req, res) => {
 })
 
 TagRouter.get('/:id(\\d+)', (req, res) => {
-    const sql = 'SELECT tag_name, times_used FROM blog_tag WHERE id = $1'
+    const sql = 'SELECT tag_name AS "tagName", times_used AS "timesUsed" FROM blog_tag WHERE id = $1'
 
     pool.query(sql, [req.params.id])
         .then(result => {

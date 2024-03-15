@@ -1,6 +1,6 @@
-import { getBlogOrderByString, getContainsFilterString, getReplyFilterString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from "../src/helpers/query-generators/posts/post-filter-string-generators"
-import { OrderByMode } from "../src/types/order-by-mode"
-import { BlogPostOrderByOption, MultipleMode, PostType, ReplyOption, UserTypeOption } from "../src/types/post-types"
+import { getBlogOrderByString, getContainsFilterString, getReplyFilterString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from '../src/helpers/query-generators/posts/post-filter-string-generators'
+import { OrderByMode } from '../src/types/order-by-mode'
+import { BlogPostOrderByOption, MultipleMode, PostType, ReplyOption, UserTypeOption } from '../src/types/post-types'
 
 describe('Testing partial query assembly', () => {
     describe('\'ORDER BY\' string generation', () => {

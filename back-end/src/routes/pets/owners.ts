@@ -1,9 +1,9 @@
-import { Router } from "express"
-import { pool } from "../../helpers/pg-pool"
-import { CREATED, FORBIDDEN } from "../../helpers/status-codes"
-import { authMandatory } from "../../middleware/auth"
-import { OwnerAddValidator } from "../../validators/pet-validators"
-import { authOwnership } from "./owner-auth"
+import { Router } from 'express'
+import { pool } from '../../helpers/pg-pool'
+import { CREATED, FORBIDDEN } from '../../helpers/status-codes'
+import { authMandatory } from '../../middleware/auth'
+import { OwnerAddValidator } from '../../validators/pet-validators'
+import { authOwnership } from './owner-auth'
 
 const OwnerRouter = Router()
 

@@ -1,4 +1,4 @@
-import { AccountEditData } from "../../validators/account-validators"
+import { AccountEditData } from '../../validators/account-validators'
 
 export const generateAccountEditQuery = (data: AccountEditData, user: number) => {
     const setBlock = [

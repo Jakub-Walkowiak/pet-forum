@@ -1,10 +1,10 @@
 import z from 'zod'
-import { OrderByMode } from "../types/order-by-mode"
+import { OrderByMode } from '../types/order-by-mode'
 import { BlogPostOrderByOption, MultipleMode, UserTypeOption } from '../types/post-types'
 
 export const BlogPostAddValidator = z.
     object({
-        contents: z.string().min(1).max(300),
+        contents: z.string().trim().min(1).max(300),
         replyTo: z.coerce.number().optional(),
         pictures: z.coerce.number().array().optional(),
         tags: z.coerce.number().array().optional(),
@@ -23,7 +23,7 @@ export const BlogPostFetchValidator = z.
         tagMode: z.nativeEnum(MultipleMode).default(MultipleMode.ANY),
         limit: z.coerce.number().max(100).default(25),
         offset: z.coerce.number().default(0),
-        contains: z.string().optional(),
+        contains: z.string().trim().optional(),
         pets: z.coerce.number().array().optional(),
         petMode: z.nativeEnum(MultipleMode).default(MultipleMode.ANY),
     })
@@ -34,10 +34,10 @@ export const BlogTagFetchValidator = z.
     object({
         limit: z.coerce.number().max(100).default(25),
         offset: z.coerce.number().default(0),
-        nameQuery: z.string().optional(),
+        nameQuery: z.string().trim().optional(),
     })
     
 export const BlogTagAddValidator = z.
     object({
-        name: z.string().min(1).max(50)
+        name: z.string().trim().min(1).max(50)
     })

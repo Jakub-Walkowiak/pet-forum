@@ -1,16 +1,17 @@
-import { Router } from "express"
-import format from "pg-format"
-import { pool } from "../../helpers/pg-pool"
-import { generatePetEditQuery } from "../../helpers/query-generators/pets/generate-pet-edit-query"
-import { generatePetFetchQuery } from "../../helpers/query-generators/pets/generate-pet-fetch-query"
-import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from "../../helpers/status-codes"
-import { authMandatory } from "../../middleware/auth"
-import { PetAddValidator, PetEditValidator, PetFetchValidator } from "../../validators/pet-validators"
-import { authOwnership } from "./owner-auth"
+import { Router } from 'express'
+import format from 'pg-format'
+import { pool } from '../../helpers/pg-pool'
+import { generatePetEditQuery } from '../../helpers/query-generators/pets/generate-pet-edit-query'
+import { generatePetFetchQuery } from '../../helpers/query-generators/pets/generate-pet-fetch-query'
+import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
+import { authMandatory } from '../../middleware/auth'
+import { PetAddValidator, PetEditValidator, PetFetchValidator } from '../../validators/pet-validators'
+import { authOwnership } from './owner-auth'
+import { OwnerRouter } from './owners'
 
 const PetRouter = Router()
 
-PetRouter.use('/:pet_id(\\d+)/owners')
+PetRouter.use('/:pet_id(\\d+)/owners', OwnerRouter)
 
 PetRouter.post('/', authMandatory, (req, res) => {
     const { name, owners, sex, type } = PetAddValidator.parse(req.body)
@@ -57,10 +58,10 @@ PetRouter.get('/', (req, res) => {
 
 PetRouter.get('/:id(\\d+)', async (req, res, next) => {
     try {
-        const petSql = 'SELECT name, type_id, sex FROM pet WHERE id = $1'
+        const petSql = 'SELECT name, type_id AS "typeId", sex FROM pet WHERE id = $1'
         const petPromise = pool.query(petSql, [req.params.id])
 
-        const ownersSql = 'SELECT owner_id FROM pet_own WHERE pet_id = $1'
+        const ownersSql = 'SELECT owner_id AS id FROM pet_own WHERE pet_id = $1'
         const ownersPromise = pool.query(ownersSql, [req.params.id])
 
         const petData = await petPromise

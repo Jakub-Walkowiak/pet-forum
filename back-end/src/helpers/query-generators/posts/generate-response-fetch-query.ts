@@ -1,5 +1,5 @@
-import { ResponseFetchData } from "../../../validators/advice-post-validators"
-import { getBestFilterString, getContainsFilterString, getOrderByString, getUserFilterString, getUserTypeFilterString } from "./post-filter-string-generators"
+import { ResponseFetchData } from '../../../validators/advice-post-validators'
+import { getBestFilterString, getContainsFilterString, getOrderByString, getUserFilterString, getUserTypeFilterString } from './post-filter-string-generators'
 
 export const generateResponseFetchQuery = (data: ResponseFetchData, forUser: number | undefined) => {
     const whereBlock = [

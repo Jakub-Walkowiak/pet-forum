@@ -1,10 +1,10 @@
 import z from 'zod'
-import { OrderByMode } from "../types/order-by-mode"
+import { OrderByMode } from '../types/order-by-mode'
 import { AdvicePostOrderByOption, MultipleMode, ResponseOrderByOption, UserTypeOption } from '../types/post-types'
 
 export const AdvicePostAddValidator = z.
     object({
-        contents: z.string().min(1).max(10000),
+        contents: z.string().trim().min(1).max(10000),
         pictures: z.coerce.number().array().optional(),
         tags: z.coerce.number().array().optional(),
         pets: z.coerce.number().array().optional(),
@@ -20,7 +20,7 @@ export const AdvicePostFetchValidator = z.
         tagMode: z.nativeEnum(MultipleMode).default(MultipleMode.ANY),
         limit: z.coerce.number().max(100).default(100),
         offset: z.coerce.number().default(0),
-        contains: z.string().optional(),
+        contains: z.string().trim().optional(),
         resolved: z.coerce.boolean().optional(),
         pets: z.coerce.number().array().optional(),
         petMode: z.nativeEnum(MultipleMode).default(MultipleMode.ANY),
@@ -42,7 +42,7 @@ export const ResponseFetchValidator = z.
         desiredUsers: z.nativeEnum(UserTypeOption).default(UserTypeOption.NONE),
         limit: z.coerce.number().max(100).default(100),
         offset: z.coerce.number().default(0),
-        contains: z.string().optional(),
+        contains: z.string().trim().optional(),
         isBest: z.coerce.boolean().optional(),
     })
 
@@ -57,10 +57,10 @@ export const AdviceTagFetchValidator = z.
     object({
         limit: z.coerce.number().max(100).default(25),
         offset: z.coerce.number().default(0),
-        nameQuery: z.string().optional(),
+        nameQuery: z.string().trim().optional(),
     })
     
 export const AdviceTagAddValidator = z.
     object({
-        name: z.string().min(1).max(50)
+        name: z.string().trim().min(1).max(50)
     })

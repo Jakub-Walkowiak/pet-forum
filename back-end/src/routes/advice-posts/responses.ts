@@ -1,10 +1,10 @@
-import { Router } from "express"
-import { pool } from "../../helpers/pg-pool"
-import { generateResponseFetchQuery } from "../../helpers/query-generators/posts/generate-response-fetch-query"
-import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from "../../helpers/status-codes"
-import { authMandatory, authOptional } from "../../middleware/auth"
-import { AdvicePostAddValidator, ResponseFetchData, ResponseFetchValidator } from "../../validators/advice-post-validators"
-import { RateRouter } from "./response-rates"
+import { Router } from 'express'
+import { pool } from '../../helpers/pg-pool'
+import { generateResponseFetchQuery } from '../../helpers/query-generators/posts/generate-response-fetch-query'
+import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
+import { authMandatory, authOptional } from '../../middleware/auth'
+import { AdvicePostAddValidator, ResponseFetchData, ResponseFetchValidator } from '../../validators/advice-post-validators'
+import { RateRouter } from './response-rates'
 
 const ResponseRouter = Router()
 
@@ -48,7 +48,12 @@ ResponseRouter.delete('/:id(\\d+)', authMandatory, (req, res) => {
 })
 
 ResponseRouter.get('/:id(\\d+)', (req, res) => {
-    const sql = 'SELECT * FROM advice_response'
+    const sql = `--sql
+        SELECT reply_to AS "replyTo",
+               poster_id AS "posterId",
+               score,
+               date_posted AS "datePosted"
+        FROM advice_response`
 
     pool.query(sql, [req.params.id])
         .then(result => {

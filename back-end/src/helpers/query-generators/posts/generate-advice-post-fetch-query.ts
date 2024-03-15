@@ -1,6 +1,6 @@
-import { PostType } from "../../../types/post-types"
-import { AdvicePostFetchData } from "../../../validators/advice-post-validators"
-import { getContainsFilterString, getOrderByString, getPetFilterString, getResolvedString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from "./post-filter-string-generators"
+import { PostType } from '../../../types/post-types'
+import { AdvicePostFetchData } from '../../../validators/advice-post-validators'
+import { getContainsFilterString, getOrderByString, getPetFilterString, getResolvedString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from './post-filter-string-generators'
 
 export const generateAdvicePostFetchQuery = (data: AdvicePostFetchData, forUser: number | undefined) => {
     const whereBlock = [

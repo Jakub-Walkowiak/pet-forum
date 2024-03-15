@@ -1,7 +1,7 @@
-import { Router } from "express"
-import { pool } from "../../helpers/pg-pool"
-import { CONFLICT, RESOURCE_NOT_FOUND } from "../../helpers/status-codes"
-import { authMandatory, authOptional } from "../../middleware/auth"
+import { Router } from 'express'
+import { pool } from '../../helpers/pg-pool'
+import { CONFLICT, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
+import { authMandatory, authOptional } from '../../middleware/auth'
 
 const LikeRouter = Router()
 
@@ -43,7 +43,7 @@ LikeRouter.get('/', authOptional, async (req, res, next) => {
         }
 
         const fetchSql = `--sql
-            SELECT user_account_id FROM post_like
+            SELECT user_account_id AS id FROM post_like
             WHERE post_id = $1
             AND id NOT IN (
                 SELECT id FROM user_account WHERE NOT likes_visible

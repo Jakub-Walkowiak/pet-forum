@@ -79,20 +79,20 @@ BlogPostRouter.delete('/:id(\\d+)', authMandatory, (req, res) => {
 BlogPostRouter.get('/:id(\\d+)', async (req, res, next) => {
     try {
         const postSql = `--sql
-            SELECT poster_id,
+            SELECT poster_id AS "posterId",
                 contents,
-                like_count,
-                reply_to,
-                date_posted,
-                reply_count
+                like_count AS "likeCount",
+                reply_to AS "replyTo",
+                date_posted AS "datePosted",
+                reply_count AS "replyCount"
             FROM blog_post WHERE id = $1`
         const postPromise = pool.query(postSql, [req.params.id])
            
-        const tagsSql = 'SELECT tag_id FROM blog_tagged WHER post_id = $1'
+        const tagsSql = 'SELECT tag_id AS id FROM blog_tagged WHER post_id = $1'
         const tagsPromise = pool.query(tagsSql, [req.params.id])
 
         const picturesSql = `--sql
-            SELECT picture_id
+            SELECT picture_id AS id
             FROM blog_post_picture
             WHERE blog_post_id = $1`
         const picturesPromise = pool.query(picturesSql, [req.params.id])

@@ -1,7 +1,7 @@
-import { Router } from "express"
-import { pool } from "../../helpers/pg-pool"
-import { CONFLICT, FORBIDDEN, RESOURCE_NOT_FOUND } from "../../helpers/status-codes"
-import { authMandatory } from "../../middleware/auth"
+import { Router } from 'express'
+import { pool } from '../../helpers/pg-pool'
+import { CONFLICT, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
+import { authMandatory } from '../../middleware/auth'
 
 const FollowRouter = Router()
 

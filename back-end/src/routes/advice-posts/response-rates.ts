@@ -1,8 +1,8 @@
-import { Router } from "express"
-import { pool } from "../../helpers/pg-pool"
-import { CONFLICT, RESOURCE_NOT_FOUND } from "../../helpers/status-codes"
-import { authMandatory } from "../../middleware/auth"
-import { ResponseRateAddValidator } from "../../validators/advice-post-validators"
+import { Router } from 'express'
+import { pool } from '../../helpers/pg-pool'
+import { CONFLICT, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
+import { authMandatory } from '../../middleware/auth'
+import { ResponseRateAddValidator } from '../../validators/advice-post-validators'
 
 const RateRouter = Router()
 

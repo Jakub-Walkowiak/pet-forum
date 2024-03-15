@@ -11,8 +11,8 @@ import { ImageRouter } from './routes/images'
 import { PetRouter } from './routes/pets'
 
 const corsOptions = {
-    origin: ['http://localhost'],
-    methods: ['GET', 'HEAD', 'PATCH', 'POST', 'DELETE'],
+    origin: ['http://localhost:8080'],
+    methods: ['GET', 'HEAD', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     credentials: true,
 }
 
@@ -41,7 +41,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 })
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    console.log(`Encountered error: ${err}`)
+    console.error(`Encountered error: ${err}`)
     res.status(500).json(INTERNAL_SERVER_ERROR)
 })
 

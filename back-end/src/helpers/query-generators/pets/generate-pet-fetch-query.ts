@@ -1,4 +1,4 @@
-import { PetFetchData } from "../../../validators/pet-validators";
+import { PetFetchData } from '../../../validators/pet-validators';
 
 export const generatePetFetchQuery = (data: PetFetchData) => {
     const whereBlock = [

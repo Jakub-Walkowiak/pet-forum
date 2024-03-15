@@ -15,30 +15,39 @@ AccountRouter.use('/id(\\d+)/follow', FollowRouter)
 
 AccountRouter.post('/register', async (req, res, next) => {
     try {
-        const { email, password, accountName, displayName } = RegistrationValidator.parse(req.body)
+        const { email, password, accountName } = RegistrationValidator.parse(req.body)
 
-        const sql = 'INSERT INTO user_account (email, password, account_name, display_name) VALUES ($1, $2, $3, $4)'
+        const registerSql = 'INSERT INTO user_account (email, password, account_name, display_name) VALUES ($1, $2, $3, $4)'
 
         const hashedPassword = await bcrypt.hash(password, saltRounds)
-        pool.query(sql, [email, hashedPassword, accountName, displayName])
+        pool.query(registerSql, [email, hashedPassword, accountName, accountName])
             .then(() => res.status(201).json(CREATED))
-            .catch(err => {
-                if (err.code === '23505') res.status(409).json(CONFLICT)
-                else next(err)
+            .catch(async err => {
+                if (err.code === '23505') {
+                    const accountNameDupeSql = 'SELECT COUNT(*) AS dupe FROM user_account WHERE account_name = $1'
+                    const emailDupeSql = 'SELECT COUNT(*) AS dupe FROM user_account WHERE email = $1'
+
+                    const accountNameDupe = (await pool.query(accountNameDupeSql, [accountName])).rows[0].dupe !== 0
+                    const emailDupe = (await pool.query(emailDupeSql, [email])).rows[0].dupe !== 0
+
+                    res.status(409).json({ accountNameDupe, emailDupe })
+                } else next(err)
             })
     } catch (err) { next(err) }
 })
 
-AccountRouter.post('/login', (req, res) => {
-    const { email, accountName, password } = LoginValidator.parse(req.body)
+AccountRouter.post('/login', (req, res, next) => {
+    try {
+        const { email, accountName, password } = LoginValidator.parse(req.body)
     
-    if (email) {
-        const sql = 'SELECT password, account_name, id FROM user_account WHERE email = $1'
-        attemptLogin(sql, email, password, res)
-    } else if (accountName) {
-        const sql = 'SELECT password, account_name FROM user_account WHERE account_name = $1'
-        attemptLogin(sql, accountName, password, res)
-    }
+        if (email) {
+            const sql = 'SELECT password, account_name, id FROM user_account WHERE email = $1'
+            attemptLogin(sql, email, password, res)
+        } else if (accountName) {
+            const sql = 'SELECT password, account_name FROM user_account WHERE account_name = $1'
+            attemptLogin(sql, accountName, password, res)
+        }
+    } catch(err) { next(err) }
 })
 
 AccountRouter.delete('/', authMandatory, (req, res) => {
@@ -97,28 +106,28 @@ AccountRouter.get('/', (req, res) => {
 
 AccountRouter.get('/:id(\\d+)', (req, res) => {
     const sql = `--sql
-        SELECT account_name,
-               display_name,
-               follower_count,
-               followed_count,
-               date_created,
-               running_response_score,
-               net_positive_responses,
-               net_negative_responses,
-               best_responses,
-               blog_post_count,
-               reply_count,
-               advice_count,
-               response_count,
-               owned_pet_count,
-               profile_picture
+        SELECT account_name AS "accountName",
+               display_name AS "displayName",
+               follower_count AS "followerCount",
+               followed_count AS "followedCount",
+               date_created AS "dateCreated",
+               running_response_score AS "runningResponseScore",
+               net_positive_responses AS "netPositiveResponses",
+               net_negative_responses AS "netNegativeResponses",
+               best_responses AS "bestResponses",
+               blog_post_count as "blogPostCount",
+               reply_count AS "replyCount",
+               advice_count AS "adviceCount",
+               response_count AS "responseCount",
+               owned_pet_count AS "ownedPetCount",
+               profile_picture AS "profilePicture"
         FROM user_account
         WHERE id = $1`
 
     pool.query(sql, [req.params.id])
         .then(result => {
             if (result.rowCount === 0) res.status(404).send(RESOURCE_NOT_FOUND)
-            else res.status(200).json(result.rows)
+            else res.status(200).json(result.rows[0])
         })
 })
 
@@ -178,7 +187,7 @@ AccountRouter.get('/:id(\\d+)/likes', authOptional, async (req, res, next) => {
             if (!(await pool.query(verifyPrivacySql, [req.params.id])).rows[0].likes_visible) res.status(403).send(FORBIDDEN)
         }
 
-        const fetchSql = 'SELECT post_id FROM post_like WHERE user_account_id = $1'
+        const fetchSql = 'SELECT post_id AS id FROM post_like WHERE user_account_id = $1'
 
         pool.query(fetchSql, [req.params.id])
             .then(result => res.status(200).send(result.rows))

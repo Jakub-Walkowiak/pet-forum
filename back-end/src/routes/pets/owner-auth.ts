@@ -1,4 +1,4 @@
-import { pool } from "../../helpers/pg-pool"
+import { pool } from '../../helpers/pg-pool'
 
 export const authOwnership = (pet: string, user: number) => {
     const verifySql = 'SELECT owner_id FROM pet_own WHERE pet_id = $1'

@@ -1,7 +1,7 @@
-import { Request, Router } from "express"
-import multer from "multer"
-import { pool } from "../../helpers/pg-pool"
-import { RESOURCE_NOT_FOUND } from "../../helpers/status-codes"
+import { Request, Router } from 'express'
+import multer from 'multer'
+import { pool } from '../../helpers/pg-pool'
+import { RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 
 const storage = multer.diskStorage({
     destination: (req: Request, file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
@@ -25,7 +25,7 @@ ImageRouter.post('/', upload.single('image'), (req, res) => {
 })
 
 ImageRouter.get('/:id(\\d+)', (req, res) => {
-    const sql = 'SELECT picture_path FROM picture WHERE id = $1'
+    const sql = 'SELECT picture_path AS "picturePath" FROM picture WHERE id = $1'
 
     pool.query(sql, [req.params.id])
         .then(result => {

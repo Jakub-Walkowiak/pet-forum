@@ -1,4 +1,4 @@
-import { PetEditData } from "../../../validators/pet-validators"
+import { PetEditData } from '../../../validators/pet-validators'
 
 export const generatePetEditQuery = (data: PetEditData, pet: string) => {
     const setBlock = [

@@ -1,7 +1,9 @@
 import Button from '@/components/form-utils/button';
 import ErrorContainer from '@/components/form-utils/error-container';
 import Input from '@/components/form-utils/input';
+import showNotificationPopup from '@/helpers/show-notification-popup';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { AiOutlineClose } from 'react-icons/ai';
 import { z } from 'zod';
@@ -27,6 +29,8 @@ type RegisterInputs = z.infer<typeof LoginInputsValidator>
     
 
 export default function LoginForm({ switchForm, hide }: LoginFormProps) {
+    const [loading, setLoading] = useState(false)
+
     const {
         register,
         handleSubmit,
@@ -39,6 +43,8 @@ export default function LoginForm({ switchForm, hide }: LoginFormProps) {
     const error = () => errors.loginKey !== undefined || errors.password !== undefined
 
     const onSubmit: SubmitHandler<RegisterInputs> = async (data) => {
+        setLoading(true)
+
         try {
             const reqBody = data.loginKey.includes('@')
                 ? { email: data.loginKey, password: data.password }
@@ -54,13 +60,14 @@ export default function LoginForm({ switchForm, hide }: LoginFormProps) {
                 credentials: 'include',
             })
     
-            if (response.ok) console.log('idk')
-            else if (response.status === 401) setError('password', { message: 'Incorrect password' })
+            if (response.ok) {
+                showNotificationPopup(true, 'Logged in successfully')
+                hide()
+            } else if (response.status === 401) setError('password', { message: 'Incorrect password' })
             else if (response.status === 404) setError('loginKey', { message: 'No account exists with given e-mail/name' })
-            else console.log('poopoo')
-        } catch (err) { 
-            console.log('not good')
-        }
+            else showNotificationPopup(false, 'Encountered server error')
+        } catch (err) { showNotificationPopup(false, 'Error contacting server')
+        } finally { setLoading(false) }
     }
 
     return (
@@ -77,7 +84,7 @@ export default function LoginForm({ switchForm, hide }: LoginFormProps) {
                 {errors.password && <p>{errors.password.message}</p>}
             </ErrorContainer>
             
-            <Button text='Log in' disabled={error()}/>
+            <Button text='Log in' disabled={error()} loading={loading}/>
 
             <div className='text-center scale-90 font-light'>Don&apos;t have an account?  <Button dark text='Register' onClickHandler={switchForm}/></div>
         </form>

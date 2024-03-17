@@ -1,7 +1,9 @@
 import Button from '@/components/form-utils/button';
 import ErrorContainer from '@/components/form-utils/error-container';
 import Input from '@/components/form-utils/input';
+import showNotificationPopup from '@/helpers/show-notification-popup';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { AiOutlineClose } from 'react-icons/ai';
 import { z } from 'zod';
@@ -36,6 +38,8 @@ type RegisterInputs = z.infer<typeof RegisterInputsValidator>
     
 
 export default function RegisterForm({ switchForm, hide }: RegisterFormProps) {
+    const [loading, setLoading] = useState(false)
+
     const {
         register,
         handleSubmit,
@@ -51,6 +55,8 @@ export default function RegisterForm({ switchForm, hide }: RegisterFormProps) {
                      || errors.repeatPassword !== undefined
 
     const onSubmit: SubmitHandler<RegisterInputs> = async (data) => {
+        setLoading(true)
+
         try {
             const response = await fetch('http://localhost:3000/accounts/register', {
                 method: 'POST',
@@ -61,16 +67,17 @@ export default function RegisterForm({ switchForm, hide }: RegisterFormProps) {
                 body: JSON.stringify({ email: data.email, accountName: data.accountName, password: data.password }),
             })
     
-            if (response.ok) console.log('idk')
-            else if (response.status === 409) {
+            if (response.ok) {
+                showNotificationPopup(true, 'Registered successfully')
+                hide()
+            } else if (response.status === 409) {
                 const body = await response.json()
 
                 if (body.emailDupe) setError('email', { message: 'Account with e-mail already exists' })
                 if (body.accountNameDupe) setError('accountName', { message: 'Account name already in use' })
-            } else console.log('hmmmm')
-        } catch (err) { 
-            console.log('not good')
-        }
+            } else showNotificationPopup(false, 'Encountered server error')
+        } catch (err) { showNotificationPopup(false, 'Error contacting server')
+        } finally { setLoading(false) }
     }
 
     return (
@@ -91,7 +98,7 @@ export default function RegisterForm({ switchForm, hide }: RegisterFormProps) {
                 {errors.repeatPassword && <p>{errors.repeatPassword.message}</p>}
             </ErrorContainer>
             
-            <Button text='Register' disabled={error()}/>
+            <Button text='Register' disabled={error()} loading={loading}/>
 
             <div className='text-center scale-90 font-light'>Already have an account?  <Button dark text='Sign in' onClickHandler={switchForm}/></div>
         </form>

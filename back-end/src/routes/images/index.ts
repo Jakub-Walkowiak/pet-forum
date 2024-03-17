@@ -1,5 +1,6 @@
 import { Request, Router } from 'express'
 import multer from 'multer'
+import format from 'pg-format'
 import { pool } from '../../helpers/pg-pool'
 import { RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 
@@ -17,11 +18,14 @@ const upload = multer({ storage })
 
 const ImageRouter = Router()
 
-ImageRouter.post('/', upload.single('image'), (req, res) => {
-    const sql = 'INSERT INTO picture (picure_path) VALUES ($1) RETURNING id'
+ImageRouter.post('/', upload.array('images', 10), (req, res) => {
+    if (req.files === undefined) res.status(204).send()
+    else {
+        const sql = format('INSERT INTO picture (picure_path) VALUES %L RETURNING id', (<Express.Multer.File[]>req.files).map(file => file.filename))
 
-    pool.query(sql, [req.file?.filename])
-        .then(result => res.status(201).send(result.rows))
+        pool.query(sql)
+            .then(result => res.status(201).send(result.rows))
+    }
 })
 
 ImageRouter.get('/:id(\\d+)', (req, res) => {

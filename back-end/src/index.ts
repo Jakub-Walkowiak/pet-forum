@@ -2,6 +2,7 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import 'dotenv/config'
 import express, { NextFunction, Request, Response } from 'express'
+import { MulterError } from 'multer'
 import { z } from 'zod'
 import { BAD_REQUEST, ENDPOINT_NOT_FOUND, INTERNAL_SERVER_ERROR } from './helpers/status-codes'
 import { AccountRouter } from './routes/accounts'
@@ -36,6 +37,13 @@ app.all('*', (req, res) => {
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof z.ZodError) {
         console.error(`Data error: ${err}`)
+        res.status(400).json(BAD_REQUEST)
+    } else next(err)
+})
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    if (err instanceof MulterError) {
+        console.error(`Multer error: ${err}`)
         res.status(400).json(BAD_REQUEST)
     } else next(err)
 })

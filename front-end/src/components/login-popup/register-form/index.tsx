@@ -7,9 +7,10 @@ import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { AiOutlineClose } from 'react-icons/ai';
 import { z } from 'zod';
+import { FormMode } from '../form-mode';
 
 interface RegisterFormProps {
-    switchForm: VoidFunction,
+    switchForm: (mode: FormMode) => void,
     hide: VoidFunction,
 }
 
@@ -100,7 +101,7 @@ export default function RegisterForm({ switchForm, hide }: RegisterFormProps) {
             
             <Button text='Register' disabled={error()} loading={loading}/>
 
-            <div className='text-center scale-90 font-light'>Already have an account?  <Button dark text='Sign in' onClickHandler={switchForm}/></div>
+            <div className='text-center scale-90 font-light'>Already have an account?  <Button dark text='Sign in' onClickHandler={() => switchForm(FormMode.Login)}/></div>
         </form>
     )
 }

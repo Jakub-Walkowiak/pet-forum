@@ -7,9 +7,10 @@ import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { AiOutlineClose } from 'react-icons/ai';
 import { z } from 'zod';
+import { FormMode } from '../form-mode';
 
 interface LoginFormProps {
-    switchForm: VoidFunction,
+    switchForm: (mode: FormMode) => void,
     hide: VoidFunction,
 }
 
@@ -86,7 +87,7 @@ export default function LoginForm({ switchForm, hide }: LoginFormProps) {
             
             <Button text='Log in' disabled={error()} loading={loading}/>
 
-            <div className='text-center scale-90 font-light'>Don&apos;t have an account?  <Button dark text='Register' onClickHandler={switchForm}/></div>
+            <div className='text-center scale-90 font-light'>Don&apos;t have an account?  <Button dark text='Register' onClickHandler={() => switchForm(FormMode.Register)}/></div>
         </form>
     )
 }

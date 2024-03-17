@@ -1,5 +1,6 @@
 import Button from '@/components/form-utils/button'
 import LoginPopup from '@/components/login-popup'
+import { FormMode } from '@/components/login-popup/form-mode'
 import { useState } from 'react'
 
 export default function LoggedOut() {
@@ -22,7 +23,7 @@ export default function LoggedOut() {
         <div className='flex flex-col gap-2 p-2 rounded-lg grow-x m-2'>
             <Button text='Log in' onClickHandler={loginHandler}/>
             <Button dark text='Register' onClickHandler={registerHandler}/>
-            {showPopup && <LoginPopup openInRegisterMode={registerMode} hide={hide}/>}
+            {showPopup && <LoginPopup openAs={registerMode ? FormMode.Register : FormMode.Login} hide={hide}/>}
         </div>
     )
 }

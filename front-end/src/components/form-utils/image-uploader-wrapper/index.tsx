@@ -1,4 +1,5 @@
 import showNotificationPopup from "@/helpers/show-notification-popup"
+import Compressor from "compressorjs"
 import { useEffect, useId, useState } from "react"
 import { getImageSize } from "react-image-size"
 
@@ -28,8 +29,15 @@ class UploaderImages {
     add = async (file: File) => {
         if (this.maxCount <= this.urls.length) return ImageError.TooMany
         else {
+            const url: string = await new Promise(resolve => {
+                new Compressor(file, {
+                    mimeType: 'image/webp',
+                    quality: 75,
+                    success: (result) => resolve(URL.createObjectURL(result))
+                })
+            })
+
             let error: ImageError | undefined
-            const url = URL.createObjectURL(file)
             const dimensions = await getImageSize(url)
 
             if (this.maxResX !== undefined && dimensions.width > this.maxResX) error = ImageError.TooWide
@@ -63,9 +71,6 @@ class UploaderImages {
             return (await fetch('http://localhost:3000/images', {
                 method: 'POST',
                 mode: 'cors',
-                // headers: {
-                //     'Content-Type': 'multipart/form-data',
-                // },
                 body: data,
             }))
         } catch (err) { return undefined }
@@ -128,7 +133,7 @@ export default function ImageUploaderWrapper({ render, maxCount = 1, maxResX, ma
 
         for (let i = 0; i < e.dataTransfer.files.length; ++i) {
             const currentFile = e.dataTransfer.files.item(i) as File
-            if (currentFile.type === 'image/jpeg') images.add(currentFile).then(handleResponse)
+            if (currentFile.type === 'image/jpeg' || currentFile.type === 'image/png' || currentFile.type === 'image/webp') images.add(currentFile).then(handleResponse)
             else showNotificationPopup(false, 'Unsupported file type')
         }
     }

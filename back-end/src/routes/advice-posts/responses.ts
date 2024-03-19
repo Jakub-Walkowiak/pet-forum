@@ -31,7 +31,7 @@ ResponseRouter.get('/', authOptional, (req, res) => {
         .then(result => res.status(200).json(result.rows))
 })
 
-ResponseRouter.delete('/:id(\\d+)', authMandatory, (req, res) => {
+ResponseRouter.delete('/:id(\\d+)', authMandatory, (req, res, next) => {
     const idVerifySql = 'SELECT poster_id FROM advice_response WHERE id = $1'
 
     pool.query(idVerifySql, [req.params.id])
@@ -43,11 +43,12 @@ ResponseRouter.delete('/:id(\\d+)', authMandatory, (req, res) => {
 
                 pool.query(deleteSql, [req.params.id])
                     .then(() => res.status(204))
+                    .catch(err => next(err))
             }
-        })
+        }).catch(err => next(err))
 })
 
-ResponseRouter.get('/:id(\\d+)', (req, res) => {
+ResponseRouter.get('/:id(\\d+)', (req, res, next) => {
     const sql = `--sql
         SELECT reply_to AS "replyTo",
                poster_id AS "posterId",
@@ -59,7 +60,7 @@ ResponseRouter.get('/:id(\\d+)', (req, res) => {
         .then(result => {
             if (result.rowCount === 0) res.status(404).send(RESOURCE_NOT_FOUND)
             else res.status(200).json(result.rows)
-        })
+        }).catch(err => next(err))
 })
 
 export { ResponseRouter }

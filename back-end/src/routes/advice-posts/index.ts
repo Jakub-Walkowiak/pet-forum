@@ -48,15 +48,16 @@ AdvicePostRouter.post('/', authMandatory, (req, res, next) => {
         })
 })
 
-AdvicePostRouter.get('/', authOptional, (req, res) => {
+AdvicePostRouter.get('/', authOptional, (req, res, next) => {
     const data: AdvicePostFetchData = AdvicePostFetchValidator.parse(req.query)
     const sql = generateAdvicePostFetchQuery(data, req.body.auth ? req.body.id : undefined)
 
     pool.query(sql)
         .then(result => res.status(200).json(result.rows))
+        .catch(err => next(err))
 })
 
-AdvicePostRouter.delete('/:id(\\d+)', authMandatory, (req, res) => {
+AdvicePostRouter.delete('/:id(\\d+)', authMandatory, (req, res, next) => {
     const idVerifySql = 'SELECT poster_id FROM advice_post WHERE id = $1'
 
     pool.query(idVerifySql, [req.params.id])
@@ -68,8 +69,9 @@ AdvicePostRouter.delete('/:id(\\d+)', authMandatory, (req, res) => {
 
                 pool.query(deleteSql, [req.params.id])
                     .then(() => res.status(204))
+                    .catch(err => next(err))
             }
-        })
+        }).catch(err => next(err))
 })
 
 AdvicePostRouter.get('/:id(\\d+)', async (req, res, next) => {

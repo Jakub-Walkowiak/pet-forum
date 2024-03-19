@@ -52,15 +52,16 @@ BlogPostRouter.post('/', authMandatory, async (req, res, next) => {
     } catch (err) { next(err) }
 })
 
-BlogPostRouter.get('/', authOptional, (req, res) => {
+BlogPostRouter.get('/', authOptional, (req, res, next) => {
     const data: BlogPostFetchData = BlogPostFetchValidator.parse(req.query)
     const sql = generateBlogPostFetchQuery(data, req.body.auth ? req.body.id : undefined)
 
     pool.query(sql)
         .then(result => res.status(200).json(result.rows))
+        .catch(err => next(err))
 })
 
-BlogPostRouter.delete('/:id(\\d+)', authMandatory, (req, res) => {
+BlogPostRouter.delete('/:id(\\d+)', authMandatory, (req, res, next) => {
     const idVerifySql = 'SELECT poster_id FROM blog_post WHERE id = $1'
 
     pool.query(idVerifySql, [req.params.id])
@@ -73,7 +74,7 @@ BlogPostRouter.delete('/:id(\\d+)', authMandatory, (req, res) => {
                 pool.query(deleteSql, [req.params.id])
                     .then(() => res.status(204))
             }
-        })
+        }).catch(err => next(err))
 })
 
 BlogPostRouter.get('/:id(\\d+)', async (req, res, next) => {

@@ -49,6 +49,6 @@ export const CONFLICT = {
 }
 
 export const INTERNAL_SERVER_ERROR = {
-    code: 502,
+    code: 500,
     message: 'Server encountered error while processing request',
 }

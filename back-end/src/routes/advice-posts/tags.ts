@@ -6,7 +6,7 @@ import { AdviceTagAddValidator, AdviceTagFetchValidator } from '../../validators
 
 const TagRouter = Router()
 
-TagRouter.get('/', (req, res) => {
+TagRouter.get('/', (req, res, next) => {
     const { limit, offset, nameQuery } = AdviceTagFetchValidator.parse(req.query)
 
     const nameFilter = nameQuery !== undefined ? `WHERE LOWER(tag_name) LIKE LOWER(\'%${nameQuery}%\')` : ''
@@ -17,16 +17,17 @@ TagRouter.get('/', (req, res) => {
 
     pool.query(sql, [limit, offset])
         .then(result => res.status(200).json(result))
+        .catch(err => next(err))
 })
 
-TagRouter.get('/:id(\\d+)', (req, res) => {
+TagRouter.get('/:id(\\d+)', (req, res, next) => {
     const sql = 'SELECT tag_name AS "tagName", times_used AS "timesUsed" FROM advice_tag WHERE id = $1'
 
     pool.query(sql, [req.params.id])
         .then(result => {
             if (result.rowCount === 0) res.status(404).json(RESOURCE_NOT_FOUND)
             else res.status(200).json(result)
-        })
+        }).catch(err => next(err))
 })
 
 TagRouter.post('/', authMandatory, (req, res, next) => {

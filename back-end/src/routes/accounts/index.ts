@@ -36,25 +36,26 @@ AccountRouter.post('/register', async (req, res, next) => {
     } catch (err) { next(err) }
 })
 
-AccountRouter.post('/login', (req, res, next) => {
+AccountRouter.post('/login', async (req, res, next) => {
     try {
         const { email, accountName, password } = LoginValidator.parse(req.body)
     
         if (email) {
             const sql = 'SELECT password, account_name, id FROM user_account WHERE email = $1'
-            attemptLogin(sql, email, password, res)
+            await attemptLogin(sql, email, password, res)
         } else if (accountName) {
             const sql = 'SELECT password, account_name FROM user_account WHERE account_name = $1'
-            attemptLogin(sql, accountName, password, res)
+            await attemptLogin(sql, accountName, password, res)
         }
     } catch(err) { next(err) }
 })
 
-AccountRouter.delete('/', authMandatory, (req, res) => {
+AccountRouter.delete('/', authMandatory, (req, res, next) => {
     const sql = 'DELETE FROM user_account WHERE id = $1'
 
     pool.query(sql, [req.body.id])
         .then(() => res.status(204).send())
+        .catch(err => next(err))
 })
 
 AccountRouter.patch('/', authMandatory, (req, res, next) => {
@@ -87,7 +88,7 @@ AccountRouter.patch('/password', authMandatory, async (req, res, next) => {
     } catch (err) { next(err) }
 })
 
-AccountRouter.get('/', (req, res) => {
+AccountRouter.get('/', (req, res, next) => {
     const { nameQuery, limit, offset, orderBy, orderMode } = AccountFetchValidator.parse(req.body)
 
     const nameQueryString = nameQuery === undefined ? '' : `--sql
@@ -102,9 +103,10 @@ AccountRouter.get('/', (req, res) => {
 
     pool.query(sql)
         .then(result => res.status(200).json(result))
+        .catch(err => next(err))
 })
 
-AccountRouter.get('/:id(\\d+)', (req, res) => {
+AccountRouter.get('/:id(\\d+)', (req, res, next) => {
     const sql = `--sql
         SELECT account_name AS "accountName",
                display_name AS "displayName",
@@ -128,7 +130,7 @@ AccountRouter.get('/:id(\\d+)', (req, res) => {
         .then(result => {
             if (result.rowCount === 0) res.status(404).send(RESOURCE_NOT_FOUND)
             else res.status(200).json(result.rows[0])
-        })
+        }).catch(err => next(err))
 })
 
 AccountRouter.get('/:id(\\d+)/followed', authOptional, async (req, res, next) => {
@@ -191,16 +193,18 @@ AccountRouter.get('/:id(\\d+)/likes', authOptional, async (req, res, next) => {
 
         pool.query(fetchSql, [req.params.id])
             .then(result => res.status(200).send(result.rows))
+            .catch(err => next(err))
     } catch (err) { next(err) }
 })
 
-AccountRouter.post('/:id(\\d+)/pfp', authMandatory, (req, res) => {
+AccountRouter.post('/:id(\\d+)/pfp', authMandatory, (req, res, next) => {
     const { pictureId } = AddProfilePictureValidator.parse(req.body)
 
     const sql = 'INSERT INTO profile_picture (user_account_id, picture_id) VALUES ($1, $2)'
 
     pool.query(sql, [req.params.id, pictureId])
         .then(() => res.status(201).json(CREATED))
+        .catch(err => next(err))
 })
 
 export { AccountRouter }

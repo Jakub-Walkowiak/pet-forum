@@ -13,7 +13,7 @@ const PetRouter = Router()
 
 PetRouter.use('/:pet_id(\\d+)/owners', OwnerRouter)
 
-PetRouter.post('/', authMandatory, (req, res) => {
+PetRouter.post('/', authMandatory, (req, res, next) => {
     const { name, owners, sex, type } = PetAddValidator.parse(req.body)
 
     const petSql = 'INSERT INTO pet (name, type_id, sex) VALUES ($1, $2, $3) RETURNING id'
@@ -25,9 +25,10 @@ PetRouter.post('/', authMandatory, (req, res) => {
 
             return pool.query(ownersSql)
         }).then(() => res.status(201).json(CREATED))
+        .catch(err => next(err))
 })
 
-PetRouter.delete('/:id(\\d+)', authMandatory, (req, res) => {
+PetRouter.delete('/:id(\\d+)', authMandatory, (req, res, next) => {
     authOwnership(req.params.id, req.body.id)
         .then(result => {
             if (!result) res.status(403).json(FORBIDDEN)
@@ -36,9 +37,10 @@ PetRouter.delete('/:id(\\d+)', authMandatory, (req, res) => {
                 return pool.query(sql, [req.params.id])
             }
         }).then(() => res.status(204).send())
+        .catch(err => next(err))
 })  
 
-PetRouter.patch('/:id(\\d+)', authMandatory, (req, res) => {
+PetRouter.patch('/:id(\\d+)', authMandatory, (req, res, next) => {
     authOwnership(req.params.id, req.body.id)
         .then(result => {
             if (!result) res.status(403).json(FORBIDDEN)
@@ -47,13 +49,15 @@ PetRouter.patch('/:id(\\d+)', authMandatory, (req, res) => {
                 return pool.query(sql)
             }
         }).then(() => res.status(204).send())
+        .catch(err => next(err))
 })
 
-PetRouter.get('/', (req, res) => {
+PetRouter.get('/', (req, res, next) => {
     const sql = generatePetFetchQuery(PetFetchValidator.parse(req.query))
 
     pool.query(sql)
         .then(result => res.status(200).json(result))
+        .catch(err => next(err))
 })
 
 PetRouter.get('/:id(\\d+)', async (req, res, next) => {

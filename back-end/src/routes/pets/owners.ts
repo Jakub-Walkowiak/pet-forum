@@ -7,7 +7,7 @@ import { authOwnership } from './owner-auth'
 
 const OwnerRouter = Router()
 
-OwnerRouter.post('/', authMandatory, (req, res) => {
+OwnerRouter.post('/', authMandatory, (req, res, next) => {
     authOwnership(req.params.pet_id, req.body.id)
         .then(result => {
             if (!result) res.status(403).json(FORBIDDEN)
@@ -17,9 +17,10 @@ OwnerRouter.post('/', authMandatory, (req, res) => {
                 return pool.query(sql, [req.params.pet_id, user])
             }
         }).then(() => res.status(201).json(CREATED))
+        .catch(err => next(err))
 })
 
-OwnerRouter.delete('/:owner_id(\\d+)', authMandatory, (req, res) => {
+OwnerRouter.delete('/:owner_id(\\d+)', authMandatory, (req, res, next) => {
     authOwnership(req.params.pet_id, req.body.id)
         .then(result => {
             if (!result) res.status(403).json(FORBIDDEN)
@@ -28,6 +29,7 @@ OwnerRouter.delete('/:owner_id(\\d+)', authMandatory, (req, res) => {
                 return pool.query(sql, [req.params.pet_id, Number(req.params.owner_id)])
             }
         }).then(() => res.status(201).json(CREATED))
+        .catch(err => next(err))
 })
 
 export { OwnerRouter }

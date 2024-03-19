@@ -19,24 +19,25 @@ const upload = multer({ storage })
 
 const ImageRouter = Router()
 
-ImageRouter.post('/', upload.array('images', 10), (req, res) => {
+ImageRouter.post('/', upload.array('images', 10), (req, res, next) => {
     if (req.files === undefined || req.files.length === 0) res.status(400).send(BAD_REQUEST)
     else {
         const sql = format('INSERT INTO picture (picture_path) VALUES %L RETURNING id', (<Express.Multer.File[]>req.files).map(file => [file.filename.slice(0, -5)]))
 
         pool.query(sql)
             .then(result => res.status(201).send(result.rows))
+            .catch(err => next(err))
     }
 })
 
-ImageRouter.get('/:id(\\d+)', (req, res) => {
+ImageRouter.get('/:id(\\d+)', (req, res, next) => {
     const sql = 'SELECT picture_path AS "picturePath" FROM picture WHERE id = $1'
 
     pool.query(sql, [req.params.id])
         .then(result => {
             if (result.rowCount === 0) res.status(404).send(RESOURCE_NOT_FOUND)
             else res.status(200).sendFile(path.resolve('imgs/' + result.rows[0].picturePath + '.webp'))
-        })
+        }).catch(err => next(err))
 })
 
 export { ImageRouter }

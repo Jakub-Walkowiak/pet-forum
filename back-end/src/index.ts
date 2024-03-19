@@ -36,20 +36,20 @@ app.all('*', (req, res) => {
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof z.ZodError) {
-        console.error(`Data error: ${err}`)
+        console.error(`${err}`)
         res.status(400).json(BAD_REQUEST)
     } else next(err)
 })
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof MulterError) {
-        console.error(`Multer error: ${err}`)
+        console.error(`${err.stack}`)
         res.status(400).json(BAD_REQUEST)
     } else next(err)
 })
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    console.error(`Encountered error: ${err}`)
+    console.error(`${err.stack}`)
     res.status(500).json(INTERNAL_SERVER_ERROR)
 })
 

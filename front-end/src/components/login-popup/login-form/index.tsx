@@ -26,8 +26,8 @@ const LoginInputsValidator = z
             .regex(/^([\w~`!@#$%^&*()_\-\+={[}\]\|\\:'',.?\/]+)$/, { message: 'Invalid character(s) in password' }),
     })
 
-type RegisterInputs = z.infer<typeof LoginInputsValidator>
-    
+type LoginInputs = z.infer<typeof LoginInputsValidator>
+
 
 export default function LoginForm({ switchForm, hide }: LoginFormProps) {
     const [loading, setLoading] = useState(false)
@@ -37,13 +37,13 @@ export default function LoginForm({ switchForm, hide }: LoginFormProps) {
         handleSubmit,
         formState: { errors },
         setError,
-    } = useForm<RegisterInputs>({
+    } = useForm<LoginInputs>({
         resolver: zodResolver(LoginInputsValidator)
     })
 
     const error = () => errors.loginKey !== undefined || errors.password !== undefined
 
-    const onSubmit: SubmitHandler<RegisterInputs> = async (data) => {
+    const onSubmit: SubmitHandler<LoginInputs> = async (data) => {
         setLoading(true)
 
         try {

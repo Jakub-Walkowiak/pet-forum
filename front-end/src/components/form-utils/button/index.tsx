@@ -7,9 +7,10 @@ interface ButtonProps {
     onClickHandler?: (e: React.MouseEvent<HTMLButtonElement>) => void,
     disabled?: boolean,
     loading?: boolean,
+    className?: string,
 }
 
-export default function Button({ dark = false, text, onClickHandler, disabled = false, loading = false }: ButtonProps) {
+export default function Button({ dark = false, text, onClickHandler, disabled = false, loading = false, className }: ButtonProps) {
     const baseStyle = 'border inline-flex justify-center rounded-lg p-2 font-medium duration-200 enabled:hover:bg-opacity-80 disabled:bg-black/30 disabled:text-zinc-700 enabled:active:scale-95 enabled:active:scale-95'
 
     const colorModeStyle = dark
@@ -22,6 +23,6 @@ export default function Button({ dark = false, text, onClickHandler, disabled = 
     }
 
     return (
-        <button onClick={handleClick} className={`${baseStyle} ${colorModeStyle} ${loading && 'cursor-wait'}`} disabled={disabled || loading}>{loading ? <AiOutlineLoading className="font-xl animate-spin"/> : text}</button>
+        <button onClick={handleClick} className={`${baseStyle} ${colorModeStyle} ${loading && 'cursor-wait'} ${className}`} disabled={disabled || loading}>{loading ? <AiOutlineLoading className="font-xl animate-spin"/> : text}</button>
     )
 }

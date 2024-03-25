@@ -12,13 +12,13 @@ export default function LoggedIn({ authId }: LoggedInProps) {
     const [showPopup, setShowPopup] = useState(false)
 
     if (profileData !== undefined) return (
-        <div className={`duration-200 cursor-pointer z-10 flex gap-4 p-4 m-2 items-center justify-center h-fit hover:bg-gray-800 relative ${showPopup ? 'bg-gray-800 rounded-b-lg' : 'rounded-lg overflow-hidden'}`} 
+        <div className={`duration-200 cursor-pointer z-10 flex gap-4 p-4 m-2 items-center justify-center h-fit max-w-72 hover:bg-gray-800 relative ${showPopup ? 'bg-gray-800 rounded-b-lg' : 'rounded-lg overflow-hidden'}`} 
             onClick={() => setShowPopup(!showPopup)}>
             <PanelPopup show={showPopup}/>
-            <div className='z-10 h-full aspect-square'>{<ProfilePicture profileData={profileData}/>}</div>
-            <div className='z-10 w-fit h-fit'>
-                <p className='font-medium text-md'>{profileData.displayName}</p>
-                <p className='font-normal text-sm text-zinc-500'>@{profileData.accountName}</p>
+            <div className='z-10 h-12 aspect-square'>{<ProfilePicture profileData={profileData}/>}</div>
+            <div className='z-10 h-fit max-w-52'>
+                <p className='font-medium text-md white truncate'>{profileData.displayName}</p>
+                <p className='font-normal text-sm text-zinc-500 truncate'>@{profileData.accountName}</p>
             </div>
         </div>
     ) 

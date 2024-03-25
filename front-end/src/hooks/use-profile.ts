@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useInterval } from 'usehooks-ts';
 
 export interface ProfileData {
     accountName: string,
@@ -15,20 +16,23 @@ export interface ProfileData {
     adviceCount: number,
     responseCount: number,
     ownedPetCount: number,
-    profilePicture: number,
+    profilePictureId: number,
 }
 
 export default function useProfile(id: number) {
     const [profileData, setProfileData] = useState<ProfileData>()
 
-    useEffect(() => {
+    const getProfileData = () => {
         const fetchData = async () => {
             const res = await fetch(`http://localhost:3000/accounts/${id}`)
             if (!res.ok) setProfileData(undefined) 
             else setProfileData(await res.json())
         }
         try { fetchData() } catch (err) { setProfileData(undefined) }
-    }, [id])    
+    }
+
+    useEffect(getProfileData, [id])    
+    useInterval(getProfileData, 200)
 
     return profileData
 }

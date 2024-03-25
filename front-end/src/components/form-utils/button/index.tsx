@@ -4,7 +4,7 @@ import { AiOutlineLoading } from "react-icons/ai"
 interface ButtonProps {
     dark?: boolean,
     text?: string,
-    onClickHandler?: VoidFunction,
+    onClickHandler?: (e: React.MouseEvent<HTMLButtonElement>) => void,
     disabled?: boolean,
     loading?: boolean,
 }
@@ -16,9 +16,9 @@ export default function Button({ dark = false, text, onClickHandler, disabled = 
         ? 'enabled:hover:bg-emerald-700 border-zinc-700 disabled:border-0'
         : 'border-0 bg-emerald-500'
 
-    const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         if (loading) return
-        if (onClickHandler !== undefined) onClickHandler()
+        if (onClickHandler !== undefined) onClickHandler(e)
     }
 
     return (

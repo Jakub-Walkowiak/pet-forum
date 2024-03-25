@@ -94,7 +94,7 @@ export default function RegisterForm({ switchForm, hide }: RegisterFormProps) {
     }
 
     return (
-        <form onSubmit={handleSubmit(async (data) => await onSubmit(data))} className='flex flex-col gap-4 px-8 py-5 items-center absolute top-0 bottom-0 left-0 right-0 m-auto z-50 h-fit w-full max-w-xl bg-gray-900 rounded-lg items-stretch'>
+        <form onSubmit={handleSubmit(async (data) => await onSubmit(data))} className='flex flex-col gap-4 px-8 py-5 items-center fixed inset-y-0 inset-x-0 m-auto z-50 h-fit w-full max-w-xl bg-gray-900 rounded-lg items-stretch'>
             <AiOutlineClose className='text-xl self-end hover:cursor-pointer' onClick={hide}/>
 
             <Input placeholder='E-mail' register={register} name='email' error={errors.email !== undefined}/>

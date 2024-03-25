@@ -69,8 +69,20 @@ export default function RegisterForm({ switchForm, hide }: RegisterFormProps) {
             })
     
             if (response.ok) {
-                showNotificationPopup(true, 'Registered successfully')
-                hide()
+                showNotificationPopup(true, 'Registered, logging in...')
+
+                await fetch('http://localhost:3000/accounts/login', {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: data.email, password: data.password }),
+                    credentials: 'include',
+                })
+                showNotificationPopup(true, 'Logged in successfully')
+            
+                switchForm(FormMode.CreateProfile)
             } else if (response.status === 409) {
                 const body = await response.json()
 

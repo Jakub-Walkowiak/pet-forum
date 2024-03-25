@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import BlurOverlay from '../blur-overlay';
+import CreateProfileForm from './create-profile-form';
 import { FormMode } from './form-mode';
 import LoginForm from './login-form';
 import RegisterForm from './register-form';
@@ -25,8 +26,7 @@ export default function LoginPopup({ openAs, hide }: LoginPopupProps) {
             form = <RegisterForm switchForm={switchForm} hide={hide}/>
             break
         case FormMode.CreateProfile: 
-            throw new Error('Not implemented')
-            break
+            form = <CreateProfileForm hide={hide}/>
     }
 
     return (

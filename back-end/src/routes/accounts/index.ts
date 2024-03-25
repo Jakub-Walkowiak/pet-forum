@@ -66,6 +66,7 @@ AccountRouter.patch('/', authMandatory, (req, res, next) => {
             .then(() => res.status(204).send())
             .catch(err => {
                 if (err.code === '23505') res.status(409).json(CONFLICT)
+                else if (err.code === '23503') res.status(404).json(RESOURCE_NOT_FOUND)
                 else next(err)
             })
     } else res.status(204).send()
@@ -122,7 +123,7 @@ AccountRouter.get('/:id(\\d+)', (req, res, next) => {
                advice_count AS "adviceCount",
                response_count AS "responseCount",
                owned_pet_count AS "ownedPetCount",
-               profile_picture AS "profilePicture"
+               profile_picture_id AS "profilePictureId"
         FROM user_account
         WHERE id = $1`
 

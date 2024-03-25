@@ -6,6 +6,7 @@ export const generateAccountEditQuery = (data: AccountEditData, user: number) =>
         data.email !== undefined ? `email = \'${data.email}\'` : '',
         data.likeVisibility !== undefined ? `like_visibility = ${data.likeVisibility}` : '',
         data.followedVisibility !== undefined ? `followed_visible = ${data.followedVisibility}` : '',
+        data.profilePictureId !== undefined ? `profile_picture_id = ${data.profilePictureId}` : '',
     ].filter(string => string !== '').join(',')
 
     return setBlock.length === 0 ? '' : `--sql

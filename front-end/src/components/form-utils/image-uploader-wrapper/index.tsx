@@ -43,7 +43,7 @@ export class UploaderImages {
             })
 
             if (!this.overrideOnMax) this.urls.push(url)
-            else this.urls.splice(0, 0, url)
+            else this.urls.splice(0, 1, url)
         }
     }
 

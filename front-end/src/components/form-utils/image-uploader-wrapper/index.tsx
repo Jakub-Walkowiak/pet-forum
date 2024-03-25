@@ -1,53 +1,43 @@
 import showNotificationPopup from "@/helpers/show-notification-popup"
 import Compressor from "compressorjs"
 import { useEffect, useId, useState } from "react"
-import { getImageSize } from "react-image-size"
 
-enum ImageError {
-    TooWide,
-    TooTall,
-    NotSquare,
-    TooMany,
-}
-
-class UploaderImages {
+export class UploaderImages {
     urls: Array<string>
     maxCount: number
     forceSquare: boolean
-    maxResX?: number
-    maxResY?: number
+    maxResX: number
+    maxResY: number
+    overrideOnMax?: boolean
 
-    constructor(maxCount: number, forceSquare: boolean, maxResX?: number, maxResY?: number) {
+    constructor(maxCount: number, forceSquare: boolean, maxResX?: number, maxResY?: number, overrideOnMax?: boolean) {
         this.maxCount = maxCount
         this.forceSquare = forceSquare
-        this.maxResX = maxResX
-        this.maxResY = maxResY
+        this.maxResX = maxResX ?? 4096
+        this.maxResY = maxResY ?? 4096
+        this.overrideOnMax = overrideOnMax
 
         this.urls = new Array<string>()
     }
 
     add = async (file: File) => {
-        if (this.maxCount <= this.urls.length) return ImageError.TooMany
+        if (this.maxCount <= this.urls.length && !this.overrideOnMax) return false
         else {
             const url: string = await new Promise(resolve => {
                 new Compressor(file, {
                     mimeType: 'image/webp',
                     quality: 75,
+                    maxWidth: this.maxResX,
+                    maxHeight: this.maxResY,
+                    width: this.forceSquare ? (this.maxResX < this.maxResY ? this.maxResX : this.maxResY) : undefined,
+                    height: this.forceSquare ? (this.maxResX < this.maxResY ? this.maxResX : this.maxResY) : undefined,
+                    resize: 'cover',
                     success: (result) => resolve(URL.createObjectURL(result))
                 })
             })
 
-            let error: ImageError | undefined
-            const dimensions = await getImageSize(url)
-
-            if (this.maxResX !== undefined && dimensions.width > this.maxResX) error = ImageError.TooWide
-            else if (this.maxResY !== undefined && dimensions.height > this.maxResY) error = ImageError.TooTall
-            else if (this.forceSquare && dimensions.width !== dimensions.height) error = ImageError.NotSquare
-
-            if (error !== undefined) {
-                URL.revokeObjectURL(url)
-                return error
-            } else this.urls.push(url)
+            if (!this.overrideOnMax) this.urls.push(url)
+            else this.urls.splice(0, 0, url)
         }
     }
 
@@ -57,6 +47,8 @@ class UploaderImages {
     }
 
     upload = async () => {
+        if (this.urls.length === 0) return undefined
+
         try {
             const data: FormData = await new Promise(resolve => {
                 const data = new FormData()
@@ -83,12 +75,13 @@ interface ImageUploaderWrapperProps {
     maxResX?: number,
     maxResY?: number,
     forceSquare?: boolean,
+    overrideOnMax?: boolean,
 }
 
-export default function ImageUploaderWrapper({ render, maxCount = 1, maxResX, maxResY, forceSquare = false }: ImageUploaderWrapperProps) {
+export default function ImageUploaderWrapper({ render, maxCount = 1, maxResX, maxResY, forceSquare = false, overrideOnMax = false }: ImageUploaderWrapperProps) {
     const [update, setUpdate] = useState(false)
     const [useDragStyle, setUseDragStyle] = useState(false)
-    const [images] = useState(new UploaderImages(maxCount, forceSquare, maxResX, maxResY))
+    const [images] = useState(new UploaderImages(maxCount, forceSquare, maxResX, maxResY, overrideOnMax))
 
     const overlayId = useId()
     const wrapperId = useId()
@@ -109,25 +102,8 @@ export default function ImageUploaderWrapper({ render, maxCount = 1, maxResX, ma
         e.preventDefault()
         setUseDragStyle(false)
 
-        const handleResponse = (response?: ImageError) => {
-            switch (response) {
-                case ImageError.NotSquare:
-                    showNotificationPopup(false, 'Image must be square')
-                    break
-
-                case ImageError.TooMany:
-                    showNotificationPopup(false, `Max number of images is ${images.maxCount}`)
-                    break
-
-                case ImageError.TooTall:
-                    showNotificationPopup(false, `Max image height is ${images.maxResY}px`)
-                    break
-
-                case ImageError.TooWide:
-                    showNotificationPopup(false, `Max image width is ${images.maxResX}px`)
-                    break
-            }
-
+        const handleResponse = (response?: boolean) => {
+            if (response === false) showNotificationPopup(false, `Max number of images is ${images.maxCount}`)
             setUpdate(true)
         }
 
@@ -144,11 +120,11 @@ export default function ImageUploaderWrapper({ render, maxCount = 1, maxResX, ma
             onDragEnter={handleDrag} 
             onDragOver={handleDrag} 
             onDrop={handleDrop}
-            className={`w-fit h-fit relative`}>
+            className='h-fit relative'>
             
             {useDragStyle && <div id={overlayId} className='w-full h-full absolute top-0 left-0 z-[100] bg-emerald-950/20 outline-4 outline-dashed outline-emerald-700 rounded-lg -outline-offset-[12px]'/>}
             <object data={'placeholder-icon.svg'} className={`inset-x-0 inset-y-0 m-auto absolute stroke-emerald-700 w-12 ${!useDragStyle && 'hidden'}`}/>
-            <div className='w-full h-full'>{render(images)}</div>
+            {render(images)}
         </div>
     )
 }                      

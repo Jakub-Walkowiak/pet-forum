@@ -13,14 +13,14 @@ export class UploaderImages {
     forceSquare: boolean
     maxResX: number
     maxResY: number
-    overrideOnMax?: boolean
+    overrideOnMax: boolean
 
     constructor(maxCount: number, forceSquare: boolean, maxResX?: number, maxResY?: number, overrideOnMax?: boolean) {
         this.maxCount = maxCount
         this.forceSquare = forceSquare
         this.maxResX = maxResX ?? 4096
         this.maxResY = maxResY ?? 4096
-        this.overrideOnMax = overrideOnMax
+        this.overrideOnMax = overrideOnMax ?? false
 
         this.urls = new Array<string>()
     }
@@ -126,7 +126,7 @@ export default function ImageUploaderWrapper({ render, maxCount = 1, maxResX, ma
             onDragEnter={handleDrag} 
             onDragOver={handleDrag} 
             onDrop={handleDrop}
-            className='h-fit relative'>
+            className='h-fit relative flex-1'>
             
             {useDragStyle && <div id={overlayId} className='w-full h-full absolute top-0 left-0 z-[100] bg-emerald-950/20 outline-4 outline-dashed outline-emerald-700 rounded-lg -outline-offset-[12px]'/>}
             <object data={'placeholder-icon.svg'} className={`inset-x-0 inset-y-0 m-auto absolute stroke-emerald-700 w-12 ${!useDragStyle && 'hidden'}`}/>

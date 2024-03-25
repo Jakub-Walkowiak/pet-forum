@@ -7,8 +7,8 @@ interface ProfilePictureProps {
 }
 
 export default function ProfilePicture({ profileData }: ProfilePictureProps) {
-    const imageUrl = useImageUrl(profileData.profilePicture)
+    const imageUrl = useImageUrl(profileData.profilePictureId)
     return imageUrl !== undefined
-        ? <Image src={imageUrl} alt={`Profile picture of user ${profileData.accountName}`} className='rounded-full w-full h-full' width={100} height={100}/>
+        ? <Image src={imageUrl} alt={`Profile picture of user ${profileData.accountName}`} className='rounded-full w-full h-12' width={400} height={400}/>
         : <div className='rounded-full w-full h-full bg-emerald-600'/>
 }

@@ -2,6 +2,11 @@ import showNotificationPopup from "@/helpers/show-notification-popup"
 import Compressor from "compressorjs"
 import { useEffect, useId, useState } from "react"
 
+export enum ImageError {
+    InvalidType,
+    TooMany,
+}
+
 export class UploaderImages {
     urls: Array<string>
     maxCount: number
@@ -21,7 +26,8 @@ export class UploaderImages {
     }
 
     add = async (file: File) => {
-        if (this.maxCount <= this.urls.length && !this.overrideOnMax) return false
+        if (file.type !== 'image/png' && file.type !== 'image/jpeg' && file.type !== 'image/webp') return ImageError.InvalidType
+        if (this.maxCount <= this.urls.length && !this.overrideOnMax) return ImageError.TooMany
         else {
             const url: string = await new Promise(resolve => {
                 new Compressor(file, {
@@ -102,15 +108,15 @@ export default function ImageUploaderWrapper({ render, maxCount = 1, maxResX, ma
         e.preventDefault()
         setUseDragStyle(false)
 
-        const handleResponse = (response?: boolean) => {
-            if (response === false) showNotificationPopup(false, `Max number of images is ${images.maxCount}`)
+        const handleResponse = (response?: ImageError) => {
+            if (response === ImageError.TooMany) showNotificationPopup(false, `Max number of images is ${images.maxCount}`)
+            else if (response === ImageError.InvalidType) showNotificationPopup(false, `Unsupported filed type`)
             setUpdate(true)
         }
 
         for (let i = 0; i < e.dataTransfer.files.length; ++i) {
             const currentFile = e.dataTransfer.files.item(i) as File
-            if (currentFile.type === 'image/jpeg' || currentFile.type === 'image/png' || currentFile.type === 'image/webp') images.add(currentFile).then(handleResponse)
-            else showNotificationPopup(false, 'Unsupported file type')
+            images.add(currentFile).then(handleResponse)
         }
     }
 

@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
         cb(null, 'imgs/')
     },
     filename: (req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
-        const fileName = Date.now() + '-' + Math.round(Math.random() * 1E9) + '.webp'
+        const fileName = Date.now() + '-' + Math.round(Math.random() * 1E9).toString().padStart(9, '0') + '.webp'
         cb(null, fileName)
     }
 })

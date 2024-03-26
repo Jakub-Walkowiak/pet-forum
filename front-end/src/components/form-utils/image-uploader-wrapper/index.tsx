@@ -110,7 +110,7 @@ export default function ImageUploaderWrapper({ render, maxCount = 1, maxResX, ma
 
         const handleResponse = (response?: ImageError) => {
             if (response === ImageError.TooMany) showNotificationPopup(false, `Max number of images is ${images.maxCount}`)
-            else if (response === ImageError.InvalidType) showNotificationPopup(false, `Unsupported filed type`)
+            else if (response === ImageError.InvalidType) showNotificationPopup(false, `Unsupported file type`)
             setUpdate(true)
         }
 

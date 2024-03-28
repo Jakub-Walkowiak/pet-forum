@@ -35,6 +35,7 @@ export const BlogTagFetchValidator = z.
         limit: z.coerce.number().max(100).default(25),
         offset: z.coerce.number().default(0),
         nameQuery: z.string().trim().optional(),
+        exactMatch: z.coerce.boolean().default(false),
     })
     
 export const BlogTagAddValidator = z.

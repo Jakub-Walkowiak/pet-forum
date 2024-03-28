@@ -26,7 +26,7 @@ export default function RootLayout({
                         <NavbarSideFull></NavbarSideFull>
                         <LoginPanel/>
                     </section>
-                    <section className='grow p-4 border-s md:border-e border-zinc-700 min-h-screen'>{children}</section>
+                    <section className='grow border-s md:border-e border-zinc-700 min-h-screen'>{children}</section>
                 </main>
             </body>
         </html>

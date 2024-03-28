@@ -27,7 +27,7 @@ BlogPostRouter.post('/', authMandatory, async (req, res, next) => {
 
                 if (pictures !== undefined) {
                     const picturesData = pictures.map(item => [item, result.rows[0].id])
-                    const picturesSql = format('INSERT INTO blog_post_picture (picture_path, post_id) VALUES %L', picturesData)
+                    const picturesSql = format('INSERT INTO blog_post_picture (picture_id, post_id) VALUES %L', picturesData)
                     picturesPromise = pool.query(picturesSql)
                 } 
 

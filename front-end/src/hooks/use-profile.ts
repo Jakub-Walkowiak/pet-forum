@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useInterval } from 'usehooks-ts';
 
 export interface ProfileData {
     accountName: string,
@@ -32,7 +31,6 @@ export default function useProfile(id: number) {
     }
 
     useEffect(getProfileData, [id])    
-    useInterval(getProfileData, 200)
 
     return profileData
 }

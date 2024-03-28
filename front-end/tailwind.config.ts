@@ -15,6 +15,10 @@ const config: Config = {
                     '50%': { transform: 'scale(1.05)' },
                     '100%': { transform: 'scale(1)' },
                 },
+                fadein: {
+                    '0%': { opacity: '0%' },
+                    '100%': { opacity: '100%' },
+                },
                 fadeout: {
                     '0%': { opacity: '100%', },
                     '80%': { opacity: '100%' },
@@ -23,6 +27,7 @@ const config: Config = {
             },
             animation: {
                 'pop-in': 'popin 0.4s ease-out',
+                'fade-in': 'fadein 0.15s ease-in',
                 'fade-out': 'fadeout 3s ease-out'
             },
         }

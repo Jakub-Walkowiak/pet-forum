@@ -91,6 +91,7 @@ export default function CreateProfileForm({ hide }: CreateProfileFormProps) {
             if (response.status === 404) showNotificationPopup(false, 'Couldn\'t set your profile picture')
             else if (response.ok) {
                 showNotificationPopup(true, 'Changes saved')
+                document.dispatchEvent(new CustomEvent('refreshprofile'))
                 hide()
             } else showNotificationPopup(false, 'Encountered server error')
         } catch (err) { showNotificationPopup(false, 'Error contacting server')

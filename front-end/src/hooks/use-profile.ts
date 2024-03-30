@@ -30,7 +30,8 @@ export default function useProfile(id: number) {
         try { fetchData() } catch (err) { setProfileData(undefined) }
     }
 
-    useEffect(getProfileData, [id])    
+    useEffect(getProfileData, [id])
+    document.addEventListener('refreshprofile', getProfileData) 
 
     return profileData
 }

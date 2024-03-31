@@ -3,7 +3,7 @@ import { pool } from '../../helpers/pg-pool'
 import { CONFLICT, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory, authOptional } from '../../middleware/auth'
 
-const LikeRouter = Router()
+const LikeRouter = Router({ mergeParams: true })
 
 LikeRouter.post('/', authMandatory, (req, res, next) => {
     const sql = 'INSERT INTO post_like (post_id, user_account_id) VALUES ($1, $2)'
@@ -49,7 +49,7 @@ LikeRouter.get('/', authOptional, async (req, res, next) => {
                 SELECT id FROM user_account WHERE NOT likes_visible
             )`
 
-        return (await pool.query(fetchSql, [req.params.id])).rows.concat(selfHasPrivateLikesAppendix)
+        res.status(200).json((await pool.query(fetchSql, [req.params.id])).rows.concat(selfHasPrivateLikesAppendix))
     } catch (err) { next(err) }
 })
 

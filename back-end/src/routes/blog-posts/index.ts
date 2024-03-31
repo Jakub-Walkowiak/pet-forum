@@ -25,19 +25,19 @@ BlogPostRouter.post('/', authMandatory, async (req, res, next) => {
                 let tagsPromise
                 let petsPromise
 
-                if (pictures !== undefined) {
+                if (pictures !== undefined && pictures.length > 0) {
                     const picturesData = pictures.map(item => [item, result.rows[0].id])
                     const picturesSql = format('INSERT INTO blog_post_picture (picture_id, post_id) VALUES %L', picturesData)
                     picturesPromise = pool.query(picturesSql)
                 } 
 
-                if (tags !== undefined) {
+                if (tags !== undefined && tags.length > 0) {
                     const tagsData = tags.map(item => [item, result.rows[0].id])
                     const tagsSql = format('INSERT INTO blog_tagged (tag_id, post_id) VALUES %L', tagsData)
                     tagsPromise = pool.query(tagsSql)
                 } 
 
-                if (pets !== undefined) {
+                if (pets !== undefined && pets.length > 0) {
                     const petsData = pets.map(item => [item, result.rows[0].id])
                     const petsSql = format('INSERT INTO blog_post_pet (pet_id, post_id) VALUES %L', petsData)
                     petsPromise = pool.query(petsSql)
@@ -85,25 +85,26 @@ BlogPostRouter.get('/:id(\\d+)', async (req, res, next) => {
                 like_count AS "likeCount",
                 reply_to AS "replyTo",
                 date_posted AS "datePosted",
-                reply_count AS "replyCount"
+                reply_count AS "replyCount",
+                like_count AS "likeCount"
             FROM blog_post WHERE id = $1`
         const postPromise = pool.query(postSql, [req.params.id])
            
-        const tagsSql = 'SELECT tag_id AS id FROM blog_tagged WHER post_id = $1'
+        const tagsSql = 'SELECT tag_id AS id FROM blog_tagged WHERE post_id = $1'
         const tagsPromise = pool.query(tagsSql, [req.params.id])
 
         const picturesSql = `--sql
             SELECT picture_id AS id
             FROM blog_post_picture
-            WHERE blog_post_id = $1`
+            WHERE post_id = $1`
         const picturesPromise = pool.query(picturesSql, [req.params.id])
 
         const postData = await postPromise
-        const tagsData = (await tagsPromise).rows.map(row => row.tag_id)
-        const picturesData = (await picturesPromise).rows.map(row => row.picture_data)
+        const tagsData = (await tagsPromise).rows.map(row => row.id)
+        const picturesData = (await picturesPromise).rows.map(row => row.id)
 
         if (postData.rowCount === 0) res.status(404).send(RESOURCE_NOT_FOUND)
-        else res.status(200).send({ ...postData, tags: tagsData, pictures: picturesData })
+        else res.status(200).send({ ...postData.rows[0], tags: tagsData, images: picturesData })
     } catch (err) { next(err) }
 })
 

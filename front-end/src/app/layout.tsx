@@ -21,7 +21,7 @@ export default function RootLayout({
         <html lang='en'>
             <body className={inter.className}>
                 <main className='mx-auto md:w-5/6 max-w-6xl flex'>
-                    <section className='flex flex-col place-content-between'>
+                    <section className='flex flex-col place-content-between h-screen sticky top-0 z-10'>
                         <NavbarSideCompact></NavbarSideCompact>
                         <NavbarSideFull></NavbarSideFull>
                         <LoginPanel/>

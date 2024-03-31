@@ -44,7 +44,7 @@ AccountRouter.post('/login', async (req, res, next) => {
             const sql = 'SELECT password, account_name, id FROM user_account WHERE email = $1'
             await attemptLogin(sql, email, password, res)
         } else if (accountName) {
-            const sql = 'SELECT password, account_name FROM user_account WHERE account_name = $1'
+            const sql = 'SELECT password, account_name, id FROM user_account WHERE account_name = $1'
             await attemptLogin(sql, accountName, password, res)
         }
     } catch(err) { next(err) }

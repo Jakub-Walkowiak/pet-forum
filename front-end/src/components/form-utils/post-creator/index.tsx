@@ -1,4 +1,4 @@
-import FormImage from "@/components/form-image";
+import FormImage from "@/components/images/form-image";
 import showNotificationPopup from "@/helpers/show-notification-popup";
 import showTagPanel from "@/helpers/show-tag-panel";
 import { zodResolver } from "@hookform/resolvers/zod";

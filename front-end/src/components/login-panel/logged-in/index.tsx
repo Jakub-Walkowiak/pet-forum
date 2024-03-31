@@ -1,4 +1,4 @@
-import ProfilePicture from '@/components/profile-picture'
+import ProfilePicture from '@/components/images/profile-picture'
 import useProfile from '@/hooks/use-profile'
 import { useState } from 'react'
 import PanelPopup from './panel-popup'

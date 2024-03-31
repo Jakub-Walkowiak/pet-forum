@@ -17,8 +17,8 @@ export default function LoggedIn({ authId }: LoggedInProps) {
             <PanelPopup show={showPopup}/>
             <div className='h-12 aspect-square'>{<ProfilePicture profileData={profileData}/>}</div>
             <div className='h-fit max-w-52'>
-                <p className='font-medium text-md white truncate'>{profileData.displayName}</p>
-                <p className='font-normal text-sm text-zinc-500 truncate'>@{profileData.accountName}</p>
+                <p className='font-medium text-md white truncate' title={profileData.displayName}>{profileData.displayName}</p>
+                <p className='font-normal text-sm text-zinc-500 truncate' title={profileData.accountName}>@{profileData.accountName}</p>
             </div>
         </div>
     ) 

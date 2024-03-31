@@ -77,7 +77,7 @@ BlogPostRouter.delete('/:id(\\d+)', authMandatory, (req, res, next) => {
         }).catch(err => next(err))
 })
 
-BlogPostRouter.get('/:id(\\d+)', async (req, res, next) => {
+BlogPostRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
     try {
         const postSql = `--sql
             SELECT poster_id AS "posterId",
@@ -99,12 +99,16 @@ BlogPostRouter.get('/:id(\\d+)', async (req, res, next) => {
             WHERE post_id = $1`
         const picturesPromise = pool.query(picturesSql, [req.params.id])
 
+        const likedSql = 'SELECT COUNT(*) AS count FROM post_like WHERE post_id = $1 AND user_account_id = $2'
+        const likedPromise = pool.query(likedSql, [req.params.id, req.body.id])
+
         const postData = await postPromise
         const tagsData = (await tagsPromise).rows.map(row => row.id)
         const picturesData = (await picturesPromise).rows.map(row => row.id)
+        const liked = (await likedPromise).rows[0].count > 0
 
         if (postData.rowCount === 0) res.status(404).send(RESOURCE_NOT_FOUND)
-        else res.status(200).send({ ...postData.rows[0], tags: tagsData, images: picturesData })
+        else res.status(200).send({ ...postData.rows[0], tags: tagsData, images: picturesData, liked })
     } catch (err) { next(err) }
 })
 

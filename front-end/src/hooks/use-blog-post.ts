@@ -9,6 +9,7 @@ export interface BlogPostData {
     replyTo?: number,
     tags: Array<number>,
     images: Array<number>,
+    liked: boolean,
 }
 
 export default function useBlogPost(id: number) {
@@ -16,7 +17,7 @@ export default function useBlogPost(id: number) {
 
     const getData = () => {
         const fetchData = async () => {
-            const response = await fetch(`http://localhost:3000/blog-posts/${id}`)
+            const response = await fetch(`http://localhost:3000/blog-posts/${id}`, { credentials: 'include' })
             if (!response.ok) setData(undefined)
             else setData(await response.json())
         }
@@ -24,7 +25,8 @@ export default function useBlogPost(id: number) {
     }
 
     useEffect(getData, [id])
-    document.addEventListener('refreshblogpost', getData)
+    
+    useEffect(() => document.addEventListener('refreshblogpost', getData), [])
 
     return data
 }

@@ -31,7 +31,7 @@ export default function useProfile(id: number) {
     }
 
     useEffect(getProfileData, [id])
-    document.addEventListener('refreshprofile', getProfileData) 
+    useEffect(() => document.addEventListener('refreshprofile', getProfileData), [])
 
     return profileData
 }

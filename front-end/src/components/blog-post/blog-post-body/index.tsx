@@ -36,14 +36,14 @@ export default function BlogPostBody({ data, handleLike, handleUnlike, showReply
     if (profileData !== undefined) return (
         <>
             <ProfilePicture profileData={profileData}/>
-            <div className="flex-1 flex flex-col">
-                <div className="flex gap-1 items-between mb-1">
-                    <div className="flex-1 flex gap-1 items-center">
-                        <p className='font-medium text-md white truncate block'>{profileData.displayName}</p>
-                        <p className='font-normal text-sm text-zinc-500 truncate block'>@{profileData.accountName}</p>
+            <div className="w-full flex flex-col">
+                <div className="grid grid-cols-8 gap-1">
+                    <div className="items-center flex flex-wrap gap-x-1 w-full col-span-7">
+                        <span title={profileData.displayName} className='flex-none truncate font-medium text-md max-w-full white'>{profileData.displayName}</span>
+                        <span title={`@${profileData.accountName}`} className='flex-none font-normal text-sm text-zinc-500 max-w-full truncate'>@{profileData.accountName}</span>
                     </div>
                     
-                    <TimeLabel date={new Date(data.datePosted)}/>
+                    <div className="col-span-1"><TimeLabel date={new Date(data.datePosted)}/></div>
                 </div>
 
                 {replyTo && <div className="grid grid-cols-1 w-full text-emerald-700 font-medium truncate text-sm">

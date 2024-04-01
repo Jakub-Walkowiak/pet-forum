@@ -9,6 +9,7 @@ const config: Config = {
     plugins: [],
     theme: {
         extend: {
+            screens: { 'xs': '480px' },
             keyframes: {
                 popin: {
                     '0%': { transform: 'scale(0)' },

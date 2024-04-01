@@ -8,12 +8,12 @@ const getTimeSinceString = (date: Date) => {
     const ONE_MONTH = 30 * ONE_DAY
     const ONE_YEAR = 365 * ONE_DAY
 
-    if (since < ONE_MINUTE) return `${Math.floor(since / ONE_SECOND)}s ago`
-    else if (since < ONE_HOUR) return `${Math.floor(since / ONE_MINUTE)}min ago`
-    else if (since < ONE_DAY) return `${Math.floor(since / ONE_HOUR)}h ago`
-    else if (since < ONE_MONTH) return `${Math.floor(since / ONE_DAY)} days ago`
-    else if (since < ONE_YEAR) return `${Math.floor(since / ONE_MONTH)} months ago`
-    else return `${Math.floor(since / ONE_YEAR)} years ago`
+    if (since < ONE_MINUTE) return `${Math.floor(since / ONE_SECOND)}s`
+    else if (since < ONE_HOUR) return `${Math.floor(since / ONE_MINUTE)}min`
+    else if (since < ONE_DAY) return `${Math.floor(since / ONE_HOUR)}h`
+    else if (since < ONE_MONTH) return `${Math.floor(since / ONE_DAY)}d`
+    else if (since < ONE_YEAR) return `${Math.floor(since / ONE_MONTH)}mos`
+    else return `${Math.floor(since / ONE_YEAR)}yrs`
 }
 
 export default getTimeSinceString

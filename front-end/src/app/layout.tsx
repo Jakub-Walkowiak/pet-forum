@@ -18,7 +18,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang='en'>
+        <html lang='en' className='text-[12px] xs:text-[14px] sm:text-[16px]'>
             <body className={inter.className}>
                 <main className='mx-auto md:w-5/6 max-w-6xl flex'>
                     <section className='flex flex-col place-content-between h-screen sticky top-0 z-10'>
@@ -26,7 +26,7 @@ export default function RootLayout({
                         <NavbarSideFull></NavbarSideFull>
                         <LoginPanel/>
                     </section>
-                    <section className='grow border-s md:border-e border-zinc-700 min-h-screen'>{children}</section>
+                    <section className='grow sm:border-s md:border-e border-zinc-700 min-h-screen'>{children}</section>
                 </main>
             </body>
         </html>

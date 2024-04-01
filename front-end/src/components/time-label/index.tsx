@@ -5,6 +5,6 @@ interface TimeLabelProps {
 }
 
 export default function TimeLabel({ date }: TimeLabelProps) {
-    return <p title={date.toLocaleString('default', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric'})} 
-        className='flex-1 flex justify-end items-center font-normal text-sm text-zinc-500 truncate block'>{getTimeSinceString(date)}</p>
+    return <span title={date.toLocaleString('default', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric'})} 
+        className='h-full w-full flex items-center justify-end font-normal text-sm text-zinc-500 truncate'>{getTimeSinceString(date)}</span>
 }

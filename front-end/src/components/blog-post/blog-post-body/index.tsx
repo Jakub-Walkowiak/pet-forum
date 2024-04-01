@@ -26,7 +26,7 @@ export default function BlogPostBody({ data, handleLike, handleUnlike }: BlogPos
         clearTimeout(likeTimeout)
         setLikeTimeout(setTimeout(() => {
             if (data.liked === clientLike) data.liked ? handleUnlike() : handleLike()
-        }, 750))
+        }, 350))
     }
 
     if (profileData !== undefined) return (

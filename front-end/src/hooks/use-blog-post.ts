@@ -12,14 +12,17 @@ export interface BlogPostData {
     liked: boolean,
 }
 
-export default function useBlogPost(id: number) {
+export default function useBlogPost(id: number | undefined) {
     const [data, setData] = useState<BlogPostData>()
 
     const getData = () => {
         const fetchData = async () => {
-            const response = await fetch(`http://localhost:3000/blog-posts/${id}`, { credentials: 'include' })
-            if (!response.ok) setData(undefined)
-            else setData(await response.json())
+            if (id === undefined) setData(undefined)
+            else {
+                const response = await fetch(`http://localhost:3000/blog-posts/${id}`, { credentials: 'include' })
+                if (!response.ok) setData(undefined)
+                else setData(await response.json())
+            }
         }
         try { fetchData() } catch(err) { setData(undefined) }
     }

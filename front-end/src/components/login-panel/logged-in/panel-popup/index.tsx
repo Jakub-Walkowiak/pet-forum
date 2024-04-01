@@ -19,7 +19,7 @@ export default function PanelPopup({ show }: PanelPopupProps) {
             </div>
             <div className="duration-200 w-full flex cursor-pointer hover:bg-red-800/30 p-1 rounded-lg">
                 <object data='placeholder-icon.svg' className='h-8 me-2 inline'/>
-                <p className='text-red-600' onClick={() => Cookies.remove('login_token')}>Log out</p>
+                <p className='text-red-600' onClick={() => Cookies.remove('login_token', { path: '' })}>Log out</p>
             </div>
         </div>
     )

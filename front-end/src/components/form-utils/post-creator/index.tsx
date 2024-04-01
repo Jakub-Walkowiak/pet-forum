@@ -13,6 +13,7 @@ interface PostCreatorProps {
     placeholder: string,
     replyTo?: number,
     maxRows: number,
+    afterSubmit?: VoidFunction,
 }
 
 const PostCreatorValidator = z
@@ -24,7 +25,7 @@ const PostCreatorValidator = z
 
 type PostCreatorInputs = z.infer<typeof PostCreatorValidator>
 
-export default function PostCreator({ placeholder, replyTo, maxRows }: PostCreatorProps) {
+export default function PostCreator({ placeholder, replyTo, maxRows, afterSubmit }: PostCreatorProps) {
     const fileInputId = useId()
     const [update, setUpdate] = useState(false)
     const [textLength, setTextLength] = useState(0)
@@ -132,7 +133,10 @@ export default function PostCreator({ placeholder, replyTo, maxRows }: PostCreat
                 setValue('contents', '')
 
                 if (postResponse.status === 404) showNotificationPopup(false, 'Failed to attach resources')
-                else showNotificationPopup(true, 'Post created successfully!')
+                else { 
+                    showNotificationPopup(true, 'Post created successfully!')
+                    if (afterSubmit) afterSubmit()
+                }
             }
         } catch (err) { showNotificationPopup(false, 'Error contacting server') }
     }

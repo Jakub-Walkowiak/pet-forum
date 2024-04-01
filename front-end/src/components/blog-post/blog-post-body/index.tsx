@@ -2,7 +2,7 @@ import PostImages from "@/components/images/post-images";
 import ProfilePicture from "@/components/images/profile-picture";
 import TagLabel from "@/components/tag-label";
 import TimeLabel from "@/components/time-label";
-import { BlogPostData } from "@/hooks/use-blog-post";
+import useBlogPost, { BlogPostData } from "@/hooks/use-blog-post";
 import useProfile from "@/hooks/use-profile";
 import { useEffect, useState } from "react";
 import { AiFillHeart, AiOutlineHeart, AiOutlineMessage } from "react-icons/ai";
@@ -12,12 +12,16 @@ interface BlogPostBodyProps {
     data: BlogPostData,
     handleLike: VoidFunction,
     handleUnlike: VoidFunction,
+    showReplyCreator: (accountName: string) => void,
 }
 
-export default function BlogPostBody({ data, handleLike, handleUnlike }: BlogPostBodyProps) {
+export default function BlogPostBody({ data, handleLike, handleUnlike, showReplyCreator }: BlogPostBodyProps) {
     const [clientLike, setClientLike] = useState(data.liked)
     const [likeTimeout, setLikeTimeout] = useState<NodeJS.Timeout>()
     const profileData = useProfile(data.posterId)
+
+    const replyTo = useBlogPost(data.replyTo)
+    const replyToPoster = useProfile(replyTo?.posterId)
 
     useEffect(() => setClientLike(data.liked), [data])
 
@@ -42,6 +46,11 @@ export default function BlogPostBody({ data, handleLike, handleUnlike }: BlogPos
                     <TimeLabel date={new Date(data.datePosted)}/>
                 </div>
 
+                {replyTo && <div className="grid grid-cols-1 w-full text-emerald-700 font-medium truncate text-sm">
+                    <div className="max-w-full font-medium truncate text-sm">to @{replyToPoster !== undefined ? replyToPoster.accountName : '[could not find]'}</div>
+                </div>}
+                <div className="h-1"/>
+
                 <div className="mb-3">{data.contents}</div>
 
                 {data.tags.length > 0 && <ul className="flex gap-2 flex-wrap list-none mb-4">
@@ -59,7 +68,9 @@ export default function BlogPostBody({ data, handleLike, handleUnlike }: BlogPos
                             : <AiFillHeart className="text-xl"/>}
                         {data.likeCount + (clientLike === data.liked ? 0 : clientLike ? 1 : -1)}
                     </div>
-                    <div className="cursor-pointer duration-200 hover:text-white flex gap-1 items-center"><AiOutlineMessage className="text-xl"/>{data.replyCount}</div>
+                    <div className="cursor-pointer duration-200 hover:text-white flex gap-1 items-center" onClick={() => showReplyCreator(profileData.accountName)}>
+                        <AiOutlineMessage className="text-xl"/>{data.replyCount}
+                    </div>
                 </div>
             </div>
         </>

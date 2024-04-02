@@ -22,7 +22,7 @@ export default async function* getBlogPosts(options?: BlogPostFetchOptions) {
             options.orderBy ? `orderBy=${options.orderBy}` : '',
             options.orderMode ? `orderMode=${options.orderMode}` : '',
             options.fromUser ? `fromUser=${options.fromUser}` : '', 
-            options.replies ? `replies=${options.replies}` : '', 
+            options.replies !== undefined ? `replies${options.replies ? '=1' : ''}` : '', 
             options.replyTo ? `replyTo=${options.replyTo}` : '', 
             options.desiredUsers ? `desiredUsers=${options.desiredUsers}` : '', 
             options.tagMode ? `tagMode=${options.tagMode}` : '', 
@@ -33,7 +33,8 @@ export default async function* getBlogPosts(options?: BlogPostFetchOptions) {
         ].filter(str => str !== '').join('&')
 
     while (true) {
-        const response = await fetch(`http://localhost:3000/blog-posts?offset=${offset}&` +  queryBody)
+        const response = await fetch(`http://localhost:3000/blog-posts?offset=${offset}&` +  queryBody, { credentials: 'include' })
+        console.log(queryBody)
 
         if (response.ok) {
             const json = (await response.json()) as { id: number }[]

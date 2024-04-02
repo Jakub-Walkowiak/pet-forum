@@ -2,11 +2,13 @@ import PostImages from "@/components/images/post-images";
 import ProfilePicture from "@/components/images/profile-picture";
 import TagLabel from "@/components/tag-label";
 import TimeLabel from "@/components/time-label";
+import showNotificationPopup from "@/helpers/show-notification-popup";
 import useBlogPost, { BlogPostData } from "@/hooks/use-blog-post";
 import useProfile from "@/hooks/use-profile";
 import { useEffect, useState } from "react";
 import { AiFillHeart, AiOutlineHeart, AiOutlineMessage } from "react-icons/ai";
 import BlogPostError from "../blog-post-error";
+import useAuth from "@/hooks/use-auth";
 
 interface BlogPostBodyProps {
     data: BlogPostData,
@@ -19,6 +21,7 @@ export default function BlogPostBody({ data, handleLike, handleUnlike, showReply
     const [clientLike, setClientLike] = useState(data.liked)
     const [likeTimeout, setLikeTimeout] = useState<NodeJS.Timeout>()
     const profileData = useProfile(data.posterId)
+    const auth = useAuth()
 
     const replyTo = useBlogPost(data.replyTo)
     const replyToPoster = useProfile(replyTo?.posterId)
@@ -26,6 +29,11 @@ export default function BlogPostBody({ data, handleLike, handleUnlike, showReply
     useEffect(() => setClientLike(data.liked), [data])
 
     const onClick = () => {
+        if (!auth) {
+            showNotificationPopup(false, 'Login to like posts')
+            return
+        }
+
         setClientLike(!clientLike)
         clearTimeout(likeTimeout)
         setLikeTimeout(setTimeout(() => {

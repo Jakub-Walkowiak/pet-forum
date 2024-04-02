@@ -13,7 +13,7 @@ interface PostCreatorProps {
     placeholder: string,
     replyTo?: number,
     maxRows: number,
-    afterSubmit?: VoidFunction,
+    afterSubmit?: (id: number) => void,
 }
 
 const PostCreatorValidator = z
@@ -133,10 +133,10 @@ export default function PostCreator({ placeholder, replyTo, maxRows, afterSubmit
                 setValue('contents', '')
 
                 if (postResponse.status === 404) showNotificationPopup(false, 'Failed to attach resources')
-                else { 
-                    showNotificationPopup(true, 'Post created successfully!')
-                    if (afterSubmit) afterSubmit()
-                }
+                else showNotificationPopup(true, 'Post created successfully!')
+
+                if (afterSubmit) afterSubmit((await postResponse.json()).id)
+                    
             }
         } catch (err) { showNotificationPopup(false, 'Error contacting server') }
     }

@@ -81,6 +81,7 @@ export default function RegisterForm({ switchForm, hide }: RegisterFormProps) {
                     credentials: 'include',
                 })
                 showNotificationPopup(true, 'Logged in successfully')
+                document.dispatchEvent(new CustomEvent('refreshauth'))
             
                 switchForm(FormMode.CreateProfile)
             } else if (response.status === 409) {

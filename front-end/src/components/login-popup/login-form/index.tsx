@@ -63,6 +63,7 @@ export default function LoginForm({ switchForm, hide }: LoginFormProps) {
     
             if (response.ok) {
                 showNotificationPopup(true, 'Logged in successfully')
+                document.dispatchEvent(new CustomEvent('refreshauth'))
                 hide()
             } else if (response.status === 401) setError('password', { message: 'Incorrect password' })
             else if (response.status === 404) setError('loginKey', { message: 'No account exists with given e-mail/name' })

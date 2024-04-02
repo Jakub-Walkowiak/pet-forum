@@ -8,6 +8,12 @@ interface PanelPopupProps {
 export default function PanelPopup({ show }: PanelPopupProps) {
     const accountRoute = routes.find(el => el.name === 'Account')
 
+    const handleLogout = () => {
+        Cookies.remove('login_token', { path: '' })
+        document.dispatchEvent(new CustomEvent('refreshblogpost'))
+        document.dispatchEvent(new CustomEvent('refreshauth'))
+    }
+
     return (
         <div className={`cursor-auto absolute p-1 flex flex-col w-full border-t-4 border-x-4 border-gray-800 bg-gray-800/30 -top-[92px] rounded-t-lg text-2xl ${!show && 'h-0'}`}
             onClick={e => e.stopPropagation()}>
@@ -17,9 +23,9 @@ export default function PanelPopup({ show }: PanelPopupProps) {
                     <p>Settings</p>
                 </a> 
             </div>
-            <div className="duration-200 w-full flex cursor-pointer hover:bg-red-800/30 p-1 rounded-lg">
+            <div onClick={handleLogout} className="duration-200 w-full flex cursor-pointer hover:bg-red-800/30 p-1 rounded-lg">
                 <object data='placeholder-icon.svg' className='h-8 me-2 inline'/>
-                <p className='text-red-600' onClick={() => Cookies.remove('login_token', { path: '' })}>Log out</p>
+                <p className='text-red-600'>Log out</p>
             </div>
         </div>
     )

@@ -12,8 +12,11 @@ export default function useAuth() {
         else setAuthId(undefined)
     }
 
-    useEffect(verifyAuth, [])
-    useInterval(verifyAuth, 200)
+    useEffect(() => {
+        verifyAuth()
+        document.addEventListener('refreshauth', () => verifyAuth())
+    }, [])
+    useInterval(verifyAuth, 2000)
     
     return authId
 }

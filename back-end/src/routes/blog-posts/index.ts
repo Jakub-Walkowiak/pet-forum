@@ -2,7 +2,7 @@ import { Router } from 'express'
 import format from 'pg-format'
 import { pool } from '../../helpers/pg-pool'
 import { generateBlogPostFetchQuery } from '../../helpers/query-generators/posts/generate-blog-post-fetch-query'
-import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
+import { FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory, authOptional } from '../../middleware/auth'
 import { BlogPostAddValidator, BlogPostFetchData, BlogPostFetchValidator } from '../../validators/blog-post-validators'
 import { LikeRouter } from './likes'
@@ -18,9 +18,12 @@ BlogPostRouter.post('/', authMandatory, async (req, res, next) => {
         const { contents, replyTo, pictures, tags, pets } = BlogPostAddValidator.parse(req.body)
     
         const postSql = 'INSERT INTO blog_post (poster_id, contents, reply_to) VALUES ($1, $2, $3) RETURNING id'
-    
+        let idCreated: number
+
         pool.query(postSql, [req.body.id, contents, replyTo])
             .then(result => { 
+                idCreated = result.rows[0].id
+
                 let picturesPromise
                 let tagsPromise
                 let petsPromise
@@ -44,9 +47,9 @@ BlogPostRouter.post('/', authMandatory, async (req, res, next) => {
                 }
 
                 return Promise.all([picturesPromise, tagsPromise, petsPromise])
-            }).then(() => res.status(201).json(CREATED))
+            }).then(() => res.status(201).json({ id: idCreated }))
             .catch(err => {
-                if (err.code = 23503) res.status(404).json(RESOURCE_NOT_FOUND)
+                if (err.code = 23503) res.status(404).json({ id: idCreated })
                 else next(err)
             })
     } catch (err) { next(err) }

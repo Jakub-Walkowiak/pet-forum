@@ -17,7 +17,7 @@ export default function useBlogPost(id: number | undefined) {
 
     const getData = () => {
         const fetchData = async () => {
-            if (id === undefined) setData(undefined)
+            if (!id) setData(undefined) 
             else {
                 const response = await fetch(`http://localhost:3000/blog-posts/${id}`, { credentials: 'include' })
                 if (!response.ok) setData(undefined)

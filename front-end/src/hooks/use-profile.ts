@@ -23,7 +23,7 @@ export default function useProfile(id: number | undefined) {
 
     const getProfileData = () => {
         const fetchData = async () => {
-            if (id === undefined) setProfileData(undefined)
+            if (!id) setProfileData(undefined)
             else {
                 const res = await fetch(`http://localhost:3000/accounts/${id}`)
                 if (!res.ok) setProfileData(undefined) 

@@ -34,8 +34,7 @@ export default async function* getBlogPosts(options?: BlogPostFetchOptions) {
 
     while (true) {
         const response = await fetch(`http://localhost:3000/blog-posts?offset=${offset}&` +  queryBody, { credentials: 'include' })
-        console.log(queryBody)
-
+        
         if (response.ok) {
             const json = (await response.json()) as { id: number }[]
             if (json.length > 0) {

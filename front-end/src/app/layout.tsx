@@ -1,3 +1,4 @@
+import BackToTop from '@/components/back-to-top';
 import LoginPanel from '@/components/login-panel';
 import NavbarSideCompact from '@/components/navbars/navbar-side-compact';
 import NavbarSideFull from '@/components/navbars/navbar-side-full';
@@ -27,6 +28,7 @@ export default function RootLayout({
                         <LoginPanel/>
                     </section>
                     <section className='grow sm:border-s md:border-e border-zinc-700 min-h-screen'>{children}</section>
+                    <BackToTop/>
                 </main>
             </body>
         </html>

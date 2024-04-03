@@ -3,21 +3,22 @@ import ProfilePicture from "@/components/images/profile-picture";
 import TagLabel from "@/components/tag-label";
 import TimeLabel from "@/components/time-label";
 import showNotificationPopup from "@/helpers/show-notification-popup";
+import useAuth from "@/hooks/use-auth";
 import useBlogPost, { BlogPostData } from "@/hooks/use-blog-post";
 import useProfile from "@/hooks/use-profile";
 import { useEffect, useState } from "react";
 import { AiFillHeart, AiOutlineHeart, AiOutlineMessage } from "react-icons/ai";
 import BlogPostError from "../blog-post-error";
-import useAuth from "@/hooks/use-auth";
 
 interface BlogPostBodyProps {
     data: BlogPostData,
     handleLike: VoidFunction,
     handleUnlike: VoidFunction,
     showReplyCreator: (accountName: string) => void,
+    maximized?: boolean,
 }
 
-export default function BlogPostBody({ data, handleLike, handleUnlike, showReplyCreator }: BlogPostBodyProps) {
+export default function BlogPostBody({ data, handleLike, handleUnlike, showReplyCreator, maximized = false }: BlogPostBodyProps) {
     const [clientLike, setClientLike] = useState(data.liked)
     const [likeTimeout, setLikeTimeout] = useState<NodeJS.Timeout>()
     const profileData = useProfile(data.posterId)
@@ -27,6 +28,8 @@ export default function BlogPostBody({ data, handleLike, handleUnlike, showReply
     const replyToPoster = useProfile(replyTo?.posterId)
 
     useEffect(() => setClientLike(data.liked), [data])
+
+    const stopEvent = (e: React.BaseSyntheticEvent) => e.stopPropagation()
 
     const onClick = () => {
         if (!auth) {
@@ -43,42 +46,52 @@ export default function BlogPostBody({ data, handleLike, handleUnlike, showReply
 
     if (profileData !== undefined) return (
         <>
-            <ProfilePicture profileData={profileData}/>
+            {maximized 
+                ? <div className="flex gap-4">
+                    <ProfilePicture sizeOverride={maximized ? 55 : undefined} profileData={profileData}/>
+                    <div className="flex flex-col gap-x-1 col-span-7">
+                        <span title={profileData.displayName} className={`flex-none truncate font-medium ${maximized ? 'text-lg' : 'text-base'} max-w-full white`}>{profileData.displayName}</span>
+                        <span title={`@${profileData.accountName}`} className={`flex-none font-normal ${maximized ? 'text-base' : 'text-sm'} text-zinc-500 max-w-full truncate`}>@{profileData.accountName}</span>
+                    </div>
+                </div> 
+                : <ProfilePicture sizeOverride={maximized ? 55 : undefined} profileData={profileData}/>}
+
             <div className="w-full flex flex-col">
-                <div className="grid grid-cols-8 gap-1">
+                {!maximized && <div className="grid grid-cols-8 gap-1">
                     <div className="items-center flex flex-wrap gap-x-1 w-full col-span-7">
-                        <span title={profileData.displayName} className='flex-none truncate font-medium text-md max-w-full white'>{profileData.displayName}</span>
-                        <span title={`@${profileData.accountName}`} className='flex-none font-normal text-sm text-zinc-500 max-w-full truncate'>@{profileData.accountName}</span>
+                        <span title={profileData.displayName} className={`flex-none truncate font-medium max-w-full white`}>{profileData.displayName}</span>
+                        <span title={`@${profileData.accountName}`} className={`flex-none font-normal text-sm text-zinc-500 max-w-full truncate`}>@{profileData.accountName}</span>
                     </div>
                     
                     <div className="col-span-1"><TimeLabel date={new Date(data.datePosted)}/></div>
-                </div>
+                </div>}
 
-                {replyTo && <div className="grid grid-cols-1 w-full text-emerald-700 font-medium truncate text-sm">
+                {replyTo && <div className={`grid grid-cols-1 w-full text-emerald-700 font-medium truncate ${maximized ? 'text-base' : 'text-sm'}`}>
                     <div className="max-w-full font-medium truncate text-sm">to @{replyToPoster !== undefined ? replyToPoster.accountName : '[could not find]'}</div>
                 </div>}
-                <div className="h-1"/>
+                {!maximized && <div className="h-1"/>}
 
-                <div className="mb-3">{data.contents}</div>
+                <div className={`mb-3 ${maximized ? 'text-lg' : 'text-base'}`}>{data.contents}</div>
 
                 {data.tags.length > 0 && <ul className="flex gap-2 flex-wrap list-none mb-4">
                     {data.tags.map(id => (
-                        <li key={id}><TagLabel tagId={id}/></li>
+                        <li className={maximized ? '*:text-base' : ''} key={id}><TagLabel tagId={id}/></li>
                     ))}
                 </ul>}
 
                 {data.images.length > 0 && <PostImages imageIds={data.images}/>}
 
                 <div className="flex gap-3 text-zinc-500 font-medium">
-                    <div className={`${!clientLike ? 'hover:text-white' : 'text-red-600 hover:text-red-700'} cursor-pointer duration-200 flex gap-1 items-center`} onClick={onClick}>
+                    <div className={`${!clientLike ? 'hover:text-white' : 'text-red-600 hover:text-red-700'} ${maximized ? 'text-lg' : 'text-base'} cursor-pointer duration-200 flex gap-1 items-center`} onClick={e => { stopEvent(e); onClick() }}>
                         {!clientLike
-                            ? <AiOutlineHeart className="text-xl"/>
-                            : <AiFillHeart className="text-xl"/>}
-                        {data.likeCount + (clientLike === data.liked ? 0 : clientLike ? 1 : -1)}
+                            ? <AiOutlineHeart className={maximized ? 'text-2xl' : 'text-xl'}/>
+                            : <AiFillHeart className={maximized ? 'text-2xl' : 'text-xl'}/>}
+                        {data.likeCount + (clientLike === data.liked ? 0 : clientLike ? 1 : -1)} {maximized && 'Likes'}
                     </div>
-                    <div className="cursor-pointer duration-200 hover:text-white flex gap-1 items-center" onClick={() => showReplyCreator(profileData.accountName)}>
-                        <AiOutlineMessage className="text-xl"/>{data.replyCount}
+                    <div className={`${maximized ? 'text-lg' : 'text-base'}  cursor-pointer duration-200 hover:text-white flex gap-1 items-center`} onClick={e => { stopEvent(e); showReplyCreator(profileData.accountName) }}>
+                        <AiOutlineMessage className={maximized ? 'text-2xl' : 'text-xl'}/>{data.replyCount} {maximized && 'Replies'}
                     </div>
+                    {maximized && <div className="flex-1"><TimeLabel date={new Date(data.datePosted)} extended/></div>}
                 </div>
             </div>
         </>

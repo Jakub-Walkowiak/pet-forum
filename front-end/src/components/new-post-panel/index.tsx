@@ -14,7 +14,7 @@ export default function NewPostPanel() {
             </div>
             {created.length > 0 && <ul className="w-full flex flex-col list-none divide-y divide-zinc-700 border-b border-zinc-700">
                 {created.map(id => (
-                    <li key={id}><BlogPostGroup startId={id}/></li>
+                    <li key={id}><BlogPostGroup rootId={id}/></li>
                 ))}
             </ul>}
         </>

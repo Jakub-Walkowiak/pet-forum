@@ -7,9 +7,10 @@ import BlogPostGroup from "../blog-post-group";
 
 interface BlogFeedProps {
     options?: BlogPostFetchOptions,
+    hideParentButton?: boolean,
 }
 
-export default function BlogFeed({ options }: BlogFeedProps) {
+export default function BlogFeed({ options, hideParentButton = false }: BlogFeedProps) {
     const [postGenerator] = useState(getBlogPosts(options))
     const [loading, setLoading] = useState(false)
     const [posts, setPosts] = useState(new Array<number>())
@@ -33,7 +34,7 @@ export default function BlogFeed({ options }: BlogFeedProps) {
     return (
         <ul className="w-full flex flex-col list-none divide-y divide-zinc-700">
             {posts.map(id => (
-                <li key={id}><BlogPostGroup startId={id}/></li>
+                <li key={id}><BlogPostGroup hideParentButton={hideParentButton} rootId={id}/></li>
             ))}
             {loading 
                 ? <li className="w-full flex items-center justify-center h-32 mt-1 text-5xl"><AiOutlineLoading className="animate-spin"/></li>

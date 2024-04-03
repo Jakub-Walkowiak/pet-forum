@@ -24,7 +24,7 @@ export default function PanelPopup({ show }: PanelPopupProps) {
                 </a> 
             </div>
             <div onClick={handleLogout} className="duration-200 w-full flex cursor-pointer hover:bg-red-800/30 p-1 rounded-lg">
-                <object data='placeholder-icon.svg' className='h-8 me-2 inline'/>
+                <object data='/placeholder-icon.svg' className='h-8 me-2 inline'/>
                 <p className='text-red-600'>Log out</p>
             </div>
         </div>

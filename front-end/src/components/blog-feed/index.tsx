@@ -2,7 +2,7 @@
 
 import BlogPostFetchOptions from "@/helpers/fetch-options/blog-post-fetch-options";
 import getBlogPosts from "@/helpers/get-posts";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
 import BlogPostGroup from "../blog-post-group";
 
@@ -12,25 +12,30 @@ interface BlogFeedProps {
 }
 
 export default function BlogFeed({ options, hideParentButton = false }: BlogFeedProps) {
-    const [postGenerator] = useState(getBlogPosts(options))
+    const [postGenerator, setPostGenerator] = useState(getBlogPosts(options))
     const [loading, setLoading] = useState(false)
     const [posts, setPosts] = useState(new Array<number>())
 
-    const fetchPosts = async () => {
+    const fetchPosts = useCallback(async () => {
         const newPosts = (await postGenerator.next()).value
         if (Array.isArray(newPosts)) setPosts(old => [...old, ...newPosts])
-    }
+    }, [postGenerator])
 
     useEffect(() => { 
         fetchPosts() 
-        window.addEventListener('scroll', async (e) => {
+        window.addEventListener('scroll', async () => {
             if (document.documentElement.scrollHeight - document.documentElement.clientHeight - document.documentElement.scrollTop < 1) {
                 setLoading(true)
                 await fetchPosts()
                 setLoading(false)
             }
         })
-    }, [])
+    }, [fetchPosts])
+
+    useEffect(() => {
+        setPosts([])
+        setPostGenerator(getBlogPosts(options))
+    }, [options])
 
     return (
         <ul className="w-full flex flex-col list-none divide-y divide-zinc-700">

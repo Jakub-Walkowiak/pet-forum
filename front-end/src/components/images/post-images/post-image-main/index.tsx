@@ -12,7 +12,7 @@ export default function PostImageMain({ imageId }: PostImageMainProps) {
     return (
         <div className='w-full'>
             {url !== undefined
-                ? <Image src={url} alt='Selected image under post' className="object-contain rounded-lg h-auto w-full" width={0} height={0}/>
+                ? <Image src={url} alt='Selected image under post' className="cursor-default object-contain rounded-lg h-auto w-full" width={0} height={0} onClick={e => e.stopPropagation()}/>
                 : <PostImageError/>}
         </div>
     )

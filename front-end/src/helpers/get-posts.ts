@@ -1,18 +1,4 @@
-export interface BlogPostFetchOptions {
-    orderBy?: 'like_count' | 'date_posted' | 'reply_count',
-    orderMode?: 'ASC | DESC',
-    fromUser?: number,
-    replies?: boolean,
-    replyTo?: number,
-    desiredUsers?: 'followed' | 'mutuals' | 'none',
-    tags?: Array<number>,
-    tagMode?: 'any' | 'all',
-    limit?: number,
-    offset?: number,
-    contains?: string,
-    pets?: Array<number>,
-    petMode?: 'any' | 'all',
-}
+import BlogPostFetchOptions from "./fetch-options/blog-post-fetch-options"
 
 export default async function* getBlogPosts(options?: BlogPostFetchOptions) {
     let offset = options?.offset === undefined ? 0 : options.offset

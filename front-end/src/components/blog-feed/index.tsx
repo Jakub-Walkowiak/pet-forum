@@ -1,6 +1,7 @@
 'use client'
 
-import getBlogPosts, { BlogPostFetchOptions } from "@/helpers/get-posts";
+import BlogPostFetchOptions from "@/helpers/fetch-options/blog-post-fetch-options";
+import getBlogPosts from "@/helpers/get-posts";
 import { useEffect, useState } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
 import BlogPostGroup from "../blog-post-group";

@@ -34,7 +34,10 @@ export default function useProfile(id: number | undefined) {
     }
 
     useEffect(getProfileData, [id])
-    useEffect(() => document.addEventListener('refreshprofile', getProfileData), [])
+    useEffect(() => {
+        document.addEventListener('refreshprofile', getProfileData)
+        return () => document.removeEventListener('refreshprofile', getProfileData)
+    }, [])
 
     return profileData
 }

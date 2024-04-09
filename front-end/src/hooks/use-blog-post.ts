@@ -29,7 +29,10 @@ export default function useBlogPost(id: number | undefined) {
 
     useEffect(getData, [id])
     
-    useEffect(() => document.addEventListener('refreshblogpost', getData), [])
+    useEffect(() => {
+        document.addEventListener('refreshblogpost', getData)
+        return () => document.removeEventListener('refreshblogpost', getData)
+    }, [])
 
     return data
 }

@@ -14,7 +14,11 @@ export default function useAuth() {
 
     useEffect(() => {
         verifyAuth()
-        document.addEventListener('refreshauth', () => verifyAuth())
+
+        const handleRefresh =  () => verifyAuth()
+    
+        document.addEventListener('refreshauth', handleRefresh)
+        return () => document.removeEventListener('refreshauth', handleRefresh)
     }, [])
     useInterval(verifyAuth, 2000)
     

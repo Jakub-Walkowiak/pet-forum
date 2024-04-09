@@ -23,13 +23,17 @@ export default function BlogFeed({ options, hideParentButton = false }: BlogFeed
 
     useEffect(() => { 
         fetchPosts() 
-        window.addEventListener('scroll', async () => {
+
+        const handleScroll = async () => {
             if (document.documentElement.scrollHeight - document.documentElement.clientHeight - document.documentElement.scrollTop < 1) {
                 setLoading(true)
                 await fetchPosts()
                 setLoading(false)
             }
-        })
+        }
+
+        window.addEventListener('scroll', handleScroll)
+        return () => window.removeEventListener('scroll', handleScroll)
     }, [fetchPosts])
 
     useEffect(() => {

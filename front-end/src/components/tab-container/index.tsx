@@ -14,10 +14,13 @@ export default function TabContainer({ tabs, header }: TabContainerProps) {
     const [scrollPositions, setScrollPositions] = useState(new Array(tabs.length).fill(0))
 
     useEffect(() => {
-        document.addEventListener('scroll', () => setPrevScrollTop(old => {
+        const handleScroll = () => setPrevScrollTop(old => {
             if (old !== document.documentElement.scrollTop) setHidePanel(old > document.documentElement.scrollTop)
             return document.documentElement.scrollTop
-        }))
+        })
+
+        document.addEventListener('scroll', handleScroll)
+        return () => document.removeEventListener('scroll', handleScroll)
     }, [])
 
     useEffect(() => {

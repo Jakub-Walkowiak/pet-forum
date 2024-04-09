@@ -9,9 +9,10 @@ interface PasswordInputProps<T extends FieldValues> {
     name?: Path<T>,
     className?: string,
     handleKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void,
+    defaultValue?: string,
 }
 
-export default function PasswordInput<T extends FieldValues>({ placeholder, error, register, name, className, handleKeyUp }: PasswordInputProps<T>) {
+export default function PasswordInput<T extends FieldValues>({ placeholder, error, register, name, className, handleKeyUp, defaultValue }: PasswordInputProps<T>) {
     const [show, setShow] = useState(false)
 
     const styles = error
@@ -23,6 +24,6 @@ export default function PasswordInput<T extends FieldValues>({ placeholder, erro
         : <AiOutlineEyeInvisible className='absolute right-4 inset-y-0 m-auto text-2xl text-gray-500 hover:cursor-pointer hover:text-white' onClick={() => setShow(false)}/>
 
     return register !== undefined && name !== undefined
-        ? <div className='relative'><input placeholder={placeholder} className={`${className} ${styles}`} onKeyUp={handleKeyUp} {...register(name)} type={show ? 'text' : 'password'}/>{showIcon}</div>
-        : <div className='relative'><input placeholder={placeholder} className={`${className} ${styles}`} onKeyUp={handleKeyUp} type={show ? 'text' : 'password'}/>{showIcon}</div>
+        ? <div className='relative'><input defaultValue={defaultValue} placeholder={placeholder} className={`${className} ${styles}`} onKeyUp={handleKeyUp} {...register(name)} type={show ? 'text' : 'password'}/>{showIcon}</div>
+        : <div className='relative'><input defaultValue={defaultValue} placeholder={placeholder} className={`${className} ${styles}`} onKeyUp={handleKeyUp} type={show ? 'text' : 'password'}/>{showIcon}</div>
 }

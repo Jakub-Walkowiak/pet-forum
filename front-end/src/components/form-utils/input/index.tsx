@@ -10,10 +10,11 @@ interface InputProps<T extends FieldValues> {
     name?: Path<T>,
     className?: string,
     handleKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void,
+    defaultValue?: string,
 }
 
-export default function Input<T extends FieldValues>({ placeholder, error = false, password = false, register, name, className, handleKeyUp }: InputProps<T>) {
+export default function Input<T extends FieldValues>({ defaultValue, placeholder, error = false, password = false, register, name, className, handleKeyUp }: InputProps<T>) {
     return !password
-        ? <PlainTextInput handleKeyUp={handleKeyUp} placeholder={placeholder} error={error} register={register} name={name} className={className}/>
-        : <PasswordInput handleKeyUp={handleKeyUp} placeholder={placeholder} error={error} register={register} name={name} className={className}/>
+        ? <PlainTextInput handleKeyUp={handleKeyUp} placeholder={placeholder} error={error} register={register} name={name} className={className} defaultValue={defaultValue}/>
+        : <PasswordInput handleKeyUp={handleKeyUp} placeholder={placeholder} error={error} register={register} name={name} className={className} defaultValue={defaultValue}/>
 }

@@ -65,7 +65,7 @@ export default function BlogPost({ id, groupArgs, hideParentButton = false, afte
     }
 
     const handleRedirect = () => {
-        if (postData && (!groupArgs?.rootMaximized || (groupArgs?.rootMaximized && groupArgs.index !== groupArgs.length - 1))) router.push(`/blog-posts/${id}`, {  })
+        if (postData && (!groupArgs?.rootMaximized || (groupArgs?.rootMaximized && groupArgs.index !== groupArgs.length - 1))) router.push(`/blog-posts/${id}`)
     }
 
     return (

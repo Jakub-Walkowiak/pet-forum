@@ -15,7 +15,10 @@ export interface ProfileData {
     adviceCount: number,
     responseCount: number,
     ownedPetCount: number,
-    profilePictureId: number,
+    profilePictureId?: number,
+    bio?: string,
+    followed: boolean,
+    likesVisible: boolean,
 }
 
 export default function useProfile(id: number | undefined) {
@@ -25,7 +28,9 @@ export default function useProfile(id: number | undefined) {
         const fetchData = async () => {
             if (!id) setProfileData(undefined)
             else {
-                const res = await fetch(`http://localhost:3000/accounts/${id}`)
+                const res = await fetch(`http://localhost:3000/accounts/${id}`, { 
+                    credentials: 'include' 
+                })
                 if (!res.ok) setProfileData(undefined) 
                 else setProfileData(await res.json())
             }

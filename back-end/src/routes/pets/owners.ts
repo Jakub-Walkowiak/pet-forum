@@ -5,7 +5,7 @@ import { authMandatory } from '../../middleware/auth'
 import { OwnerAddValidator } from '../../validators/pet-validators'
 import { authOwnership } from './owner-auth'
 
-const OwnerRouter = Router()
+const OwnerRouter = Router({ mergeParams: true })
 
 OwnerRouter.post('/', authMandatory, (req, res, next) => {
     authOwnership(req.params.pet_id, req.body.id)

@@ -4,7 +4,7 @@ import { CONFLICT, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory } from '../../middleware/auth'
 import { ResponseRateAddValidator } from '../../validators/advice-post-validators'
 
-const RateRouter = Router()
+const RateRouter = Router({ mergeParams: true })
 
 RateRouter.post('/', authMandatory, (req, res, next) => {
     const { isPositive } = ResponseRateAddValidator.parse(req.body)

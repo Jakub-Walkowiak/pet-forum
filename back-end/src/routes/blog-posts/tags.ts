@@ -4,7 +4,7 @@ import { CONFLICT, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory } from '../../middleware/auth'
 import { BlogTagAddValidator, BlogTagFetchValidator } from '../../validators/blog-post-validators'
 
-const TagRouter = Router()
+const TagRouter = Router({ mergeParams: true })
 
 TagRouter.get('/', (req, res, next) => {
     const { limit, offset, nameQuery, exactMatch } = BlogTagFetchValidator.parse(req.query)

@@ -11,7 +11,7 @@ import { attemptLogin, getFollowed, getFollowers } from './functions'
 const saltRounds = 10
 const AccountRouter = Router()
 
-AccountRouter.use('/id(\\d+)/follow', FollowRouter)
+AccountRouter.use('/:id(\\d+)/follow', FollowRouter)
 
 AccountRouter.post('/register', async (req, res, next) => {
     try {

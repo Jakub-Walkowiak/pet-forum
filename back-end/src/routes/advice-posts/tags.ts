@@ -4,7 +4,7 @@ import { CONFLICT, CREATED, RESOURCE_NOT_FOUND } from '../../helpers/status-code
 import { authMandatory } from '../../middleware/auth'
 import { AdviceTagAddValidator, AdviceTagFetchValidator } from '../../validators/advice-post-validators'
 
-const TagRouter = Router()
+const TagRouter = Router({ mergeParams: true })
 
 TagRouter.get('/', (req, res, next) => {
     const { limit, offset, nameQuery } = AdviceTagFetchValidator.parse(req.query)

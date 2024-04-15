@@ -6,7 +6,7 @@ import { authMandatory, authOptional } from '../../middleware/auth'
 import { AdvicePostAddValidator, ResponseFetchData, ResponseFetchValidator } from '../../validators/advice-post-validators'
 import { RateRouter } from './response-rates'
 
-const ResponseRouter = Router()
+const ResponseRouter = Router({ mergeParams: true })
 
 ResponseRouter.use('/:id(\\d+)/rate', RateRouter)
 

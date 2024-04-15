@@ -3,7 +3,7 @@ import { pool } from '../../helpers/pg-pool'
 import { CONFLICT, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory } from '../../middleware/auth'
 
-const FollowRouter = Router()
+const FollowRouter = Router({ mergeParams: true })
 
 FollowRouter.post('/', authMandatory, (req, res, next) => {
     const sql = 'INSERT INTO follow (followed_id, follower_id) VALUES ($1, $2)'

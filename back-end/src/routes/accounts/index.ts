@@ -107,8 +107,9 @@ AccountRouter.get('/', (req, res, next) => {
         .catch(err => next(err))
 })
 
-AccountRouter.get('/:id(\\d+)', (req, res, next) => {
-    const sql = `--sql
+AccountRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
+    try {
+        const sql = `--sql
         SELECT account_name AS "accountName",
                display_name AS "displayName",
                follower_count AS "followerCount",
@@ -123,15 +124,24 @@ AccountRouter.get('/:id(\\d+)', (req, res, next) => {
                advice_count AS "adviceCount",
                response_count AS "responseCount",
                owned_pet_count AS "ownedPetCount",
-               profile_picture_id AS "profilePictureId"
+               profile_picture_id AS "profilePictureId",
+               bio,
+               likes_visible AS "likesVisible"
         FROM user_account
         WHERE id = $1`
 
-    pool.query(sql, [req.params.id])
-        .then(result => {
-            if (result.rowCount === 0) res.status(404).send(RESOURCE_NOT_FOUND)
-            else res.status(200).json(result.rows[0])
-        }).catch(err => next(err))
+        let followed = false
+        if (req.body.auth === true) {
+            const followedSql = 'SELECT Count(*) AS count FROM follow WHERE follower_id = $1 AND followed_id = $2'
+            if ((await pool.query(followedSql, [req.body.id, req.params.id])).rows[0].count > 0) followed = true
+        }
+
+        pool.query(sql, [req.params.id])
+            .then(result => {
+                if (result.rowCount === 0) res.status(404).send(RESOURCE_NOT_FOUND)
+                else res.status(200).json({ ...result.rows[0], followed })
+            }).catch(err => next(err))
+    } catch (err) { next(err) }
 })
 
 AccountRouter.get('/:id(\\d+)/followed', authOptional, async (req, res, next) => {

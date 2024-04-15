@@ -2,7 +2,7 @@
 
 import BlogPostFetchOptions from "@/helpers/fetch-options/blog-post-fetch-options";
 import getBlogPosts from "@/helpers/get-posts";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
 import BlogPostGroup from "../blog-post-group";
 
@@ -13,40 +13,55 @@ interface BlogFeedProps {
 
 export default function BlogFeed({ options, hideParentButton = false }: BlogFeedProps) {
     const [postGenerator, setPostGenerator] = useState(getBlogPosts(options))
-    const [loading, setLoading] = useState(false)
+    const loading = useRef(false)
+    const [visualLoading, setVisualLoading] = useState(false)
     const [posts, setPosts] = useState(new Array<number>())
 
     const fetchPosts = useCallback(async () => {
         const newPosts = (await postGenerator.next()).value
-        if (Array.isArray(newPosts)) setPosts(old => [...old, ...newPosts])
+        if (Array.isArray(newPosts)) setPosts(old => {
+            const oldLen = old.length
+            const replacement = [...old.filter(id => !newPosts.includes(id)), ...newPosts]
+            if (replacement.length === oldLen && newPosts.length !== 0) fetchPosts()
+            return replacement
+        })
     }, [postGenerator])
 
-    useEffect(() => { 
-        fetchPosts() 
+    const updatePosts = useCallback(async () => {
+        if (!loading.current) {
+            loading.current = true
+            setVisualLoading(true)
+            await fetchPosts()
+            loading.current = false
+            setVisualLoading(false)
+        }
+    }, [fetchPosts])
 
-        const handleScroll = async () => {
-            if (document.documentElement.scrollHeight - document.documentElement.clientHeight - document.documentElement.scrollTop < 1) {
-                setLoading(true)
-                await fetchPosts()
-                setLoading(false)
-            }
+    useEffect(() => { 
+        updatePosts()
+
+        const handleScroll = () => {
+            if (document.documentElement.scrollHeight - document.documentElement.clientHeight - document.documentElement.scrollTop < 1) updatePosts()
         }
 
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
-    }, [fetchPosts])
+    }, [updatePosts])
+
+    useEffect(() => {
+        setPostGenerator(getBlogPosts(options))
+    }, [options])
 
     useEffect(() => {
         setPosts([])
-        setPostGenerator(getBlogPosts(options))
-    }, [options])
+    }, [postGenerator])
 
     return (
         <ul className="w-full flex flex-col list-none divide-y divide-zinc-700">
             {posts.map(id => (
                 <li key={id}><BlogPostGroup hideParentButton={hideParentButton} rootId={id}/></li>
             ))}
-            {loading 
+            {visualLoading
                 ? <li className="w-full flex items-center justify-center h-32 mt-1 text-5xl"><AiOutlineLoading className="animate-spin"/></li>
                 : <li className="w-full flex items-center justify-center h-32 mt-1 text-xl text-gray-500">Nothing too see here...</li>}
         </ul>

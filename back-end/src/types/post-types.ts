@@ -2,6 +2,7 @@ export enum BlogPostOrderByOption {
     LIKES = 'like_count',
     DATE = 'date_posted',
     REPLIES = 'reply_count',
+    DATE_LIKED = 'date_liked',
 }
 
 export enum AdvicePostOrderByOption {

@@ -69,3 +69,7 @@ export const getContainsFilterString = (contains?: string) => contains === undef
 export const getResolvedString = (resolved?: boolean) => resolved === undefined ? '' : `${resolved ? '' : 'NOT'} resolved`
 
 export const getBestFilterString = (isBest?: boolean) => isBest === undefined ? '' : `${isBest ? '' : 'NOT'} marked_as_best`
+
+export const getLikedByFilterString = (likedBy?: number) => {
+    return likedBy !== undefined ? `user_account_id = ${likedBy}` : ''
+}

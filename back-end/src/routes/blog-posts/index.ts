@@ -55,13 +55,21 @@ BlogPostRouter.post('/', authMandatory, async (req, res, next) => {
     } catch (err) { next(err) }
 })
 
-BlogPostRouter.get('/', authOptional, (req, res, next) => {
-    const data: BlogPostFetchData = BlogPostFetchValidator.parse(req.query)
-    const sql = generateBlogPostFetchQuery(data, req.body.auth ? req.body.id : undefined)
+BlogPostRouter.get('/', authOptional, async (req, res, next) => {
+    try {
+        const data: BlogPostFetchData = BlogPostFetchValidator.parse(req.query)
+        const sql = generateBlogPostFetchQuery(data, req.body.auth ? req.body.id : undefined)
 
-    pool.query(sql)
-        .then(result => res.status(200).json(result.rows))
-        .catch(err => next(err))
+        if (data.likedBy !== undefined &&  (!req.body.auth || data.likedBy !== req.body.id)) {
+            const verifyPrivacySql = 'SELECT likes_visible FROM user_account WHERE id = $1'
+            const result = await pool.query(verifyPrivacySql, [data.likedBy])
+            if (result.rowCount && !(result.rows[0].likes_visible)) res.status(403).send(FORBIDDEN)
+        }
+
+        pool.query(sql)
+            .then(result => res.status(200).json(result.rows))
+            .catch(err => next(err))
+    } catch (err) { next(err) }
 })
 
 BlogPostRouter.delete('/:id(\\d+)', authMandatory, (req, res, next) => {

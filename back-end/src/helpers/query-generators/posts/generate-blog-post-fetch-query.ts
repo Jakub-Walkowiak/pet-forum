@@ -1,6 +1,6 @@
-import { PostType } from '../../../types/post-types'
+import { BlogPostOrderByOption, PostType } from '../../../types/post-types'
 import { BlogPostFetchData } from '../../../validators/blog-post-validators'
-import { getContainsFilterString, getOrderByString, getPetFilterString, getReplyFilterString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from './post-filter-string-generators'
+import { getContainsFilterString, getLikedByFilterString, getOrderByString, getPetFilterString, getReplyFilterString, getTagFilterString, getUserFilterString, getUserTypeFilterString } from './post-filter-string-generators'
 
 export const generateBlogPostFetchQuery = (data: BlogPostFetchData, forUser?: number) => {
     const whereBlock = [
@@ -10,11 +10,13 @@ export const generateBlogPostFetchQuery = (data: BlogPostFetchData, forUser?: nu
         getTagFilterString(data.tagMode, PostType.BLOG, data.tags),
         getContainsFilterString(data.contains),
         getPetFilterString(data.petMode, PostType.BLOG, data.pets),
+        getLikedByFilterString(data.likedBy),
     ].filter(filterString => filterString !== '').join(' AND ')
 
     return `--sql
         SELECT id FROM blog_post
+        ${data.likedBy ? 'JOIN post_like ON id = post_id' : ''}
         ${whereBlock.length === 0 ? '' : `WHERE ${whereBlock}`}
-        ORDER BY ${getOrderByString(data.orderBy, data.orderMode)} 
+        ORDER BY ${getOrderByString(!(data.orderBy === BlogPostOrderByOption.DATE_LIKED && data.likedBy === undefined) ? data.orderBy : BlogPostOrderByOption.LIKES, data.orderMode)} 
         LIMIT ${data.limit} OFFSET ${data.offset}`
 }

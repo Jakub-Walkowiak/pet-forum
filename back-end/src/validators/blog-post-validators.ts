@@ -26,6 +26,7 @@ export const BlogPostFetchValidator = z.
         contains: z.string().trim().optional(),
         pets: z.coerce.number().array().optional(),
         petMode: z.nativeEnum(MultipleMode).default(MultipleMode.ANY),
+        likedBy: z.coerce.number().optional(),
     })
 
 export type BlogPostFetchData = z.infer<typeof BlogPostFetchValidator>

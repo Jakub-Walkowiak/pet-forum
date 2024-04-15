@@ -24,7 +24,6 @@ export default function TabContainer({ tabs, header }: TabContainerProps) {
     }, [])
 
     useEffect(() => {
-        console.log(scrollPositions[selected])
         document.documentElement.scrollTo({ top: scrollPositions[selected], behavior: 'auto' })
     }, [selected, scrollPositions])
 

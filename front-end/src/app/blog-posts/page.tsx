@@ -4,9 +4,9 @@ import BlogFeed from "@/components/blog-feed";
 import BlogPostSearchPanel from "@/components/blog-post-search-panel";
 import { BlogPostFetchValidator } from "@/helpers/fetch-options/blog-post-fetch-options";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
-export default function Page() {
+function PageBody() {
     const params = useSearchParams()
     const [options, setOptions] = useState(BlogPostFetchValidator.parse(Object.fromEntries(params.entries())))
 
@@ -19,5 +19,13 @@ export default function Page() {
             </div>
             <BlogFeed options={options}/>
         </>
+    )
+}
+
+export default function Page() {
+    return (
+        <Suspense>
+            <PageBody/>
+        </Suspense>
     )
 }

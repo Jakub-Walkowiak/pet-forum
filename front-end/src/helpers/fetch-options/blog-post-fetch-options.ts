@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const BlogPostFetchValidator = z
     .object({
-        orderBy: z.enum(['like_count', 'date_posted', 'reply_count']).optional(),
+        orderBy: z.enum(['like_count', 'date_posted', 'reply_count', 'date_liked']).optional(),
         orderMode: z.enum(['ASC', 'DESC']).optional(),
         fromUser: z.coerce.number().optional(),
         replies: z.coerce.boolean().optional(),
@@ -25,6 +25,7 @@ export const BlogPostFetchValidator = z
             .transform(checked => checked.map(el => Number(el)))
             .optional(),
         petMode: z.enum(['any', 'all']).optional(),
+        likedBy: z.coerce.number().optional(),
     })
 
 type BlogPostFetchOptions = z.infer<typeof BlogPostFetchValidator>

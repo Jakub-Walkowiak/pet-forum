@@ -16,16 +16,17 @@ export default async function* getBlogPosts(options?: BlogPostFetchOptions) {
             options.petMode ? `petMode=${options.petMode}` : '', 
             options.tags && options.tags.length > 0 ? options.tags.map(tag => `tags[]=${tag}`).join('&') : '',
             options.pets && options.pets.length > 0 ? options.pets.map(pet => `pets[]=${pet}`).join('&') : '',
+            options.likedBy ? `likedBy=${options.likedBy}` : '',
         ].filter(str => str !== '').join('&')
 
     while (true) {
         const response = await fetch(`http://localhost:3000/blog-posts?offset=${offset}&` +  queryBody, { credentials: 'include' })
-        
+
         if (response.ok) {
             const json = (await response.json()) as { id: number }[]
             if (json.length > 0) {
                 yield json.map(row => Number(row.id))
-                offset += options?.limit !== undefined ? options?.limit : 10
+                offset += json.length
             } else yield undefined
         } else yield undefined
     }

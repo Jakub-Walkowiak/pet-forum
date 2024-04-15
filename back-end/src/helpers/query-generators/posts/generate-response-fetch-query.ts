@@ -1,7 +1,7 @@
 import { ResponseFetchData } from '../../../validators/advice-post-validators'
 import { getBestFilterString, getContainsFilterString, getOrderByString, getUserFilterString, getUserTypeFilterString } from './post-filter-string-generators'
 
-export const generateResponseFetchQuery = (data: ResponseFetchData, forUser: number | undefined) => {
+export const generateResponseFetchQuery = (data: ResponseFetchData, forUser?: number) => {
     const whereBlock = [
         getUserFilterString(data.fromUser),
         getUserTypeFilterString(data.desiredUsers, forUser),

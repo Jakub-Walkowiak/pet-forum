@@ -3,7 +3,7 @@ import { AdvicePostOrderByOption, BlogPostOrderByOption, MultipleMode, PostType,
 
 export const getOrderByString = (by: BlogPostOrderByOption | AdvicePostOrderByOption | ResponseOrderByOption, mode: OrderByMode) => `${by} ${mode}, date_posted DESC`
 
-export const getUserTypeFilterString = (input: UserTypeOption, forUser: number | undefined) => {
+export const getUserTypeFilterString = (input: UserTypeOption, forUser?: number) => {
     if (forUser === undefined) return ''
 
     switch (input) {
@@ -23,7 +23,7 @@ export const getUserTypeFilterString = (input: UserTypeOption, forUser: number |
     }
 }
 
-export const getTagFilterString = (mode: MultipleMode, tags: Array<number> | undefined, postType: PostType) => {
+export const getTagFilterString = (mode: MultipleMode, postType: PostType, tags?: Array<number>) => {
     if (tags === undefined || tags.length === 0) return ''
     else if (mode === MultipleMode.ANY) return `--sql
         id IN (
@@ -39,7 +39,7 @@ export const getTagFilterString = (mode: MultipleMode, tags: Array<number> | und
         `).join(' AND ')
 }
 
-export const getPetFilterString = (mode: MultipleMode, pets: Array<number> | undefined, postType: PostType) => {
+export const getPetFilterString = (mode: MultipleMode, postType: PostType, pets?: Array<number>) => {
     if (pets === undefined || pets.length === 0) return ''
     else if (mode === MultipleMode.ANY) return `--sql
         id IN (
@@ -55,17 +55,17 @@ export const getPetFilterString = (mode: MultipleMode, pets: Array<number> | und
         `).join(' AND ')
 }
 
-export const getUserFilterString = (user: number | undefined) => user !== undefined ? `poster_id = \'${user}\'` : ''
+export const getUserFilterString = (user?: number) => user !== undefined ? `poster_id = \'${user}\'` : ''
 
-export const getReplyFilterString = (replies: boolean | undefined, to: number | undefined) => 
+export const getReplyFilterString = (replies?: boolean, to?: number) => 
     replies === undefined 
         ? `${to === undefined ? '' : `reply_to = ${to}`}`
         : replies
             ? `reply_to ${to === undefined ? 'IS NOT NULL' : `= ${to}`}`
             : 'reply_to IS NULL'
 
-export const getContainsFilterString = (contains: string | undefined) => contains === undefined ? '' : `LOWER(contents) LIKE LOWER(\'%${contains}%\')`
+export const getContainsFilterString = (contains?: string) => contains === undefined ? '' : `LOWER(contents) LIKE LOWER(\'%${contains}%\')`
 
-export const getResolvedString = (resolved: boolean | undefined) => resolved === undefined ? '' : `WHERE ${resolved ? '' : 'NOT'} resolved`
+export const getResolvedString = (resolved?: boolean) => resolved === undefined ? '' : `${resolved ? '' : 'NOT'} resolved`
 
-export const getBestFilterString = (isBest: boolean | undefined) => isBest === undefined ? '' : `WHERE ${isBest ? '' : 'NOT'} marked_as_best`
+export const getBestFilterString = (isBest?: boolean) => isBest === undefined ? '' : `${isBest ? '' : 'NOT'} marked_as_best`

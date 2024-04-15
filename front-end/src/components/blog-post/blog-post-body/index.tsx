@@ -71,7 +71,7 @@ export default function BlogPostBody({ data, handleLike, handleUnlike, showReply
                 </div>}
                 {!maximized && <div className="h-1"/>}
 
-                <div className={`mb-3 ${maximized ? 'text-lg' : 'text-base'}`}>{data.contents}</div>
+                <div className={`mb-3 ${maximized ? 'text-lg' : 'text-base'} break-all`}>{data.contents}</div>
 
                 {data.tags.length > 0 && <ul className="flex gap-2 flex-wrap list-none mb-4">
                     {data.tags.map(id => (

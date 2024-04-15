@@ -91,7 +91,7 @@ export default function BlogPostBody({ data, handleLike, handleUnlike, showReply
                     <div className={`${maximized ? 'text-lg' : 'text-base'}  cursor-pointer duration-200 hover:text-white flex gap-1 items-center`} onClick={e => { stopEvent(e); showReplyCreator(profileData.accountName) }}>
                         <AiOutlineMessage className={maximized ? 'text-2xl' : 'text-xl'}/>{data.replyCount} {maximized && 'Replies'}
                     </div>
-                    {maximized && <div className="flex-1"><TimeLabel date={new Date(data.datePosted)} extended/></div>}
+                    {maximized && <div className="flex-1"><TimeLabel date={new Date(data.datePosted)} mode='datetime'/></div>}
                 </div>
             </div>
         </>

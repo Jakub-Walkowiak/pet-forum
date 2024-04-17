@@ -1,6 +1,6 @@
 import BlogPostGroup from "@/components/blog-post-group";
+import getBlogPosts from "@/helpers/feed-generators/get-blog-posts";
 import BlogPostFetchOptions from "@/helpers/fetch-options/blog-post-fetch-options";
-import getBlogPosts from "@/helpers/get-posts";
 import DynamicFeed from "..";
 
 interface BlogFeedProps {

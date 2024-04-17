@@ -1,6 +1,6 @@
 'use client'
 
-import BlogFeed from "@/components/blog-feed";
+import BlogFeed from "@/components/dynamic-feeds/blog-feed";
 import NewPostPanel from "@/components/new-post-panel";
 import TabContainer from "@/components/tab-container";
 import useAuth from "@/hooks/use-auth";

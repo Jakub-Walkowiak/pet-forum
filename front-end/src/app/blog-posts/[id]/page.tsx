@@ -1,7 +1,7 @@
 'use client'
 
-import BlogFeed from "@/components/blog-feed";
 import BlogPostGroup from "@/components/blog-post-group";
+import BlogFeed from "@/components/dynamic-feeds/blog-feed";
 import { notFound } from "next/navigation";
 import { useState } from "react";
 

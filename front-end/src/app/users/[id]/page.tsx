@@ -1,6 +1,6 @@
 'use client'
 
-import BlogFeed from "@/components/blog-feed";
+import BlogFeed from "@/components/dynamic-feeds/blog-feed";
 import ProfileHeader from "@/components/profile-header";
 import TabContainer from "@/components/tab-container";
 import { notFound } from "next/navigation";

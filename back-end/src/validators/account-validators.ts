@@ -1,5 +1,5 @@
 import z from 'zod'
-import { AccountOrderByOption } from '../types/account-types'
+import { AccountOrderByOption, RelationType } from '../types/account-types'
 import { OrderByMode } from '../types/order-by-mode'
 
 export const RegistrationValidator = z.object({
@@ -23,6 +23,8 @@ export const AccountFetchValidator = z
         offset: z.coerce.number().default(0),
         orderBy: z.nativeEnum(AccountOrderByOption).default(AccountOrderByOption.FOLLOWERS),
         orderMode: z.nativeEnum(OrderByMode).default(OrderByMode.DESC),
+        relatedTo: z.coerce.number().optional(),
+        relationType: z.nativeEnum(RelationType).default(RelationType.FOLLOWERS),
     })
 
 export const AccountFollowFetchValidator = z

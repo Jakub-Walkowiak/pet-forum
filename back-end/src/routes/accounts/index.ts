@@ -1,12 +1,14 @@
 import bcrypt from 'bcrypt'
 import { Router } from 'express'
 import { pool } from '../../helpers/pg-pool'
-import { generateAccountEditQuery } from '../../helpers/query-generators/generate-account-edit-query'
+import { generateAccountEditQuery } from '../../helpers/query-generators/accounts/generate-account-edit-query'
+import generateRelationTypeJoin from '../../helpers/query-generators/accounts/generate-relation-type-join'
 import { CONFLICT, CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory, authOptional } from '../../middleware/auth'
-import { AccountEditValidator, AccountFetchValidator, AccountFollowFetchData, AccountFollowFetchValidator, AddProfilePictureValidator, ChangePasswordValidator, LoginValidator, RegistrationValidator } from '../../validators/account-validators'
+import { AccountOrderByOption, RelationType } from '../../types/account-types'
+import { AccountEditValidator, AccountFetchValidator, AddProfilePictureValidator, ChangePasswordValidator, LoginValidator, RegistrationValidator } from '../../validators/account-validators'
 import { FollowRouter } from './follows'
-import { attemptLogin, getFollowed, getFollowers } from './functions'
+import { attemptLogin } from './functions'
 
 const saltRounds = 10
 const AccountRouter = Router()
@@ -89,22 +91,39 @@ AccountRouter.patch('/password', authMandatory, async (req, res, next) => {
     } catch (err) { next(err) }
 })
 
-AccountRouter.get('/', (req, res, next) => {
-    const { nameQuery, limit, offset, orderBy, orderMode } = AccountFetchValidator.parse(req.body)
+AccountRouter.get('/', authOptional, async (req, res, next) => {
+    try {
+        const { nameQuery, limit, offset, orderBy, orderMode, relatedTo, relationType } = AccountFetchValidator.parse(req.query)
+    
+        if (relationType === RelationType.FOLLOWED || relationType === RelationType.MUTUALS) {
+            const privacySql = 'SELECT followed_visible FROM user_account WHERE id = $1'
+            const shouldFetch = (req.body.auth && req.body.id === relatedTo) || (await pool.query(privacySql, [relatedTo])).rows[0].followed_visible
+            if (!shouldFetch) res.status(403).json(FORBIDDEN)
+        }
 
-    const nameQueryString = nameQuery === undefined ? '' : `--sql
-        WHERE Lower(account_name) LIKE Lower(\'%${nameQuery}%\')
-        OR Lower(display_name) LIKE Lower(\'%${nameQuery}%\')`
+        const nameQueryString = nameQuery === undefined ? '' : `--sql
+            WHERE Lower(account_name) LIKE Lower(\'%${nameQuery}%\')
+            OR Lower(display_name) LIKE Lower(\'%${nameQuery}%\')`
 
-    const sql = `--sql
-        SELECT id FROM user_account
-        ${nameQueryString}
-        ORDER BY ${orderBy} ${orderMode}
-        LIMIT ${limit} OFFSET ${offset}`
+        const orderByString = orderBy !== AccountOrderByOption.DATE_FOLLOWED 
+            ? `${orderBy}`
+            : relatedTo === undefined ? AccountOrderByOption.FOLLOWERS
+                : relationType === RelationType.FOLLOWERS ? 'followers.date_followed'
+                : relationType === RelationType.FOLLOWED ? 'followed.date_followed'
+                : 'Greatest(followers.date_followed, followed.date_followed)'
 
-    pool.query(sql)
-        .then(result => res.status(200).json(result))
-        .catch(err => next(err))
+        const sql = `--sql
+            SELECT id FROM user_account ${generateRelationTypeJoin(relationType, relatedTo)}
+            ${nameQueryString}
+            ORDER BY 
+                ${req.body.auth ? `id = ${req.body.id},` : ''} 
+                ${orderByString} ${orderMode}
+            LIMIT ${limit} OFFSET ${offset}`
+
+        pool.query(sql)
+            .then(result => res.status(200).json(result.rows))
+            .catch(err => next(err))
+    } catch (err) { next(err) }
 })
 
 AccountRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
@@ -141,55 +160,6 @@ AccountRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
                 if (result.rowCount === 0) res.status(404).send(RESOURCE_NOT_FOUND)
                 else res.status(200).json({ ...result.rows[0], followed })
             }).catch(err => next(err))
-    } catch (err) { next(err) }
-})
-
-AccountRouter.get('/:id(\\d+)/followed', authOptional, async (req, res, next) => {
-    try {
-        const privacySql = 'SELECT followed_visible FROM user_account WHERE id = $1'
-        const shouldFetch = (req.body.auth && req.body.id === req.params.id) || (await pool.query(privacySql, [req.params.id])).rows[0].followed_visible
-
-        if (shouldFetch) {
-            const data: AccountFollowFetchData = AccountFollowFetchValidator.parse(req.body)
-
-            const result = await getFollowed(req.params.id, data)
-            if (result.length === 0) res.status(404).send(RESOURCE_NOT_FOUND)
-            else res.status(200).json(result)
-        } else res.status(403).json(FORBIDDEN)
-    } catch (err) { next(err) }
-})
-
-AccountRouter.get('/:id(\\d+)/followers', authOptional, async (req, res, next) => {
-    try {
-        const data: AccountFollowFetchData = AccountFollowFetchValidator.parse(req.body)
-
-        let result
-
-        if (req.body.auth) result = await getFollowers(req.params.id, req.body.id, data)
-        else result = await getFollowers(req.params.id, undefined, data)
-
-        if (result.length === 0) res.status(404).send(RESOURCE_NOT_FOUND)
-        else res.status(200).json(result)
-    } catch (err) { next(err) }
-})
-
-AccountRouter.get('/:id(\\d+)/mutuals', authOptional, async (req, res, next) => {
-    try {
-        const privacySql = 'SELECT followed_visible FROM user_account WHERE id = $1'
-        const shouldFetch = (req.body.auth && req.body.id === req.params.id) || (await pool.query(privacySql, [req.params.id])).rows[0].followed_visible
-
-        if (shouldFetch) {
-            const data: AccountFollowFetchData = AccountFollowFetchValidator.parse(req.body)
-
-            const followed = await getFollowed(req.params.id, data)
-            const followers = req.body.auth
-                ? await getFollowers(req.params.id, req.body.id, data)
-                : await getFollowers(req.params.id, undefined, data)
-
-            const result = followed.filter(value => followers.includes(value))
-            if (result.length === 0) res.status(404).send(RESOURCE_NOT_FOUND)
-            else res.status(200).json(result)
-        } else res.status(403).json(FORBIDDEN)
     } catch (err) { next(err) }
 })
 

@@ -13,4 +13,11 @@ export enum AccountOrderByOption {
     ADVICE_POSTS = 'advice_count',
     RESPONSES = 'response_count',
     PETS = 'owned_pet_count',
+    DATE_FOLLOWED = 'date_followed',
+}
+
+export enum RelationType {
+    FOLLOWERS = 'followers',
+    FOLLOWED = 'followed',
+    MUTUALS = 'mutuals',
 }

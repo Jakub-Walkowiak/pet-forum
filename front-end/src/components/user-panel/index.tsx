@@ -19,8 +19,8 @@ export default function UserPanel({ id }: UserPanelProps) {
                         <ProfilePicture userId={id} profileData={data} sizeOverride={3.5}/>
                         <div className="flex flex-col">
                             <div className="gap-2 flex">
-                                <AccountLabel text={data.displayName} displayName size="large"/>
-                                <AccountLabel text={data.accountName} size="large"/>
+                                <AccountLabel id={id} text={data.displayName} displayName size="large"/>
+                                <AccountLabel id={id} text={data.accountName} size="large"/>
                             </div>
                             <p className="break-all">{data.bio}</p>
                         </div>

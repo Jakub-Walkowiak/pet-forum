@@ -50,8 +50,8 @@ export default function BlogPostBody({ data, handleLike, handleUnlike, showReply
                 ? <div className="flex gap-4">
                     <ProfilePicture userId={data.posterId} sizeOverride={4} profileData={profileData}/>
                     <div className="flex flex-col gap-x-1 col-span-7">
-                        <AccountLabel displayName size="large" text={profileData.displayName}/>
-                        <AccountLabel size="large" text={profileData.accountName}/>
+                        <AccountLabel id={data.posterId} displayName size="large" text={profileData.displayName}/>
+                        <AccountLabel id={data.posterId} size="large" text={profileData.accountName}/>
                     </div>
                 </div> 
                 : <ProfilePicture userId={data.posterId} profileData={profileData}/>}
@@ -59,8 +59,8 @@ export default function BlogPostBody({ data, handleLike, handleUnlike, showReply
             <div className="w-full flex flex-col">
                 {!maximized && <div className="grid grid-cols-8 gap-1">
                     <div className="items-center flex flex-wrap gap-x-1 w-full col-span-7">
-                        <AccountLabel displayName text={profileData.displayName}/>
-                        <AccountLabel text={profileData.accountName}/>
+                        <AccountLabel id={data.posterId} displayName text={profileData.displayName}/>
+                        <AccountLabel id={data.posterId} text={profileData.accountName}/>
                     </div>
                     
                     <div className="col-span-1"><TimeLabel date={new Date(data.datePosted)}/></div>

@@ -37,8 +37,8 @@ export default function ProfileHeader({ id, setLikesTab }: ProfileHeaderProps) {
                     <ProfilePicture userId={id} profileData={data} sizeOverride={10}/>
                 </div>
                 <div className="flex flex-col">
-                    <AccountLabel text={data.displayName} size='extra_large' displayName/>
-                    <AccountLabel text={data.accountName} size='extra_large'/>
+                    <AccountLabel id={id} text={data.displayName} size='extra_large' displayName/>
+                    <AccountLabel id={id} text={data.accountName} size='extra_large'/>
                     <div className="break-all relative top-4 text-gray-200">{data.bio}</div>
                 </div>
                 <div className="absolute top-36 left-3"><FollowButton id={id} followed={data.followed} onChange={setClientFollow}/></div>

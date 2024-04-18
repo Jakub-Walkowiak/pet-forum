@@ -18,8 +18,8 @@ export default function LoggedIn({ authId }: LoggedInProps) {
             <PanelPopup show={showPopup}/>
             <div className='h-12 aspect-square'>{<ProfilePicture userId={authId} profileData={profileData}/>}</div>
             <div className='h-fit max-w-52 flex flex-col'>
-                <AccountLabel text={profileData.displayName} displayName/>
-                <AccountLabel text={profileData.accountName}/>
+                <AccountLabel id={authId} text={profileData.displayName} displayName/>
+                <AccountLabel id={authId} text={profileData.accountName}/>
             </div>
         </div>
     ) 

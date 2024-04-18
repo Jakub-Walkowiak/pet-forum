@@ -18,7 +18,7 @@ export const LoginValidator = z
 
 export const AccountFetchValidator = z
     .object({
-        nameQuery: z.string().trim().optional(),
+        contains: z.string().trim().optional(),
         limit: z.coerce.number().max(100).default(25),
         offset: z.coerce.number().default(0),
         orderBy: z.nativeEnum(AccountOrderByOption).default(AccountOrderByOption.FOLLOWERS),

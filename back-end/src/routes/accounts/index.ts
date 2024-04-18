@@ -93,7 +93,7 @@ AccountRouter.patch('/password', authMandatory, async (req, res, next) => {
 
 AccountRouter.get('/', authOptional, async (req, res, next) => {
     try {
-        const { nameQuery, limit, offset, orderBy, orderMode, relatedTo, relationType } = AccountFetchValidator.parse(req.query)
+        const { contains, limit, offset, orderBy, orderMode, relatedTo, relationType } = AccountFetchValidator.parse(req.query)
     
         if (relationType === RelationType.FOLLOWED || relationType === RelationType.MUTUALS) {
             const privacySql = 'SELECT followed_visible FROM user_account WHERE id = $1'
@@ -101,9 +101,9 @@ AccountRouter.get('/', authOptional, async (req, res, next) => {
             if (!shouldFetch) res.status(403).json(FORBIDDEN)
         }
 
-        const nameQueryString = nameQuery === undefined ? '' : `--sql
-            WHERE Lower(account_name) LIKE Lower(\'%${nameQuery}%\')
-            OR Lower(display_name) LIKE Lower(\'%${nameQuery}%\')`
+        const nameQueryString = contains === undefined ? '' : `--sql
+            WHERE Lower(account_name) LIKE Lower(\'%${contains}%\')
+            OR Lower(display_name) LIKE Lower(\'%${contains}%\')`
 
         const orderByString = orderBy !== AccountOrderByOption.DATE_FOLLOWED 
             ? `${orderBy}`

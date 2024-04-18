@@ -21,7 +21,7 @@ TagRouter.get('/', (req, res, next) => {
 })
 
 TagRouter.get('/:id(\\d+)', (req, res, next) => {
-    const sql = 'SELECT tag_name AS "tagName", times_used AS "timesUsed" FROM advice_tag WHERE id = $1'
+    const sql = 'SELECT tag_name AS 'tagName', times_used AS 'timesUsed' FROM advice_tag WHERE id = $1'
 
     pool.query(sql, [req.params.id])
         .then(result => {

@@ -50,10 +50,10 @@ ResponseRouter.delete('/:id(\\d+)', authMandatory, (req, res, next) => {
 
 ResponseRouter.get('/:id(\\d+)', (req, res, next) => {
     const sql = `--sql
-        SELECT reply_to AS "replyTo",
-               poster_id AS "posterId",
+        SELECT reply_to AS 'replyTo',
+               poster_id AS 'posterId',
                score,
-               date_posted AS "datePosted"
+               date_posted AS 'datePosted'
         FROM advice_response`
 
     pool.query(sql, [req.params.id])

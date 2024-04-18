@@ -77,10 +77,10 @@ AdvicePostRouter.delete('/:id(\\d+)', authMandatory, (req, res, next) => {
 AdvicePostRouter.get('/:id(\\d+)', async (req, res, next) => {
     try {
         const postSql = `--sql
-            SELECT CASE WHEN posted_as_anonymous THEN poster_id ELSE NULL AS "posterId",
+            SELECT CASE WHEN posted_as_anonymous THEN poster_id ELSE NULL AS 'posterId',
                 contents,
-                date_posted AS "datePosted",
-                response_count AS "responseCount",
+                date_posted AS 'datePosted',
+                response_count AS 'responseCount',
                 resolved
             FROM advice_post WHERE id = $1`
         const postPromise = pool.query(postSql, [req.params.id])

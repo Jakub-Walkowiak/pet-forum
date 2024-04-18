@@ -1,4 +1,4 @@
-import getTimeSinceString from "./get-time-since-string";
+import getTimeSinceString from './get-time-since-string';
 
 interface TimeLabelProps {
     date: Date,

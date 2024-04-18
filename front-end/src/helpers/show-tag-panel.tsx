@@ -1,5 +1,5 @@
-import TagPanel, { TagPanelProps } from "@/components/tag-panel";
-import { createRoot } from "react-dom/client";
+import TagPanel, { TagPanelProps } from '@/components/content/tag-panel';
+import { createRoot } from 'react-dom/client';
 
 const showTagPanel = (props: TagPanelProps) => {
     const rootElement = document.createElement('div')

@@ -62,7 +62,7 @@ PetRouter.get('/', (req, res, next) => {
 
 PetRouter.get('/:id(\\d+)', async (req, res, next) => {
     try {
-        const petSql = 'SELECT name, type_id AS "typeId", sex FROM pet WHERE id = $1'
+        const petSql = 'SELECT name, type_id AS 'typeId', sex FROM pet WHERE id = $1'
         const petPromise = pool.query(petSql, [req.params.id])
 
         const ownersSql = 'SELECT owner_id AS id FROM pet_own WHERE pet_id = $1'

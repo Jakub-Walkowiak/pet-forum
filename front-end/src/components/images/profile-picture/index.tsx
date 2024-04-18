@@ -1,11 +1,11 @@
 'use client'
 
-import stopEvent from '@/helpers/stop-event';
-import useImageUrl from '@/hooks/use-image-url';
-import { ProfileData } from '@/hooks/use-profile';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useId } from 'react';
+import stopEvent from '@/helpers/stop-event'
+import useImageUrl from '@/hooks/use-image-url'
+import { ProfileData } from '@/hooks/use-profile'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { useId } from 'react'
 
 interface ProfilePictureProps {
     profileData: ProfileData,

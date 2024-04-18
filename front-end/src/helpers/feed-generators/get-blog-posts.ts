@@ -1,4 +1,4 @@
-import BlogPostFetchOptions from "../fetch-options/blog-post-fetch-options"
+import BlogPostFetchOptions from '../fetch-options/blog-post-fetch-options'
 
 export default async function* getBlogPosts(options?: BlogPostFetchOptions) {
     let offset = options?.offset === undefined ? 0 : options.offset

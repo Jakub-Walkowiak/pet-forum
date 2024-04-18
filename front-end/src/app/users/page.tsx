@@ -1,10 +1,10 @@
 'use client'
 
-import AccountFeed from "@/components/dynamic-feeds/account-feed";
-import AccountSearchPanel from "@/components/form-utils/feed-search-panels/account-search-panel";
-import { AccountFetchValidator } from "@/helpers/fetch-options/account-fetch-options";
-import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import AccountFeed from '@/components/content/dynamic-feeds/account-feed'
+import AccountSearchPanel from '@/components/utils/form-utils/feed-search-panels/account-search-panel'
+import { AccountFetchValidator } from '@/helpers/fetch-options/account-fetch-options'
+import { useSearchParams } from 'next/navigation'
+import { Suspense, useEffect, useState } from 'react'
 
 function PageBody() {
     const params = useSearchParams()
@@ -14,7 +14,7 @@ function PageBody() {
 
     return (
         <>
-            <div className="w-full p-2 border-b border-zinc-700">
+            <div className='w-full p-2 border-b border-zinc-700'>
                 <AccountSearchPanel onSave={options => setOptions(options)} defaults={options}/>
             </div>
             <AccountFeed options={options}/>

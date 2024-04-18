@@ -1,10 +1,10 @@
-import BackToTop from '@/components/back-to-top';
-import LoginPanel from '@/components/login-panel';
-import NavbarSideCompact from '@/components/navbars/navbar-side-compact';
-import NavbarSideFull from '@/components/navbars/navbar-side-full';
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
+import LoginPanel from '@/components/account/account-panel'
+import NavbarSideCompact from '@/components/layout/navbars/navbar-side-compact'
+import NavbarSideFull from '@/components/layout/navbars/navbar-side-full'
+import BackToTop from '@/components/utils/back-to-top'
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] });
 

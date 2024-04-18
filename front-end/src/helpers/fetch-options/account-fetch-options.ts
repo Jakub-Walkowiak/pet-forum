@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 enum AccountOrderByOption {
     ACCOUNT_NAME = 'account_name',

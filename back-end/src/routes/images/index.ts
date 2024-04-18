@@ -31,7 +31,7 @@ ImageRouter.post('/', upload.array('images', 10), (req, res, next) => {
 })
 
 ImageRouter.get('/:id(\\d+)', (req, res, next) => {
-    const sql = 'SELECT picture_path AS "picturePath" FROM picture WHERE id = $1'
+    const sql = 'SELECT picture_path AS 'picturePath' FROM picture WHERE id = $1'
 
     pool.query(sql, [req.params.id])
         .then(result => {

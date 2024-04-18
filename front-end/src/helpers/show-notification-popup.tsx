@@ -1,5 +1,5 @@
-import NotificationPopup from "@/components/notification-popup"
-import { createRoot } from "react-dom/client"
+import NotificationPopup from '@/components/utils/notification-popup'
+import { createRoot } from 'react-dom/client'
 
 const showNotificationPopup = (positive: boolean, text: string) => {
     const rootElement = document.createElement('div')

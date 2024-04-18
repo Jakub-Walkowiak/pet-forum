@@ -1,10 +1,10 @@
 'use client'
 
-import BlogFeed from "@/components/dynamic-feeds/blog-feed";
-import BlogPostSearchPanel from "@/components/form-utils/feed-search-panels/blog-post-search-panel";
-import { BlogPostFetchValidator } from "@/helpers/fetch-options/blog-post-fetch-options";
-import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import BlogFeed from '@/components/content/dynamic-feeds/blog-feed'
+import BlogPostSearchPanel from '@/components/utils/form-utils/feed-search-panels/blog-post-search-panel'
+import { BlogPostFetchValidator } from '@/helpers/fetch-options/blog-post-fetch-options'
+import { useSearchParams } from 'next/navigation'
+import { Suspense, useEffect, useState } from 'react'
 
 function PageBody() {
     const params = useSearchParams()
@@ -14,7 +14,7 @@ function PageBody() {
 
     return (
         <>
-            <div className="w-full p-2 border-b border-zinc-700">
+            <div className='w-full p-2 border-b border-zinc-700'>
                 <BlogPostSearchPanel onSave={options => setOptions(options)} defaults={options}/>
             </div>
             <BlogFeed options={options}/>

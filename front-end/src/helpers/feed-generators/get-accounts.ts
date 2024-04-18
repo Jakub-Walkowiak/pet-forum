@@ -1,4 +1,4 @@
-import AccountFetchOptions from "../fetch-options/account-fetch-options"
+import AccountFetchOptions from '../fetch-options/account-fetch-options'
 
 export default async function* getAccounts(options?: AccountFetchOptions) {
     let offset = options?.offset === undefined ? 0 : options.offset

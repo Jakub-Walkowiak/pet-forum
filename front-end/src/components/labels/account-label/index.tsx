@@ -1,5 +1,5 @@
-import stopEvent from "@/helpers/stop-event";
-import Link from "next/link";
+import stopEvent from '@/helpers/stop-event';
+import Link from 'next/link';
 
 interface AccountLabelProps {
     text: string,

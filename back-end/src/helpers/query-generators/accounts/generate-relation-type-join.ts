@@ -1,4 +1,4 @@
-import { RelationType } from "../../../types/account-types";
+import { RelationType } from '../../../types/account-types';
 
 const generateFollowersJoin = (id: number) => {
     return `--sql

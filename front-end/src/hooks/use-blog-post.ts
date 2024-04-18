@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react'
 
 export interface BlogPostData {
     posterId: number,
@@ -15,7 +15,7 @@ export interface BlogPostData {
 export default function useBlogPost(id: number | undefined) {
     const [data, setData] = useState<BlogPostData>()
 
-    const getData = () => {
+    const getData = useCallback(() => {
         const fetchData = async () => {
             if (!id) setData(undefined) 
             else {
@@ -25,14 +25,14 @@ export default function useBlogPost(id: number | undefined) {
             }
         }
         try { fetchData() } catch(err) { setData(undefined) }
-    }
+    }, [id])
 
-    useEffect(getData, [id])
+    useEffect(getData, [id, getData])
     
     useEffect(() => {
         document.addEventListener('refreshblogpost', getData)
         return () => document.removeEventListener('refreshblogpost', getData)
-    }, [])
+    }, [getData])
 
     return data
 }

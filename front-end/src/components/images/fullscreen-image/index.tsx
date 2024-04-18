@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { AiOutlineClose } from "react-icons/ai";
 import BlurOverlay from "../../blur-overlay";
+import stopEvent from "@/helpers/stop-event";
 
 interface FullscreenImageProps {
     src: string,
@@ -8,8 +9,6 @@ interface FullscreenImageProps {
 }
 
 export default function FullscreenImage({ src, hide }: FullscreenImageProps) {
-    const stopEvent = (e: React.BaseSyntheticEvent) => e.stopPropagation()
-
     return (
         <>
             <BlurOverlay/>

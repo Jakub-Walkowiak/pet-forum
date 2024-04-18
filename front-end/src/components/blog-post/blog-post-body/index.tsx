@@ -4,6 +4,7 @@ import AccountLabel from "@/components/labels/account-label";
 import TagLabel from "@/components/labels/tag-label";
 import TimeLabel from "@/components/labels/time-label";
 import showNotificationPopup from "@/helpers/show-notification-popup";
+import stopEvent from "@/helpers/stop-event";
 import useAuth from "@/hooks/use-auth";
 import useBlogPost, { BlogPostData } from "@/hooks/use-blog-post";
 import useProfile from "@/hooks/use-profile";
@@ -29,8 +30,6 @@ export default function BlogPostBody({ data, handleLike, handleUnlike, showReply
     const replyToPoster = useProfile(replyTo?.posterId)
 
     useEffect(() => setClientLike(data.liked), [data])
-
-    const stopEvent = (e: React.BaseSyntheticEvent) => e.stopPropagation()
 
     const onClick = () => {
         if (!auth) {

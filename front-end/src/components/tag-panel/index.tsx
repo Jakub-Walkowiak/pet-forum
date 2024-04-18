@@ -1,6 +1,7 @@
 'use client'
 
 import showNotificationPopup from "@/helpers/show-notification-popup"
+import stopEvent from "@/helpers/stop-event"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -109,8 +110,6 @@ export default function TagPanel({ advice = false, selected, added, setSelected,
     const handleScroll = (e: React.MouseEvent<HTMLUListElement>) => {
         if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - e.currentTarget.clientHeight) < 1) updateTags()
     }
-
-    const stopEvent = (e: React.BaseSyntheticEvent) => e.stopPropagation()
 
     return (
         <form style={{ top: y, left: x }} className={`fixed flex flex-col w-60 border border-gray-600 rounded-lg bg-gray-800`} onClick={stopEvent} onScroll={stopEvent}>

@@ -1,9 +1,8 @@
 import BlogPostFetchOptions from "@/helpers/fetch-options/blog-post-fetch-options";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiOutlineSearch } from "react-icons/ai";
-import Input from "../form-utils/input";
-import Select from "../form-utils/select";
+import Input from "../../input";
+import Select from "../../select";
 
 interface BlogPostSearchPanelProps {
     onSave: (options: BlogPostFetchOptions) => void,
@@ -11,7 +10,7 @@ interface BlogPostSearchPanelProps {
 }
 
 export default function BlogPostSearchPanel({ onSave, defaults }: BlogPostSearchPanelProps) {
-    const [minimized, setMinimized] = useState(true)
+    // const [minimized, setMinimized] = useState(true)
 
     const {
         register,

@@ -1,13 +1,13 @@
 'use client'
 
-import showNotificationPopup from "@/helpers/show-notification-popup";
 import useAuth from "@/hooks/use-auth";
 import useProfile from "@/hooks/use-profile";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { AiFillInfoCircle, AiOutlineInfoCircle } from "react-icons/ai";
-import Button from "../form-utils/button";
+import FollowButton from "../follow-button";
 import ProfilePicture from "../images/profile-picture";
-import TimeLabel from "../time-label";
+import AccountLabel from "../labels/account-label";
+import TimeLabel from "../labels/time-label";
 
 interface ProfileHeaderProps {
     id: number,
@@ -18,50 +18,13 @@ export default function ProfileHeader({ id, setLikesTab }: ProfileHeaderProps) {
     const data = useProfile(id)
     const auth = useAuth()
 
-    const [clientFollow, setClientFollow] = useState(false)
-    const [followTimeout, setFollowTimeout] = useState<NodeJS.Timeout>()
     const [showStats, setShowStats] = useState(false)
+    const [clientFollow, setClientFollow] = useState(false)
 
     useEffect(() => { 
-        if (data !== undefined) { 
-            setClientFollow(data.followed) 
-            if (setLikesTab) setLikesTab(data.likesVisible || (!data.likesVisible && auth === id))
-        }
+        if (data !== undefined) if (setLikesTab) setLikesTab(data.likesVisible || (!data.likesVisible && auth === id))
     }, [data, auth, id, setLikesTab])
 
-    const handleUnfollow = async () => {
-        try {
-            const response = await fetch(`http://localhost:3000/accounts/${id}/follow`, {
-                method: 'DELETE',
-                mode: 'cors',
-                credentials: 'include',
-            }).catch(err => { throw err })
-
-            if (!response.ok) showNotificationPopup(false, 'Failed to unfollow')
-            else document.dispatchEvent(new CustomEvent('refreshprofile'))
-        } catch (err) { showNotificationPopup(false, 'Failed to unfollow') }
-    }
-
-    const handleFollow = async () => {
-        try {
-            const response = await fetch(`http://localhost:3000/accounts/${id}/follow`, {
-                method: 'POST',
-                mode: 'cors',
-                credentials: 'include',
-            }).catch(err => { throw err })
-
-            if (!response.ok) showNotificationPopup(false, 'Failed to follow')
-            else document.dispatchEvent(new CustomEvent('refreshprofile'))
-        } catch (err) { showNotificationPopup(false, 'Failed to follow') }
-    }
-
-    const handleFollowClick = () => {
-        setClientFollow(!clientFollow)
-        clearTimeout(followTimeout)
-        setFollowTimeout(setTimeout(() => {
-            if (clientFollow === data?.followed) data?.followed ? handleUnfollow() : handleFollow()
-        }, 350))
-    }
 
     if (data === undefined) return (
         <div className="flex items-center justify-center text-2xl font-semibold">Encountered error fetching profile</div>
@@ -78,11 +41,7 @@ export default function ProfileHeader({ id, setLikesTab }: ProfileHeaderProps) {
                     <AccountLabel text={data.accountName} size='extra_large'/>
                     <div className="break-all relative top-4 text-gray-200">{data.bio}</div>
                 </div>
-                <Button className="absolute top-36 left-3 w-40 h-10" 
-                    text={auth !== undefined ? (!clientFollow ? 'Follow' : 'Unfollow') : 'Login to follow'} 
-                    disabled={auth === undefined || auth === id} 
-                    dark={clientFollow} 
-                    onClickHandler={handleFollowClick}/>
+                <div className="absolute top-36 left-3"><FollowButton id={id} followed={data.followed} onChange={setClientFollow}/></div>
             </div>
 
             <div className="flex px-3 py-4 items-end">

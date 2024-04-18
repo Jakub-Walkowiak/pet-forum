@@ -33,24 +33,19 @@ export default function DynamicFeed<T>({ generator, generatorOptions, mapper }: 
         }
     }, [fetch])
 
-    useEffect(() => { 
-        update()
-
-        const handleScroll = () => {
-            if (document.documentElement.scrollHeight - document.documentElement.clientHeight - document.documentElement.scrollTop < 1) update()
-        }
-
-        window.addEventListener('scroll', handleScroll)
-        return () => window.removeEventListener('scroll', handleScroll)
+    const tryExtendFeed = useCallback(() => {
+        if (document.documentElement.scrollHeight - document.documentElement.clientHeight - document.documentElement.scrollTop < 1) update()
     }, [update])
 
-    useEffect(() => {
-        setCurrentGenerator(generator(generatorOptions))
-    }, [generatorOptions, generator])
+    useEffect(() => { 
+        update()
+        window.addEventListener('scroll', tryExtendFeed)
+        return () => window.removeEventListener('scroll', tryExtendFeed)
+    }, [tryExtendFeed, update])
 
-    useEffect(() => {
-        setItems([])
-    }, [currentGenerator])
+    useEffect(() => setCurrentGenerator(generator(generatorOptions)), [generatorOptions, generator])
+    useEffect(() => setItems([]), [currentGenerator])
+    useEffect(() => tryExtendFeed(), [items, tryExtendFeed])
 
     return (
         <ul className="w-full flex flex-col list-none divide-y divide-zinc-700">

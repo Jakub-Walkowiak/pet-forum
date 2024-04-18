@@ -48,13 +48,13 @@ export default function BlogPostBody({ data, handleLike, handleUnlike, showReply
         <>
             {maximized 
                 ? <div className="flex gap-4">
-                    <ProfilePicture sizeOverride={4} profileData={profileData}/>
+                    <ProfilePicture userId={data.posterId} sizeOverride={4} profileData={profileData}/>
                     <div className="flex flex-col gap-x-1 col-span-7">
                         <AccountLabel displayName size="large" text={profileData.displayName}/>
                         <AccountLabel size="large" text={profileData.accountName}/>
                     </div>
                 </div> 
-                : <ProfilePicture profileData={profileData}/>}
+                : <ProfilePicture userId={data.posterId} profileData={profileData}/>}
 
             <div className="w-full flex flex-col">
                 {!maximized && <div className="grid grid-cols-8 gap-1">

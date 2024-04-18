@@ -16,7 +16,7 @@ export default function UserPanel({ id }: UserPanelProps) {
                 ? <p className="inset-0 m-auto">Failed to fetch account data</p>
                 : <>
                     <div className="flex gap-4">
-                        <ProfilePicture profileData={data} sizeOverride={3.5}/>
+                        <ProfilePicture userId={id} profileData={data} sizeOverride={3.5}/>
                         <div className="flex flex-col">
                             <div className="gap-2 flex">
                                 <AccountLabel text={data.displayName} displayName size="large"/>

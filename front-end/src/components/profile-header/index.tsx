@@ -34,7 +34,7 @@ export default function ProfileHeader({ id, setLikesTab }: ProfileHeaderProps) {
             <div className="w-full aspect-[13/3] bg-emerald-800"/>
             <div className="w-full relative flex p-2 gap-2">
                 <div className="bg-gray-900 rounded-full p-1 w-fit relative -top-12 flex-shrink-0">
-                    <ProfilePicture profileData={data} sizeOverride={10}/>
+                    <ProfilePicture userId={id} profileData={data} sizeOverride={10}/>
                 </div>
                 <div className="flex flex-col">
                     <AccountLabel text={data.displayName} size='extra_large' displayName/>

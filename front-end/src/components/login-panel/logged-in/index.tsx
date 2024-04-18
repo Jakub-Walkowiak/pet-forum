@@ -1,4 +1,5 @@
 import ProfilePicture from '@/components/images/profile-picture'
+import AccountLabel from '@/components/labels/account-label'
 import useProfile from '@/hooks/use-profile'
 import { useState } from 'react'
 import PanelPopup from './panel-popup'
@@ -16,9 +17,9 @@ export default function LoggedIn({ authId }: LoggedInProps) {
             onClick={() => setShowPopup(!showPopup)}>
             <PanelPopup show={showPopup}/>
             <div className='h-12 aspect-square'>{<ProfilePicture profileData={profileData}/>}</div>
-            <div className='h-fit max-w-52'>
-                <p className='font-medium text-md white truncate' title={profileData.displayName}>{profileData.displayName}</p>
-                <p className='font-normal text-sm text-zinc-500 truncate' title={profileData.accountName}>@{profileData.accountName}</p>
+            <div className='h-fit max-w-52 flex flex-col'>
+                <AccountLabel text={profileData.displayName} displayName/>
+                <AccountLabel text={profileData.accountName}/>
             </div>
         </div>
     ) 

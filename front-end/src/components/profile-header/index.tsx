@@ -74,8 +74,8 @@ export default function ProfileHeader({ id, setLikesTab }: ProfileHeaderProps) {
                     <ProfilePicture profileData={data} sizeOverride={10}/>
                 </div>
                 <div className="flex flex-col">
-                    <p className="text-2xl font-semibold">{data.displayName}</p>
-                    <p className="text-xl text-gray-500">@{data.accountName}</p>
+                    <AccountLabel text={data.displayName} size='extra_large' displayName/>
+                    <AccountLabel text={data.accountName} size='extra_large'/>
                     <div className="break-all relative top-4 text-gray-200">{data.bio}</div>
                 </div>
                 <Button className="absolute top-36 left-3 w-40 h-10" 

@@ -1,7 +1,8 @@
 import PostImages from "@/components/images/post-images";
 import ProfilePicture from "@/components/images/profile-picture";
-import TagLabel from "@/components/tag-label";
-import TimeLabel from "@/components/time-label";
+import AccountLabel from "@/components/labels/account-label";
+import TagLabel from "@/components/labels/tag-label";
+import TimeLabel from "@/components/labels/time-label";
 import showNotificationPopup from "@/helpers/show-notification-popup";
 import useAuth from "@/hooks/use-auth";
 import useBlogPost, { BlogPostData } from "@/hooks/use-blog-post";
@@ -48,19 +49,19 @@ export default function BlogPostBody({ data, handleLike, handleUnlike, showReply
         <>
             {maximized 
                 ? <div className="flex gap-4">
-                    <ProfilePicture sizeOverride={maximized ? 4 : undefined} profileData={profileData}/>
+                    <ProfilePicture sizeOverride={4} profileData={profileData}/>
                     <div className="flex flex-col gap-x-1 col-span-7">
-                        <span title={profileData.displayName} className={`flex-none truncate font-medium ${maximized ? 'text-lg' : 'text-base'} max-w-full white`}>{profileData.displayName}</span>
-                        <span title={`@${profileData.accountName}`} className={`flex-none font-normal ${maximized ? 'text-base' : 'text-sm'} text-zinc-500 max-w-full truncate`}>@{profileData.accountName}</span>
+                        <AccountLabel displayName size="large" text={profileData.displayName}/>
+                        <AccountLabel size="large" text={profileData.accountName}/>
                     </div>
                 </div> 
-                : <ProfilePicture sizeOverride={maximized ? 4 : undefined} profileData={profileData}/>}
+                : <ProfilePicture profileData={profileData}/>}
 
             <div className="w-full flex flex-col">
                 {!maximized && <div className="grid grid-cols-8 gap-1">
                     <div className="items-center flex flex-wrap gap-x-1 w-full col-span-7">
-                        <span title={profileData.displayName} className={`flex-none truncate font-medium max-w-full white`}>{profileData.displayName}</span>
-                        <span title={`@${profileData.accountName}`} className={`flex-none font-normal text-sm text-zinc-500 max-w-full truncate`}>@{profileData.accountName}</span>
+                        <AccountLabel displayName text={profileData.displayName}/>
+                        <AccountLabel text={profileData.accountName}/>
                     </div>
                     
                     <div className="col-span-1"><TimeLabel date={new Date(data.datePosted)}/></div>

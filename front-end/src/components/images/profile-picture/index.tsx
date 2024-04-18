@@ -14,5 +14,5 @@ export default function ProfilePicture({ profileData, sizeOverride }: ProfilePic
 
     return imageUrl !== undefined
         ? <Image id={id} src={imageUrl} alt={`Profile picture of user ${profileData.accountName}`} className={`rounded-full ${sizeOverride === undefined && 'w-12 h-12'}`} width={400} height={400} style={{ width: `${sizeOverride}rem`, height: `${sizeOverride}rem` }}/>
-        : <div className='rounded-full w-full h-full bg-emerald-600' style={{ width: `${sizeOverride}rem`, height: `${sizeOverride}rem` }}/>
+        : <div className={`flex-shrink-0 rounded-full bg-emerald-600 ${sizeOverride === undefined && 'w-12 h-12'}`} style={{ width: `${sizeOverride}rem`, height: `${sizeOverride}rem` }}/>
 }

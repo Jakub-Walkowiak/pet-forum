@@ -1,5 +1,5 @@
-import { routes } from '@/helpers/routes';
-import Cookies from 'js-cookie';
+import { routes } from '@/helpers/routes'
+import Cookies from 'js-cookie'
 
 interface PanelPopupProps {
     show: boolean,

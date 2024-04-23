@@ -14,7 +14,7 @@ export const attemptLogin = async (sql: string, indentifier: string, password: s
         if (verified) {
             const secret = process.env.JWT_SECRET
             
-            if (secret === undefined) res.status(502).json(INTERNAL_SERVER_ERROR) 
+            if (secret === undefined) res.status(500).json(INTERNAL_SERVER_ERROR) 
             else {
                 res.cookie('login_token', jwt.sign({ id: result.rows[0].id }, secret), { maxAge: 31560000000 })
                 res.status(204).send()

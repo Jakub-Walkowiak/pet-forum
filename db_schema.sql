@@ -23,6 +23,8 @@ DROP TRIGGER IF EXISTS trigger_reply_count_increase ON blog_post;
 DROP TRIGGER IF EXISTS trigger_reply_count_decrease ON blog_post;
 DROP TRIGGER IF EXISTS trigger_owned_pet_count_increase ON pet_own;
 DROP TRIGGER IF EXISTS trigger_owned_pet_count_decrease ON pet_own;
+DROP TRIGGER IF EXISTS trigger_blog_tag_times_used_increase ON blog_tagged;
+DROP TRIGGER IF EXISTS trigger_blog_tag_times_used_decrease ON blog_tagged;
 
 DROP FUNCTION IF EXISTS follower_count_increase();
 DROP FUNCTION IF EXISTS follower_count_decrease();
@@ -34,6 +36,8 @@ DROP FUNCTION IF EXISTS reply_count_increase();
 DROP FUNCTION IF EXISTS reply_count_decrease();
 DROP FUNCTION IF EXISTS owned_pet_count_increase();
 DROP FUNCTION IF EXISTS owned_pet_count_decrease();
+DROP FUNCTION IF EXISTS blog_tag_times_used_increase();
+DROP FUNCTION IF EXISTS blog_tag_times_used_decrease();
 
 
 -- types
@@ -95,7 +99,8 @@ CREATE TABLE pet_type (
 
 CREATE TABLE blog_tag (
     id serial PRIMARY KEY,
-    tag_name varchar(50)
+    tag_name varchar(50),
+    times_used int DEFAULT 0
 );
 
 
@@ -248,6 +253,27 @@ BEGIN
     UPDATE user_account
     SET owned_pet_count = owned_pet_count - 1
     WHERE id = OLD.owner_id;
+
+    RETURN NULL;
+END; $$ LANGUAGE plpgsql;
+
+-- blog tag times used count
+CREATE FUNCTION blog_tag_times_used_increase() RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE blog_tag
+    SET times_used = times_used + 1
+    WHERE id = NEW.tag_id;
+
+    RETURN NULL;
+END; $$ LANGUAGE plpgsql;
+
+CREATE FUNCTION blog_tag_times_used_decrease() RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE blog_tag
+    SET times_used = times_used - 1
+    WHERE id = OLD.tag_id;
+
+    RETURN NULL;
 END; $$ LANGUAGE plpgsql;
 
 
@@ -266,3 +292,6 @@ CREATE TRIGGER trigger_reply_count_decrease AFTER DELETE ON blog_post FOR EACH R
 
 CREATE TRIGGER trigger_owned_pet_count_increase AFTER INSERT ON pet_own FOR EACH ROW EXECUTE FUNCTION owned_pet_count_increase();
 CREATE TRIGGER trigger_owned_pet_count_decrease AFTER DELETE ON pet_own FOR EACH ROW EXECUTE FUNCTION owned_pet_count_decrease();
+
+CREATE TRIGGER trigger_blog_tag_times_used_increase AFTER INSERT ON blog_tagged FOR EACH ROW EXECUTE FUNCTION blog_tag_times_used_increase();
+CREATE TRIGGER trigger_blog_tag_times_used_decrease AFTER DELETE ON blog_tagged FOR EACH ROW EXECUTE FUNCTION blog_tag_times_used_decrease();

@@ -44,6 +44,7 @@ export const AccountEditValidator = z
         likeVisibility: z.coerce.boolean().optional(),
         followedVisibility: z.coerce.boolean().optional(),
         profilePictureId: z.coerce.number().optional(),
+        bio: z.string().trim().max(300).transform(value => value === '' ? undefined : value),
     })
 
 export type AccountEditData = z.infer<typeof AccountEditValidator>

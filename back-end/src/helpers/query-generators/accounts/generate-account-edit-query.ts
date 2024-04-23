@@ -7,6 +7,7 @@ export const generateAccountEditQuery = (data: AccountEditData, user: number) =>
         data.likeVisibility !== undefined ? `like_visibility = ${data.likeVisibility}` : '',
         data.followedVisibility !== undefined ? `followed_visible = ${data.followedVisibility}` : '',
         data.profilePictureId !== undefined ? `profile_picture_id = ${data.profilePictureId}` : '',
+        data.bio !== undefined ? `bio = ${data.bio}` : '',
     ].filter(string => string !== '').join(',')
 
     return setBlock.length === 0 ? '' : `--sql

@@ -93,7 +93,6 @@ BlogPostRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
         const postSql = `--sql
             SELECT poster_id AS "posterId",
                 contents,
-                like_count AS "likeCount",
                 reply_to AS "replyTo",
                 date_posted AS "datePosted",
                 reply_count AS "replyCount",

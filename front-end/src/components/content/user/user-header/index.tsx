@@ -60,43 +60,17 @@ export default function UserHeader({ id, setLikesTab }: UserHeaderProps) {
                 </div>
             </div>
 
-            <div className={`${!showStats ? 'h-0' : 'h-24 xs:h-28'} text-sm xs:text-base overflow-hidden duration-200`}>
-                <div className={`p-2 grid grid-rows-4 grid-cols-7 grid-flow-col overflow-hidden bg-black/20`}>
-                    <div className='col-span-3'>
-                        <span className={`font-bold pe-1 text-gray-500 ${data.runningResponseScore > 0 && 'text-green-600'} ${data.runningResponseScore < 0 && 'text-red-600'}`}>{data.runningResponseScore > 0 && '+'}{data.runningResponseScore}</span>
-                        <span className='text-gray-500 pe-3'>Response score</span>
-                    </div>
-                    <div className='col-span-3'>
-                        <span className={`font-bold pe-1 text-gray-500 ${data.netPositiveResponses > 0 && 'text-green-300'}`}>{data.netPositiveResponses}</span>
-                        <span className='text-gray-500 pe-3'>Positive responses</span>
-                    </div>
-                    <div className='col-span-3'>
-                        <span className={`font-bold pe-1 text-gray-500 ${data.netPositiveResponses > 0 && 'text-red-300'}`}>{data.netNegativeResponses}</span>
-                        <span className='text-gray-500 pe-3'>Negative responses</span>
-                    </div>
-                    <div className='col-span-3'>
-                        <span className={`font-bold pe-1 text-gray-500 ${data.netPositiveResponses > 0 && 'text-yellow-600'}`}>{data.bestResponses}</span>
-                        <span className='text-gray-500 pe-3'>Best responses</span>
-                    </div>
-
-                    <div className='col-span-2'>
+            <div className={`${!showStats ? 'h-0' : 'h-8 xs:h-10'} text-sm xs:text-base overflow-hidden duration-200`}>
+                <div className={`p-2 grid grid-cols-3 grid-flow-col overflow-hidden bg-black/20`}>
+                    <div>
                         <span className='font-bold pe-1'>{data.blogPostCount}</span>
                         <span className='text-gray-500 pe-3'>Blog posts</span>
                     </div>
-                    <div className='col-span-2'>
+                    <div>
                         <span className='font-bold pe-1'>{data.replyCount}</span>
                         <span className='text-gray-500 pe-3'>Replies</span>
                     </div>
-                    <div className='col-span-2'>
-                        <span className='font-bold pe-1'>{data.adviceCount}</span>
-                        <span className='text-gray-500 pe-3'>Advice posts</span>
-                    </div>
-                    <div className='col-span-2'>
-                        <span className='font-bold pe-1'>{data.responseCount}</span>
-                        <span className='text-gray-500 pe-3'>Responses</span>
-                    </div>
-
-                    <div className='col-span-2'>
+                    <div>
                         <span className='font-bold pe-1'>{data.ownedPetCount}</span>
                         <span className='text-gray-500 pe-3'>Owned pets</span>
                     </div>

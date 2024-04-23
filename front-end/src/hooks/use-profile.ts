@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 
 export interface ProfileData {
     accountName: string,
@@ -6,14 +6,8 @@ export interface ProfileData {
     followerCount: number,
     followedCount: number,
     dateCreated: string,
-    runningResponseScore: number,
-    netPositiveResponses: number,
-    netNegativeResponses: number,
-    bestResponses: number,
     blogPostCount: number,
     replyCount: number,
-    adviceCount: number,
-    responseCount: number,
     ownedPetCount: number,
     profilePictureId?: number,
     bio?: string,

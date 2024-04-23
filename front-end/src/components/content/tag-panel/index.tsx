@@ -12,7 +12,6 @@ import { z } from 'zod'
 import TagCheckbox from './tag-checkbox'
 
 export interface TagPanelProps {
-    advice?: boolean,
     selected: Array<number>,
     setSelected: Dispatch<SetStateAction<Array<number>>>,
     added: Array<string>,
@@ -55,7 +54,7 @@ async function* searchTags(query?: string) {
     }
 }
 
-export default function TagPanel({ advice = false, selected, added, setSelected, setAdded, x, y }: TagPanelProps) {
+export default function TagPanel({ selected, added, setSelected, setAdded, x, y }: TagPanelProps) {
     const [found, setFound] = useState(new Array<number>())
     const [loading, setLoading] = useState(false)
     const [tagGenerator, setTagGenerator] = useState(searchTags())

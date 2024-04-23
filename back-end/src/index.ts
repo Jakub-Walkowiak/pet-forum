@@ -6,7 +6,6 @@ import { MulterError } from 'multer'
 import { z } from 'zod'
 import { BAD_REQUEST, ENDPOINT_NOT_FOUND, INTERNAL_SERVER_ERROR } from './helpers/status-codes'
 import { AccountRouter } from './routes/accounts'
-import { AdvicePostRouter } from './routes/advice-posts'
 import { BlogPostRouter } from './routes/blog-posts'
 import { ImageRouter } from './routes/images'
 import { PetRouter } from './routes/pets'
@@ -26,7 +25,6 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use('/accounts', AccountRouter)
 app.use('/blog-posts', BlogPostRouter)
-app.use('/advice-posts', AdvicePostRouter)
 app.use('/images', ImageRouter)
 app.use('/pets', PetRouter)
 

@@ -56,6 +56,7 @@ CREATE TABLE user_account (
     bio varchar(300) NULL,
 
     likes_visible boolean DEFAULT TRUE,
+    followed_visivle boolean DEFAULT TRUE,
 
     follower_count int DEFAULT 0,
     followed_count int DEFAULT 0,

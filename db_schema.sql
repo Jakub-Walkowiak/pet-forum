@@ -155,6 +155,8 @@ BEGIN
     UPDATE user_account
     SET follower_count = follower_count + 1
     WHERE id = NEW.followed_id;
+
+    RETURN NULL;
 END; $$ LANGUAGE plpgsql;
 
 CREATE FUNCTION follower_count_decrease() RETURNS TRIGGER AS $$
@@ -162,6 +164,8 @@ BEGIN
     UPDATE user_account
     SET follower_count = follower_count - 1
     WHERE id = OLD.follower_id;
+
+    RETURN NULL;
 END; $$ LANGUAGE plpgsql;
 
 -- followed count
@@ -170,6 +174,8 @@ BEGIN
     UPDATE user_account
     SET followed_count = followed_count + 1
     WHERE id = NEW.follower_id;
+
+    RETURN NULL;
 END; $$ LANGUAGE plpgsql;
 
 CREATE FUNCTION followed_count_decrease() RETURNS TRIGGER AS $$
@@ -177,6 +183,8 @@ BEGIN
     UPDATE user_account
     SET followed_count = followed_count - 1
     WHERE id = OLD.followed_id;
+
+    RETURN NULL;
 END; $$ LANGUAGE plpgsql;
 
 -- blog post count
@@ -185,6 +193,8 @@ BEGIN
     UPDATE user_account
     SET blog_post_count = blog_post_count + 1
     WHERE id = NEW.poster_id;
+
+    RETURN NULL;
 END; $$ LANGUAGE plpgsql;
 
 CREATE FUNCTION blog_post_count_decrease() RETURNS TRIGGER AS $$
@@ -192,6 +202,8 @@ BEGIN
     UPDATE user_account
     SET blog_post_count = blog_post_count - 1
     WHERE id = OLD.poster_id;
+
+    RETURN NULL;
 END; $$ LANGUAGE plpgsql;
 
 -- reply count
@@ -201,6 +213,10 @@ IF NEW.reply_to IS NOT NULL THEN
     UPDATE user_account
     SET reply_count = reply_count + 1
     WHERE id = NEW.poster_id;
+
+    RETURN NULL;
+ELSE 
+    RETURN NULL;
 END IF;
 END; $$ LANGUAGE plpgsql;
 
@@ -210,6 +226,10 @@ IF OLD.reply_to IS NOT NULL THEN
     UPDATE user_account
     SET reply_count = reply_count - 1
     WHERE id = OLD.poster_id;
+
+    RETURN NULL;
+ELSE
+    RETURN NULL;
 END IF;
 END; $$ LANGUAGE plpgsql;
 
@@ -219,6 +239,8 @@ BEGIN
     UPDATE user_account
     SET owned_pet_count = owned_pet_count + 1
     WHERE id = NEW.owner_id;
+
+    RETURN NULL;
 END; $$ LANGUAGE plpgsql;
 
 CREATE FUNCTION owned_pet_count_decrease() RETURNS TRIGGER AS $$

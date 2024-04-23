@@ -2,7 +2,8 @@
 
 import Button from '@/components/utils/form-utils/button'
 import ErrorContainer from '@/components/utils/form-utils/error-container'
-import ImageUploaderWrapper, { UploaderImages } from '@/components/utils/form-utils/image-uploader-wrapper'
+import ImageUploaderWrapper from '@/components/utils/form-utils/image-uploader-wrapper'
+import UploaderImages from '@/components/utils/form-utils/image-uploader-wrapper/uploader-images'
 import Input from '@/components/utils/form-utils/input'
 import showNotificationPopup from '@/helpers/show-notification-popup'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -19,6 +20,7 @@ interface CreateProfileFormProps {
 const ProfileInputsValidator = z
     .object({
         displayName: z.string().trim().max(50, { message: 'Max. name length is 50 chars' }).optional(),
+        bio: z.string().trim().max(300, { message: 'Max bio length is 300 chars' }).optional(),
     })
 
 type ProfileInputs = z.infer<typeof ProfileInputsValidator>
@@ -45,7 +47,6 @@ export default function CreateProfileForm({ hide }: CreateProfileFormProps) {
         if (e.currentTarget.files === null || e.currentTarget.files.length === 0) return
         await images.add(e.currentTarget.files[0])
         setUpdate(true)
-        
     }
 
     const handleFileButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -76,7 +77,7 @@ export default function CreateProfileForm({ hide }: CreateProfileFormProps) {
             const pfpId: number | undefined = imagesResponse !== undefined
                 ? (await imagesResponse.json())[0].id
                 : undefined
-            const reqBody = { displayName: data.displayName, profilePictureId: pfpId }
+            const reqBody = { displayName: data.displayName, profilePictureId: pfpId, bio: data.bio }
 
             const response = await fetch('http://localhost:3000/accounts', {
                 method: 'PATCH',
@@ -126,10 +127,12 @@ export default function CreateProfileForm({ hide }: CreateProfileFormProps) {
                     <div className='h-5'/>
 
                     <Input placeholder='Display name (same as account name by default)' register={register} name='displayName' error={errors.displayName !== undefined}/>
+                    <Input placeholder='Bio - share a short summary of you' register={register} name='bio' error={errors.bio !== undefined}/>
                     <div className='h-10'/>
 
                     <ErrorContainer>
                         {errors.displayName && <p>{errors.displayName.message}</p>}
+                        {errors.bio && <p>{errors.bio.message}</p>}
                     </ErrorContainer>
                     
                     <Button text='Save changes' disabled={error()} loading={loading}/>

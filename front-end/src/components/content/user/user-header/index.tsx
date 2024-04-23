@@ -6,6 +6,7 @@ import TimeLabel from '@/components/labels/time-label'
 import FollowButton from '@/components/utils/follow-button'
 import useAuth from '@/hooks/use-auth'
 import useProfile from '@/hooks/use-profile'
+import { useRouter } from 'next/navigation'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { AiFillInfoCircle, AiOutlineInfoCircle } from 'react-icons/ai'
 
@@ -17,6 +18,7 @@ interface UserHeaderProps {
 export default function UserHeader({ id, setLikesTab }: UserHeaderProps) {
     const data = useProfile(id)
     const auth = useAuth()
+    const router = useRouter()
 
     const [showStats, setShowStats] = useState(false)
     const [clientFollow, setClientFollow] = useState(false)
@@ -24,6 +26,9 @@ export default function UserHeader({ id, setLikesTab }: UserHeaderProps) {
     useEffect(() => { 
         if (data !== undefined) if (setLikesTab) setLikesTab(data.likesVisible || (!data.likesVisible && auth === id))
     }, [data, auth, id, setLikesTab])
+
+    const redirectFollowers = () => router.push(`/users?relationType=followers&relatedTo=${id}`)
+    const redirectFollowed = () => router.push(`/users?relationType=followed&relatedTo=${id}`)
 
 
     if (data === undefined) return (
@@ -45,11 +50,15 @@ export default function UserHeader({ id, setLikesTab }: UserHeaderProps) {
             </div>
 
             <div className='flex px-3 py-4 items-end'>
-                <span className='font-bold pe-1 text-lg'>{data.followerCount + (clientFollow === data.followed ? 0 : clientFollow ? 1 : -1)}</span>
-                <span className='text-gray-500 text-lg pe-3'>Followers</span>
+                <span className='cursor-pointer group' onClick={redirectFollowers}>
+                    <span className='font-bold pe-1 text-lg'>{data.followerCount + (clientFollow === data.followed ? 0 : clientFollow ? 1 : -1)}</span>
+                    <span className='text-gray-500 text-lg pe-3 group-hover:underline'>Followers</span>
+                </span>
 
-                <span className='font-bold pe-1 text-lg'>{data.followedCount}</span>
-                <span className='text-gray-500 text-lg pe-3'>Followed</span>
+                <span className='cursor-pointer group' onClick={redirectFollowed}>
+                    <span className='font-bold pe-1 text-lg'>{data.followedCount}</span>
+                    <span className='text-gray-500 text-lg pe-3 group-hover:underline'>Followed</span>
+                </span>
 
                 {showStats
                     ? <AiFillInfoCircle className='text-xl inset-y-0 my-auto cursor-pointer hover:text-gray-500 duration-200' onClick={() => setShowStats(false)}/>

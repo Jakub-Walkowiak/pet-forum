@@ -1,7 +1,7 @@
 'use client'
 
 import BlogFeed from '@/components/content/dynamic-feeds/blog-feed'
-import BlogPostSearchPanel from '@/components/utils/form-utils/feed-search-panels/blog-post-search-panel'
+import BlogPostSearchPanel from '@/components/forms/form-utils/feed-search-panels/blog-post-search-panel'
 import { BlogPostFetchValidator } from '@/helpers/fetch-options/blog-post-fetch-options'
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'

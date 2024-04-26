@@ -1,8 +1,8 @@
 'use client'
 
-import Button from '@/components/utils/form-utils/button'
-import ErrorContainer from '@/components/utils/form-utils/error-container'
-import Input from '@/components/utils/form-utils/input'
+import Button from '@/components/forms/utils/button'
+import ErrorContainer from '@/components/forms/utils/error-container'
+import Input from '@/components/forms/utils/input'
 import showNotificationPopup from '@/helpers/show-notification-popup'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'

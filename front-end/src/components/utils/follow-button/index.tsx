@@ -1,9 +1,9 @@
 'use client'
 
+import Button from '@/components/forms/utils/button'
 import showNotificationPopup from '@/helpers/show-notification-popup'
 import useAuth from '@/hooks/use-auth'
 import { useEffect, useState } from 'react'
-import Button from '../form-utils/button'
 
 interface FollowButtonProps {
     id: number,

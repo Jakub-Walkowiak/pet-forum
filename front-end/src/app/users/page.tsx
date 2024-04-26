@@ -1,7 +1,7 @@
 'use client'
 
 import AccountFeed from '@/components/content/dynamic-feeds/account-feed'
-import AccountSearchPanel from '@/components/utils/form-utils/feed-search-panels/account-search-panel'
+import AccountSearchPanel from '@/components/forms/form-utils/feed-search-panels/account-search-panel'
 import { AccountFetchValidator } from '@/helpers/fetch-options/account-fetch-options'
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'

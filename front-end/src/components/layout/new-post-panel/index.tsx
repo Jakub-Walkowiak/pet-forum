@@ -1,8 +1,9 @@
 'use client'
 
-import BlogPostGroup from '@/components/content/blog-post-group';
-import PostCreator from '@/components/utils/form-utils/post-creator';
-import { useState } from 'react';
+import BlogPostGroup from '@/components/content/blog-post-group'
+import PostCreator from '@/components/forms/utils/post-creator'
+
+import { useState } from 'react'
 
 export default function NewPostPanel() {
     const [created, setCreated] = useState(new Array<number>())

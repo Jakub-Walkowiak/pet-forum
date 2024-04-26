@@ -1,4 +1,4 @@
-import Button from '@/components/utils/form-utils/button'
+import Button from '@/components/forms/utils/button'
 import { Dispatch, SetStateAction } from 'react'
 
 interface LoggedOutProps {

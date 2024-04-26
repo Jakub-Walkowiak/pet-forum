@@ -1,6 +1,6 @@
 'use client'
 
-import PostCreator from '@/components/utils/form-utils/post-creator'
+import PostCreator from '@/components/forms/utils/post-creator'
 import showNotificationPopup from '@/helpers/show-notification-popup'
 import useBlogPost from '@/hooks/use-blog-post'
 import { useRouter } from 'next/navigation'

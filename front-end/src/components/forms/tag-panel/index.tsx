@@ -1,7 +1,5 @@
 'use client'
 
-import Input from '@/components/utils/form-utils/input'
-import LabeledCheckbox from '@/components/utils/form-utils/labeled-checkbox'
 import showNotificationPopup from '@/helpers/show-notification-popup'
 import stopEvent from '@/helpers/stop-event'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -9,6 +7,8 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'reac
 import { useForm } from 'react-hook-form'
 import { AiOutlineLoading, AiOutlinePlusCircle, AiOutlineSearch } from 'react-icons/ai'
 import { z } from 'zod'
+import Input from '../utils/input'
+import LabeledCheckbox from '../utils/labeled-checkbox'
 import TagCheckbox from './tag-checkbox'
 
 export interface TagPanelProps {

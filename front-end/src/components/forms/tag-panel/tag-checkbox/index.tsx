@@ -1,7 +1,7 @@
 'use client'
 
-import LabeledCheckbox from '@/components/utils/form-utils/labeled-checkbox'
 import useTag from '@/hooks/use-tag'
+import LabeledCheckbox from '../../utils/labeled-checkbox'
 
 interface TagCheckboxProps {
     tagId: number,

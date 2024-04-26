@@ -1,7 +1,7 @@
-import getAccounts from '@/helpers/feed-generators/get-accounts';
-import AccountFetchOptions from '@/helpers/fetch-options/account-fetch-options';
-import DynamicFeed from '..';
-import UserPanel from '../../user/user-panel';
+import AccountFetchOptions from '@/helpers/fetch-options/account-fetch-options'
+import getAccounts from '@/helpers/infinite-scroll-generators/get-accounts'
+import DynamicFeed from '..'
+import UserPanel from '../../user/user-panel'
 
 interface AccountFeedProps {
     options?: AccountFetchOptions,

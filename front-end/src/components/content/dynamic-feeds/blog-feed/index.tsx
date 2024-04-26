@@ -1,7 +1,7 @@
-import getBlogPosts from '@/helpers/feed-generators/get-blog-posts';
-import BlogPostFetchOptions from '@/helpers/fetch-options/blog-post-fetch-options';
-import DynamicFeed from '..';
-import BlogPostGroup from '../../blog-post-group';
+import BlogPostFetchOptions from '@/helpers/fetch-options/blog-post-fetch-options'
+import getBlogPosts from '@/helpers/infinite-scroll-generators/get-blog-posts'
+import DynamicFeed from '..'
+import BlogPostGroup from '../../blog-post-group'
 
 interface BlogFeedProps {
     options?: BlogPostFetchOptions,

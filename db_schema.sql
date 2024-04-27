@@ -168,7 +168,7 @@ CREATE FUNCTION account_follower_count_decrease() RETURNS TRIGGER AS $$
 BEGIN
     UPDATE user_account
     SET follower_count = follower_count - 1
-    WHERE id = OLD.follower_id;
+    WHERE id = OLD.followed_id;
 
     RETURN NULL;
 END; $$ LANGUAGE plpgsql;

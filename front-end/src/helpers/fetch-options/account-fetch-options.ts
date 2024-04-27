@@ -9,7 +9,7 @@ enum AccountOrderByOption {
     BLOG_POSTS = 'blog_post_count',
     REPLIES = 'reply_count',
     PETS = 'owned_pet_count',
-    DATE_FOLLOWED = 'date_followed',
+    USER_DATE_FOLLOWED = 'user_date_followed',
     PET_DATE_FOLLOWED = 'pet_date_followed',
 }
 

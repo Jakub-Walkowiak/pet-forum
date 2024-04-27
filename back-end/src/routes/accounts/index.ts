@@ -105,7 +105,7 @@ AccountRouter.get('/', authOptional, async (req, res, next) => {
             WHERE Lower(account_name) LIKE Lower(\'%${contains}%\')
             OR Lower(display_name) LIKE Lower(\'%${contains}%\')`
 
-        const orderByString = orderBy !== AccountOrderByOption.DATE_FOLLOWED && orderBy !== AccountOrderByOption.PET_DATE_FOLLOWED
+        const orderByString = orderBy !== AccountOrderByOption.USER_DATE_FOLLOWED && orderBy !== AccountOrderByOption.PET_DATE_FOLLOWED
             ? `${orderBy}` 
             : orderBy === AccountOrderByOption.PET_DATE_FOLLOWED ? 'pets.date_followed'
                 : relatedTo === undefined ? AccountOrderByOption.FOLLOWERS

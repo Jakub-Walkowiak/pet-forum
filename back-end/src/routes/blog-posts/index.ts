@@ -67,7 +67,7 @@ BlogPostRouter.get('/', authOptional, async (req, res, next) => {
         }
 
         pool.query(sql)
-            .then(result => res.status(200).json(result.rows))
+            .then(result => res.status(200).json(result.rows.map(row => row.id)))
             .catch(err => next(err))
     } catch (err) { next(err) }
 })

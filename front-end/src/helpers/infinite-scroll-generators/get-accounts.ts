@@ -18,7 +18,7 @@ export default async function* getAccounts(options?: AccountFetchOptions) {
         if (response.ok) {
             const json = (await response.json()) as { id: number }[]
             if (json.length > 0) {
-                yield json.map(row => Number(row.id))
+                yield json
                 offset += json.length
             } else yield undefined
         } else yield undefined

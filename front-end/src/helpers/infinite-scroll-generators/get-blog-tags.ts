@@ -12,8 +12,7 @@ export async function* getBlogTags(query?: string) {
         try {
             const response = await fetch(getFetchUrl(offset))
             if (response.ok) { 
-                const result = ((await response.json()) as {id: number}[])
-                    .map(row => row.id)
+                const result = (await response.json()) as {id: number}[]
 
                 if (result.length !== 0) { 
                     yield result

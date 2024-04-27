@@ -20,7 +20,7 @@ TagRouter.get('/', (req, res, next) => {
         LIMIT $1 OFFSET $2`
 
     pool.query(sql, [limit, offset])
-        .then(result => res.status(200).json(result.rows))
+        .then(result => res.status(200).json(result.rows.map(row => row.id)))
         .catch(err => next(err))
 })
 

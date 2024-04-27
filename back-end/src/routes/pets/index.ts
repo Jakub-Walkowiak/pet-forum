@@ -56,7 +56,7 @@ PetRouter.get('/', (req, res, next) => {
     const sql = generatePetFetchQuery(PetFetchValidator.parse(req.query))
 
     pool.query(sql)
-        .then(result => res.status(200).json(result))
+        .then(result => res.status(200).json(result.rows.map(row => row.id)))
         .catch(err => next(err))
 })
 

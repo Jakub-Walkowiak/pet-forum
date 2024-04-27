@@ -16,11 +16,9 @@ export interface SelectableBlogTagFormProps {
         values: Array<string>, 
         set: Dispatch<SetStateAction<Array<string>>>, 
     },
-    x: number,
-    y: number,
 }
 
-export default function SelectableBlogTagForm({ x, y, selectable, added }: SelectableBlogTagFormProps) {
+export default function SelectableBlogTagForm({ selectable, added }: SelectableBlogTagFormProps) {
     const [loading, setLoading] = useState(false)
     const [generator, setGenerator] = useState(getBlogTags())
     const [found, setFound] = useState(new Array<number>)
@@ -66,7 +64,7 @@ export default function SelectableBlogTagForm({ x, y, selectable, added }: Selec
         } catch (err) { showNotificationPopup(false, 'Error contacting server') }
     }
 
-    return <SelectableForm x={x} y={y} 
+    return <SelectableForm
         onScroll={fetchTags}
         loading={loading}
         selectable={{

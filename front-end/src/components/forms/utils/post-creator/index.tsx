@@ -57,10 +57,10 @@ export default function PostCreator({ placeholder, replyTo, maxRows, afterSubmit
     }
 
     const handleTagButtonClick = (e: React.MouseEvent<SVGElement>) => {
-        showFloatingElement(<SelectableBlogTagForm x={e.clientX} y={e.clientY}
+        showFloatingElement(<SelectableBlogTagForm
             selectable={{ selected: selectedTags, set: setSelectedTags, }}
             added={{ values: addedTags, set: setAddedTags, }}
-        />)
+        />, e.clientX, e.clientY)
     }
 
     const handleTextAreaExpansion = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

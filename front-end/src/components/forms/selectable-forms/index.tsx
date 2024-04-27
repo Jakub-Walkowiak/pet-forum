@@ -24,13 +24,11 @@ export interface SelectableFormProps<T> {
         validator: z.ZodString, 
         onSubmit: (name: string) => void,
     },
-    x: number,
-    y: number,
     loading?: boolean,
     onScroll?: () => void,
 }
 
-export default function SelectableForm<T>({ added, x, y, selectable, loading = false, onScroll }: SelectableFormProps<T>) {
+export default function SelectableForm<T>({ added, selectable, loading = false, onScroll }: SelectableFormProps<T>) {
     const [unAddTimeouts, setUnAddTimeouts] = useState(new Map<string, NodeJS.Timeout>())
 
     const SelectableFormValidator = z.object({
@@ -64,7 +62,7 @@ export default function SelectableForm<T>({ added, x, y, selectable, loading = f
     }
 
     return (
-        <form style={{ top: y, left: x }} className={`fixed flex flex-col w-60 border border-gray-600 rounded-lg bg-gray-800`} onClick={stopEvent} onScroll={stopEvent}>
+        <form className='flex flex-col w-60 border border-gray-600 rounded-lg bg-gray-800' onClick={stopEvent} onScroll={stopEvent}>
             <ul className='list-none flex flex-col h-40 w-full bg-black/10 overflow-y-auto' onScroll={handleScroll}>
                 {added?.values
                     .filter(name => !getValues('name') || name.toLowerCase().includes(getValues('name')))

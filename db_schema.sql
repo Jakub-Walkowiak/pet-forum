@@ -60,6 +60,7 @@ CREATE TABLE user_account (
 
     follower_count int DEFAULT 0,
     accounts_followed_count int DEFAULT 0,
+    pets_followed_count int DEFAULT 0,
     blog_post_count int DEFAULT 0,
     reply_count int DEFAULT 0,
     owned_pet_count int DEFAULT 0,
@@ -89,14 +90,14 @@ CREATE TABLE picture (
 CREATE TABLE pet (
     id serial PRIMARY KEY,
     name varchar(50),
-    sex sex DEFAULT 'n/a'
+    sex sex DEFAULT 'n/a',
+    follower_count int DEFAULT 0
 );
 
 CREATE TABLE pet_type (
     id serial PRIMARY KEY,
     name varchar(50)
 );
-
 
 CREATE TABLE blog_tag (
     id serial PRIMARY KEY,
@@ -113,6 +114,16 @@ CREATE TABLE account_follow (
         ON DELETE CASCADE ON UPDATE CASCADE,
     UNIQUE (follower_id, followed_id),
     CONSTRAINT chk_follow_ids_not_equal CHECK (follower_id <> followed_id),
+
+    date_followed timestamptz DEFAULT NOW()
+);
+
+CREATE TABLE pet_follow (
+    follower_id int REFERENCES user_account(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    pet_id int REFERENCES pet(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    UNIQUE (follower_id, pet_id),
 
     date_followed timestamptz DEFAULT NOW()
 );
@@ -187,6 +198,44 @@ CREATE FUNCTION account_followed_count_decrease() RETURNS TRIGGER AS $$
 BEGIN
     UPDATE user_account
     SET accounts_followed_count = followed_count - 1
+    WHERE id = OLD.follower_id;
+
+    RETURN NULL;
+END; $$ LANGUAGE plpgsql;
+
+-- pet follower count
+CREATE FUNCTION pet_follower_count_increase() RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE pet
+    SET follower_count = follower_count + 1
+    WHERE id = NEW.pet_id;
+
+    RETURN NULL;
+END; $$ LANGUAGE plpgsql;
+
+CREATE FUNCTION pet_follower_count_decrease() RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE pet
+    SET follower_count = follower_count - 1
+    WHERE id = OLD.pet_id;
+
+    RETURN NULL;
+END; $$ LANGUAGE plpgsql;
+
+-- pets followed count
+CREATE FUNCTION pet_followed_count_increase() RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE user_account
+    SET pets_followed_count = pets_followed_count + 1
+    WHERE id = NEW.follower_id;
+
+    RETURN NULL;
+END; $$ LANGUAGE plpgsql;
+
+CREATE FUNCTION pet_followed_count_decrease() RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE user_account
+    SET pets_followed_count = pets_followed_count - 1
     WHERE id = OLD.follower_id;
 
     RETURN NULL;
@@ -283,6 +332,9 @@ CREATE TRIGGER trigger_account_follower_count_decrease AFTER DELETE ON account_f
 
 CREATE TRIGGER trigger_account_followed_count_increase AFTER INSERT ON account_follow FOR EACH ROW EXECUTE FUNCTION account_followed_count_increase();
 CREATE TRIGGER trigger_account_followed_count_decrease AFTER DELETE ON account_follow FOR EACH ROW EXECUTE FUNCTION account_followed_count_decrease();
+
+CREATE TRIGGER trigger_follower_count_increase AFTER INSERT ON pet_follow FOR EACH ROW EXECUTE FUNCTION pet_follower_count_increase();
+CREATE TRIGGER trigger_follower_count_decrease AFTER DELETE ON pet_follow FOR EACH ROW EXECUTE FUNCTION pet_follower_count_decrease();
 
 CREATE TRIGGER trigger_followed_count_increase AFTER INSERT ON account_follow FOR EACH ROW EXECUTE FUNCTION account_followed_count_increase();
 CREATE TRIGGER trigger_followed_count_decrease AFTER DELETE ON account_follow FOR EACH ROW EXECUTE FUNCTION account_followed_count_decrease();

@@ -13,10 +13,10 @@ DROP TABLE IF EXISTS user_account;
 
 DROP TYPE IF EXISTS sex;
 
-DROP TRIGGER IF EXISTS trigger_follower_count_increase ON follow;
-DROP TRIGGER IF EXISTS trigger_follower_count_decrease ON follow;
-DROP TRIGGER IF EXISTS trigger_followed_count_increase ON follow;
-DROP TRIGGER IF EXISTS trigger_followed_count_decrease ON follow;
+DROP TRIGGER IF EXISTS trigger_account_follower_count_increase ON account_follow;
+DROP TRIGGER IF EXISTS trigger_account_follower_count_decrease ON account_follow;
+DROP TRIGGER IF EXISTS trigger_account_followed_count_increase ON account_follow;
+DROP TRIGGER IF EXISTS trigger_account_followed_count_decrease ON account_follow;
 DROP TRIGGER IF EXISTS trigger_blog_post_count_increase ON blog_post;
 DROP TRIGGER IF EXISTS trigger_blog_post_count_decrease ON blog_post;
 DROP TRIGGER IF EXISTS trigger_reply_count_increase ON blog_post;
@@ -26,10 +26,10 @@ DROP TRIGGER IF EXISTS trigger_owned_pet_count_decrease ON pet_own;
 DROP TRIGGER IF EXISTS trigger_blog_tag_times_used_increase ON blog_tagged;
 DROP TRIGGER IF EXISTS trigger_blog_tag_times_used_decrease ON blog_tagged;
 
-DROP FUNCTION IF EXISTS follower_count_increase();
-DROP FUNCTION IF EXISTS follower_count_decrease();
-DROP FUNCTION IF EXISTS followed_count_increase();
-DROP FUNCTION IF EXISTS followed_count_decrease();
+DROP FUNCTION IF EXISTS account_follower_count_increase();
+DROP FUNCTION IF EXISTS account_follower_count_decrease();
+DROP FUNCTION IF EXISTS account_followed_count_increase();
+DROP FUNCTION IF EXISTS account_followed_count_decrease();
 DROP FUNCTION IF EXISTS blog_post_count_increase();
 DROP FUNCTION IF EXISTS blog_post_count_decrease();
 DROP FUNCTION IF EXISTS reply_count_increase();
@@ -59,7 +59,7 @@ CREATE TABLE user_account (
     followed_visivle boolean DEFAULT TRUE,
 
     follower_count int DEFAULT 0,
-    followed_count int DEFAULT 0,
+    accounts_followed_count int DEFAULT 0,
     blog_post_count int DEFAULT 0,
     reply_count int DEFAULT 0,
     owned_pet_count int DEFAULT 0,
@@ -106,7 +106,7 @@ CREATE TABLE blog_tag (
 
 
 -- join tables
-CREATE TABLE follow (
+CREATE TABLE account_follow (
     follower_id int REFERENCES user_account(id)
         ON DELETE CASCADE ON UPDATE CASCADE,
     followed_id int REFERENCES user_account(id)
@@ -126,7 +126,6 @@ CREATE TABLE post_like (
 
     date_liked timestamptz DEFAULT NOW()
 );
-
 
 CREATE TABLE pet_own (
     pet_id int REFERENCES pet(id)
@@ -155,8 +154,8 @@ CREATE TABLE blog_post_picture (
 
 
 -- functions
--- follower count
-CREATE FUNCTION follower_count_increase() RETURNS TRIGGER AS $$
+-- account follower count
+CREATE FUNCTION account_follower_count_increase() RETURNS TRIGGER AS $$
 BEGIN
     UPDATE user_account
     SET follower_count = follower_count + 1
@@ -165,7 +164,7 @@ BEGIN
     RETURN NULL;
 END; $$ LANGUAGE plpgsql;
 
-CREATE FUNCTION follower_count_decrease() RETURNS TRIGGER AS $$
+CREATE FUNCTION account_follower_count_decrease() RETURNS TRIGGER AS $$
 BEGIN
     UPDATE user_account
     SET follower_count = follower_count - 1
@@ -174,21 +173,21 @@ BEGIN
     RETURN NULL;
 END; $$ LANGUAGE plpgsql;
 
--- followed count
-CREATE FUNCTION followed_count_increase() RETURNS TRIGGER AS $$
+-- account followed count
+CREATE FUNCTION account_followed_count_increase() RETURNS TRIGGER AS $$
 BEGIN
     UPDATE user_account
-    SET followed_count = followed_count + 1
+    SET accounts_followed_count = followed_count + 1
     WHERE id = NEW.follower_id;
 
     RETURN NULL;
 END; $$ LANGUAGE plpgsql;
 
-CREATE FUNCTION followed_count_decrease() RETURNS TRIGGER AS $$
+CREATE FUNCTION account_followed_count_decrease() RETURNS TRIGGER AS $$
 BEGIN
     UPDATE user_account
-    SET followed_count = followed_count - 1
-    WHERE id = OLD.followed_id;
+    SET accounts_followed_count = followed_count - 1
+    WHERE id = OLD.follower_id;
 
     RETURN NULL;
 END; $$ LANGUAGE plpgsql;
@@ -279,11 +278,14 @@ END; $$ LANGUAGE plpgsql;
 
 
 -- triggers
-CREATE TRIGGER trigger_follower_count_increase AFTER INSERT ON follow FOR EACH ROW EXECUTE FUNCTION follower_count_increase();
-CREATE TRIGGER trigger_follower_count_decrease AFTER DELETE ON follow FOR EACH ROW EXECUTE FUNCTION follower_count_decrease();
+CREATE TRIGGER trigger_account_follower_count_increase AFTER INSERT ON account_follow FOR EACH ROW EXECUTE FUNCTION account_follower_count_increase();
+CREATE TRIGGER trigger_account_follower_count_decrease AFTER DELETE ON account_follow FOR EACH ROW EXECUTE FUNCTION account_follower_count_decrease();
 
-CREATE TRIGGER trigger_followed_count_increase AFTER INSERT ON follow FOR EACH ROW EXECUTE FUNCTION followed_count_increase();
-CREATE TRIGGER trigger_followed_count_decrease AFTER DELETE ON follow FOR EACH ROW EXECUTE FUNCTION followed_count_decrease();
+CREATE TRIGGER trigger_account_followed_count_increase AFTER INSERT ON account_follow FOR EACH ROW EXECUTE FUNCTION account_followed_count_increase();
+CREATE TRIGGER trigger_account_followed_count_decrease AFTER DELETE ON account_follow FOR EACH ROW EXECUTE FUNCTION account_followed_count_decrease();
+
+CREATE TRIGGER trigger_followed_count_increase AFTER INSERT ON account_follow FOR EACH ROW EXECUTE FUNCTION account_followed_count_increase();
+CREATE TRIGGER trigger_followed_count_decrease AFTER DELETE ON account_follow FOR EACH ROW EXECUTE FUNCTION account_followed_count_decrease();
 
 CREATE TRIGGER trigger_blog_post_count_increase AFTER INSERT ON blog_post FOR EACH ROW EXECUTE FUNCTION blog_post_count_increase();
 CREATE TRIGGER trigger_blog_post_count_decrease AFTER DELETE ON blog_post FOR EACH ROW EXECUTE FUNCTION blog_post_count_decrease();

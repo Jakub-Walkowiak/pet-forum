@@ -4,7 +4,7 @@ export interface ProfileData {
     accountName: string,
     displayName: string,
     followerCount: number,
-    followedCount: number,
+    accountsFollowedCount: number,
     dateCreated: string,
     blogPostCount: number,
     replyCount: number,

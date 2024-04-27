@@ -56,7 +56,7 @@ export default function UserHeader({ id, setLikesTab }: UserHeaderProps) {
                 </span>
 
                 <span className='cursor-pointer group' onClick={redirectFollowed}>
-                    <span className='font-bold pe-1 text-lg'>{data.followedCount}</span>
+                    <span className='font-bold pe-1 text-lg'>{data.accountsFollowedCount}</span>
                     <span className='text-gray-500 text-lg pe-3 group-hover:underline'>Followed</span>
                 </span>
 

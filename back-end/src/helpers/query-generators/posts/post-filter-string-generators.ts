@@ -11,14 +11,14 @@ export const getUserTypeFilterString = (input: UserTypeOption, forUser?: number)
 
         case UserTypeOption.FOLLOWED: return `--sql
             poster_id IN (
-                SELECT followed_id FROM follow WHERE follower_id = ${forUser}
+                SELECT followed_id FROM account_follow WHERE follower_id = ${forUser}
             )`
 
         case UserTypeOption.MUTUTALS: return `--sql
             poster_id IN (
-                SELECT followed_id FROM follow WHERE follower_id = ${forUser}
+                SELECT followed_id FROM account_follow WHERE follower_id = ${forUser}
             ) AND poster_id IN (
-                SELECT follower_id FROM follow WHERE followed_id = ${forUser}
+                SELECT follower_id FROM account_follow WHERE followed_id = ${forUser}
             )`
     }
 }

@@ -132,7 +132,7 @@ AccountRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
         SELECT account_name AS "accountName",
                display_name AS "displayName",
                follower_count AS "followerCount",
-               followed_count AS "followedCount",
+               accounts_followed_count AS "accountsFollowedCount",
                date_created AS "dateCreated",
                blog_post_count as "blogPostCount",
                reply_count AS "replyCount",
@@ -145,7 +145,7 @@ AccountRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
 
         let followed = false
         if (req.body.auth === true) {
-            const followedSql = 'SELECT Count(*) AS count FROM follow WHERE follower_id = $1 AND followed_id = $2'
+            const followedSql = 'SELECT Count(*) AS count FROM account_follow WHERE follower_id = $1 AND followed_id = $2'
             if ((await pool.query(followedSql, [req.body.id, req.params.id])).rows[0].count > 0) followed = true
         }
 

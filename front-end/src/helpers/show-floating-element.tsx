@@ -1,12 +1,12 @@
-import TagPanel, { TagPanelProps } from '@/components/forms/tag-panel'
+import { ReactElement } from 'react'
 import { createRoot } from 'react-dom/client'
 
-const showTagPanel = (props: TagPanelProps) => {
+export default function showFloatingElement(element: ReactElement) {
     const rootElement = document.createElement('div')
     document.body.append(rootElement)
 
-    const root = createRoot(rootElement)
-    root.render(<TagPanel {...props}/>)
+    let root = createRoot(rootElement)
+    root.render(element)
 
     const dismiss = () => {
         root.unmount()
@@ -16,5 +16,3 @@ const showTagPanel = (props: TagPanelProps) => {
     document.addEventListener('scroll', dismiss)
     document.addEventListener('click', dismiss)
 }
-
-export default showTagPanel

@@ -1,13 +1,14 @@
 'use client'
 
 import FormImage from '@/components/images/form-image'
+import showFloatingElement from '@/helpers/show-floating-element'
 import showNotificationPopup from '@/helpers/show-notification-popup'
-import showTagPanel from '@/helpers/show-tag-panel'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { AiOutlineFileImage, AiOutlineTags } from 'react-icons/ai'
 import { z } from 'zod'
+import SelectableBlogTagForm from '../../selectable-forms/blog-tag-form'
 import Button from '../button'
 import ImageUploaderWrapper from '../image-uploader-wrapper'
 import UploaderImages, { ImageError } from '../image-uploader-wrapper/uploader-images'
@@ -42,7 +43,7 @@ export default function PostCreator({ placeholder, replyTo, maxRows, afterSubmit
         const files = e.currentTarget.files
         if (files === null || files.length === 0) return
 
-        // @ts-ignore
+        // @ts-ignore ts thinks that files can be null here, even though i've already checked for it by now 🤔
         for (let i = 0; i < files.length; ++i) await images.add(files.item(i)).then(response => {
             if (response === ImageError.InvalidType) showNotificationPopup(false, 'Unsupported file type')
             else if (response === ImageError.TooMany) showNotificationPopup(false, `Max. num. of images is ${images.maxCount}`)
@@ -56,7 +57,10 @@ export default function PostCreator({ placeholder, replyTo, maxRows, afterSubmit
     }
 
     const handleTagButtonClick = (e: React.MouseEvent<SVGElement>) => {
-        showTagPanel({ selected: selectedTags, setSelected: setSelectedTags, added: addedTags, setAdded: setAddedTags, x: e.clientX, y: e.clientY })
+        showFloatingElement(<SelectableBlogTagForm x={e.clientX} y={e.clientY}
+            selectable={{ selected: selectedTags, set: setSelectedTags, }}
+            added={{ values: addedTags, set: setAddedTags, }}
+        />)
     }
 
     const handleTextAreaExpansion = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

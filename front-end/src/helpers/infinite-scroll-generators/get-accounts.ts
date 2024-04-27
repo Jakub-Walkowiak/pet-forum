@@ -10,6 +10,7 @@ export default async function* getAccounts(options?: AccountFetchOptions) {
             options.contains ? `contains=${options.contains}` : '',
             options.relatedTo ? `relatedTo=${options.relatedTo}` : '',
             options.relationType ? `relationType=${options.relationType}` : '',
+            options.followsPet ? `followsPet=${options.followsPet}` : '',
         ].filter(str => str !== '').join('&')
 
     while (true) {

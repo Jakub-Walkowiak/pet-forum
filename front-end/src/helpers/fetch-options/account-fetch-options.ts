@@ -10,6 +10,7 @@ enum AccountOrderByOption {
     REPLIES = 'reply_count',
     PETS = 'owned_pet_count',
     DATE_FOLLOWED = 'date_followed',
+    PET_DATE_FOLLOWED = 'pet_date_followed',
 }
 
 export const AccountFetchValidator = z
@@ -21,6 +22,7 @@ export const AccountFetchValidator = z
         orderMode: z.enum(['ASC', 'DESC']).optional(),
         relatedTo: z.coerce.number().optional(),
         relationType: z.enum(['followers', 'followed', 'mutuals']).optional(),
+        followsPet: z.coerce.number().optional(),
     })
 
 type AccountFetchOptions = z.infer<typeof AccountFetchValidator>

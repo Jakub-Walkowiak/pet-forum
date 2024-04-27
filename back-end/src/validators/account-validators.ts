@@ -25,6 +25,7 @@ export const AccountFetchValidator = z
         orderMode: z.nativeEnum(OrderByMode).default(OrderByMode.DESC),
         relatedTo: z.coerce.number().optional(),
         relationType: z.nativeEnum(RelationType).default(RelationType.FOLLOWERS),
+        followsPet: z.coerce.number().optional(),
     })
 
 export const AccountFollowFetchValidator = z

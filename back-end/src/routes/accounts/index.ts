@@ -93,7 +93,7 @@ AccountRouter.patch('/password', authMandatory, async (req, res, next) => {
 
 AccountRouter.get('/', authOptional, async (req, res, next) => {
     try {
-        const { contains, limit, offset, orderBy, orderMode, relatedTo, relationType } = AccountFetchValidator.parse(req.query)
+        const { contains, limit, offset, orderBy, orderMode, relatedTo, relationType, followsPet } = AccountFetchValidator.parse(req.query)
     
         if (relationType === RelationType.FOLLOWED || relationType === RelationType.MUTUALS) {
             const privacySql = 'SELECT followed_visible FROM user_account WHERE id = $1'
@@ -105,15 +105,18 @@ AccountRouter.get('/', authOptional, async (req, res, next) => {
             WHERE Lower(account_name) LIKE Lower(\'%${contains}%\')
             OR Lower(display_name) LIKE Lower(\'%${contains}%\')`
 
-        const orderByString = orderBy !== AccountOrderByOption.DATE_FOLLOWED 
-            ? `${orderBy}`
-            : relatedTo === undefined ? AccountOrderByOption.FOLLOWERS
-                : relationType === RelationType.FOLLOWERS ? 'followers.date_followed'
-                : relationType === RelationType.FOLLOWED ? 'followed.date_followed'
-                : 'Greatest(followers.date_followed, followed.date_followed)'
+        const orderByString = orderBy !== AccountOrderByOption.DATE_FOLLOWED && orderBy !== AccountOrderByOption.PET_DATE_FOLLOWED
+            ? `${orderBy}` 
+            : orderBy === AccountOrderByOption.PET_DATE_FOLLOWED ? 'pets.date_followed'
+                : relatedTo === undefined ? AccountOrderByOption.FOLLOWERS
+                    : relationType === RelationType.FOLLOWERS ? 'followers.date_followed'
+                    : relationType === RelationType.FOLLOWED ? 'followed.date_followed'
+                    : 'Greatest(followers.date_followed, followed.date_followed)'
 
         const sql = `--sql
-            SELECT id FROM user_account ${generateRelationTypeJoin(relationType, relatedTo)}
+            SELECT id FROM user_account 
+                ${generateRelationTypeJoin(relationType, relatedTo)} 
+                ${followsPet !== undefined ? `JOIN pet_follow pets ON id = pets.follower_id AND pet_id = ${followsPet}` : ''}
             ${nameQueryString}
             ORDER BY 
                 ${req.body.auth ? `id = ${req.body.id},` : ''} 

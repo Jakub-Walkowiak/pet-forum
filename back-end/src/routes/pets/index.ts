@@ -6,12 +6,14 @@ import { generatePetFetchQuery } from '../../helpers/query-generators/pets/gener
 import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory } from '../../middleware/auth'
 import { PetAddValidator, PetEditValidator, PetFetchValidator } from '../../validators/pet-validators'
+import { FollowRouter } from '../accounts/follows'
 import { authOwnership } from './owner-auth'
 import { OwnerRouter } from './owners'
 
 const PetRouter = Router()
 
 PetRouter.use('/:pet_id(\\d+)/owners', OwnerRouter)
+PetRouter.use('/:pet_id(\\d+)/follows', FollowRouter)
 
 PetRouter.post('/', authMandatory, (req, res, next) => {
     const { name, owners, sex, type } = PetAddValidator.parse(req.body)

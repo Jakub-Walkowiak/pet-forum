@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import { OrderByMode } from '../types/order-by-mode';
-import { PetOrderByOption, PetSex } from '../types/pet-types';
+import { z } from 'zod'
+import { OrderByMode } from '../types/order-by-mode'
+import { PetOrderByOption, PetSex } from '../types/pet-types'
 
 export const PetAddValidator = z.
     object({
@@ -29,6 +29,7 @@ export const PetFetchValidator = z.
         offset: z.coerce.number().default(0),
         orderMode: z.nativeEnum(OrderByMode).default(OrderByMode.DESC),
         orderBy: z.nativeEnum(PetOrderByOption).default(PetOrderByOption.TYPE_USES),
+        followedBy: z.coerce.number().optional(),
     })
 
 export type PetFetchData = z.infer<typeof PetFetchValidator>

@@ -8,6 +8,7 @@ export enum AccountOrderByOption {
     REPLIES = 'reply_count',
     PETS = 'owned_pet_count',
     DATE_FOLLOWED = 'date_followed',
+    PET_DATE_FOLLOWED = 'pet_date_followed',
 }
 
 export enum RelationType {

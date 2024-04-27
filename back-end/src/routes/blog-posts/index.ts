@@ -103,6 +103,9 @@ BlogPostRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
         const tagsSql = 'SELECT tag_id AS id FROM blog_tagged WHERE post_id = $1'
         const tagsPromise = pool.query(tagsSql, [req.params.id])
 
+        const petsSql = 'SELECT pet_id AS id FROM blog_post_pet WHERE post_id = $1'
+        const petsPromise = pool.query(petsSql, [req.params.id])
+
         const picturesSql = `--sql
             SELECT picture_id AS id
             FROM blog_post_picture
@@ -114,11 +117,12 @@ BlogPostRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
 
         const postData = await postPromise
         const tagsData = (await tagsPromise).rows.map(row => row.id)
+        const petsData = (await petsPromise).rows.map(row => row.id)
         const picturesData = (await picturesPromise).rows.map(row => row.id)
         const liked = (await likedPromise).rows[0].count > 0
 
         if (postData.rowCount === 0) res.status(404).send(RESOURCE_NOT_FOUND)
-        else res.status(200).send({ ...postData.rows[0], tags: tagsData, images: picturesData, liked })
+        else res.status(200).send({ ...postData.rows[0], tags: tagsData, images: picturesData, liked, pets: petsData })
     } catch (err) { next(err) }
 })
 

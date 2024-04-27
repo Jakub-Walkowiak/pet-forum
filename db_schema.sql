@@ -1,4 +1,5 @@
 -- clean up
+DROP TABLE IF EXISTS blog_post_pet;
 DROP TABLE IF EXISTS follow;
 DROP TABLE IF EXISTS post_like;
 DROP TABLE IF EXISTS pet_own;
@@ -150,6 +151,13 @@ CREATE TABLE pet_own (
     UNIQUE (pet_id, owner_id)
 );
 
+CREATE TABLE blog_post_pet (
+    pet_id int REFERENCES pet(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    post_id int REFERENCES blog_post(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    UNIQUE (pet_id, post_id)
+);
 
 CREATE TABLE blog_tagged (
     tag_id int REFERENCES blog_tag(id)

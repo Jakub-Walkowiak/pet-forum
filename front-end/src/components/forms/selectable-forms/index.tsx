@@ -89,9 +89,10 @@ export default function SelectableForm<T>({ added, selectable, loading = false, 
             <div className='w-full h-10 border-t border-gray-600 p-1.5 bg-black/20 relative'>
                 <Input className='w-full h-full' placeholder='Look for tags...' register={register} name={'name'} handleKeyUp={() => selectable.onQuery(getValues('name'))}/>
                 <AiOutlineSearch className='absolute inset-y-0 my-auto right-9 text-gray-400 text-lg cursor-pointer hover:text-white duration-200' onClick={() => selectable.onQuery(getValues('name'))}/>
-                <AiOutlinePlusCircle className='absolute inset-y-0 my-auto right-3 text-gray-400 text-lg cursor-pointer hover:text-white duration-200' 
-                    onClick={handleSubmit(async data => added?.onSubmit(data.name), 
-                        err => { showNotificationPopup(false, err.name?.message === undefined ? 'Encountered error' : err.name.message) })}/>
+                {added && <AiOutlinePlusCircle className='absolute inset-y-0 my-auto right-3 text-gray-400 text-lg cursor-pointer hover:text-white duration-200' 
+                    onClick={handleSubmit(async data => added.onSubmit(data.name), 
+                        err => { showNotificationPopup(false, err.name?.message === undefined ? 'Encountered error' : err.name.message) })}
+                />}
             </div>
         </form>
     )

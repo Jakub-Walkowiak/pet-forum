@@ -1,7 +1,7 @@
 export enum PetSex {
     MALE = 'm',
     FEMALE = 'f',
-    NOT_APPLICABLE = 'n/a',
+    NOT_APPLICABLE = 'na',
 }
 
 export enum PetOrderByOption {

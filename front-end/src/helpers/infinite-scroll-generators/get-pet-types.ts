@@ -1,11 +1,11 @@
 import showNotificationPopup from "../show-notification-popup"
 
-export async function* getBlogTags(query?: string) {
+export async function* getPetTypes(query?: string) {
     let offset = 0
     const getFetchUrl = (offset: number) => {
         return query === undefined
-            ? `http://localhost:3000/blog-posts/tags?limit=10&offset=${offset}`
-            : `http://localhost:3000/blog-posts/tags?limit=10&offset=${offset}&nameQuery=${query}`
+            ? `http://localhost:3000/pets/types?limit=10&offset=${offset}`
+            : `http://localhost:3000/pets/types?limit=10&offset=${offset}&nameQuery=${query}`
     }
 
     while (true) {

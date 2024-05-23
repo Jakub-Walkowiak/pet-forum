@@ -4,30 +4,36 @@ import { pool } from '../../helpers/pg-pool'
 import { generatePetEditQuery } from '../../helpers/query-generators/pets/generate-pet-edit-query'
 import { generatePetFetchQuery } from '../../helpers/query-generators/pets/generate-pet-fetch-query'
 import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
-import { authMandatory } from '../../middleware/auth'
+import { authMandatory, authOptional } from '../../middleware/auth'
 import { PetAddValidator, PetEditValidator, PetFetchValidator } from '../../validators/pet-validators'
 import { FollowRouter } from '../accounts/follows'
 import { authOwnership } from './owner-auth'
 import { OwnerRouter } from './owners'
+import { TypeRouter } from './types'
 
 const PetRouter = Router()
 
 PetRouter.use('/:pet_id(\\d+)/owners', OwnerRouter)
-PetRouter.use('/:pet_id(\\d+)/follows', FollowRouter)
+PetRouter.use('/:pet_id(\\d+)/follow', FollowRouter)
+PetRouter.use('/types', TypeRouter)
 
 PetRouter.post('/', authMandatory, (req, res, next) => {
-    const { name, owners, sex, type } = PetAddValidator.parse(req.body)
+    const { name, owners, sex, type, profilePictureId } = PetAddValidator.parse(req.body)
 
-    const petSql = 'INSERT INTO pet (name, type_id, sex) VALUES ($1, $2, $3) RETURNING id'
+    const petSql = 'INSERT INTO pet (name, type_id, sex, profile_picture_id) VALUES ($1, $2, $3, $4) RETURNING id'
 
-    pool.query(petSql, [name, type, sex])
+    pool.query(petSql, [name, type, sex, profilePictureId])
         .then(result => {
             const ownersData = owners.map(item => [result.rows[0].id, item])
             const ownersSql = format('INSERT INTO pet_own (owner_id, pet_id) VALUES %L', ownersData)
 
             return pool.query(ownersSql)
         }).then(() => res.status(201).json(CREATED))
-        .catch(err => next(err))
+        .catch(async err => {
+            if (err.code === '23505') res.status(409).send()
+            else if (err.code === '23503') res.status(404).json(RESOURCE_NOT_FOUND)
+            else next(err)
+        })
 })
 
 PetRouter.delete('/:id(\\d+)', authMandatory, (req, res, next) => {
@@ -62,19 +68,26 @@ PetRouter.get('/', (req, res, next) => {
         .catch(err => next(err))
 })
 
-PetRouter.get('/:id(\\d+)', async (req, res, next) => {
+PetRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
     try {
-        const petSql = 'SELECT name, type_id AS "typeId", sex FROM pet WHERE id = $1'
+        const petSql = 'SELECT name, type_id AS "typeId", sex, profile_picture_id AS "profilePictureId" FROM pet WHERE id = $1'
         const petPromise = pool.query(petSql, [req.params.id])
 
         const ownersSql = 'SELECT owner_id AS id FROM pet_own WHERE pet_id = $1'
         const ownersPromise = pool.query(ownersSql, [req.params.id])
 
         const petData = await petPromise
-        const ownersData = await ownersPromise
+        const owners = (await ownersPromise).rows.map(row => row.id)
+        const owned = req.body.auth && owners.includes(req.body.id)
+
+        let followed = false
+        if (req.body.auth === true) {
+            const followedSql = 'SELECT Count(*) AS count FROM pet_follow WHERE follower_id = $1 AND pet_id = $2'
+            if ((await pool.query(followedSql, [req.body.id, req.params.id])).rows[0].count > 0) followed = true
+        }
         
         if (petData.rowCount === 0) res.status(404).json(RESOURCE_NOT_FOUND)
-        else res.status(200).json({ ...petData, owners: ownersData })
+        else res.status(200).json({ ...petData.rows[0], owners, owned, followed })
     } catch (err) { next(err) }
 })
 

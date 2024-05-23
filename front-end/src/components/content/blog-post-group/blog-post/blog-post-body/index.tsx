@@ -1,7 +1,7 @@
 'use client'
 
 import PostImages from '@/components/images/post-images'
-import ProfilePicture from '@/components/images/profile-picture'
+import AccountProfilePicture from '@/components/images/profile-picture/account'
 import AccountLabel from '@/components/labels/account-label'
 import TagLabel from '@/components/labels/tag-label'
 import TimeLabel from '@/components/labels/time-label'
@@ -50,13 +50,13 @@ export default function BlogPostBody({ data, handleLike, handleUnlike, showReply
         <>
             {maximized 
                 ? <div className='flex gap-4'>
-                    <ProfilePicture userId={data.posterId} sizeOverride={4} profileData={profileData}/>
+                    <AccountProfilePicture id={data.posterId} sizeOverride={4}/>
                     <div className='flex flex-col gap-x-1 col-span-7'>
                         <AccountLabel id={data.posterId} displayName size='large' text={profileData.displayName}/>
                         <AccountLabel id={data.posterId} size='large' text={profileData.accountName}/>
                     </div>
                 </div> 
-                : <ProfilePicture userId={data.posterId} profileData={profileData}/>}
+                : <AccountProfilePicture id={data.posterId}/>}
 
             <div className='w-full flex flex-col'>
                 {!maximized && <div className='grid grid-cols-8 gap-1'>

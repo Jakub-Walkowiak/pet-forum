@@ -1,6 +1,6 @@
 'use client'
 
-import ProfilePicture from '@/components/images/profile-picture'
+import AccountProfilePicture from '@/components/images/profile-picture/account'
 import AccountLabel from '@/components/labels/account-label'
 import useProfile from '@/hooks/use-profile'
 import { useState } from 'react'
@@ -18,7 +18,7 @@ export default function LoggedIn({ authId }: LoggedInProps) {
         <div className={`hidden lg:flex duration-200 cursor-pointer gap-4 p-4 m-2 items-center justify-center h-fit max-w-72 hover:bg-gray-800 relative ${showPopup ? 'bg-gray-800 rounded-b-lg' : 'rounded-lg overflow-hidden'}`} 
             onClick={() => setShowPopup(!showPopup)}>
             <PanelPopup show={showPopup}/>
-            <div className='h-12 aspect-square'>{<ProfilePicture userId={authId} profileData={profileData}/>}</div>
+            <div className='h-12 aspect-square'>{<AccountProfilePicture id={authId}/>}</div>
             <div className='h-fit max-w-52 flex flex-col'>
                 <AccountLabel id={authId} text={profileData.displayName} displayName/>
                 <AccountLabel id={authId} text={profileData.accountName}/>

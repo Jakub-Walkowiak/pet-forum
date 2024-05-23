@@ -1,16 +1,17 @@
 -- clean up
 DROP TABLE IF EXISTS blog_post_pet;
-DROP TABLE IF EXISTS follow;
+DROP TABLE IF EXISTS account_follow;
+DROP TABLE IF EXISTS pet_follow;
 DROP TABLE IF EXISTS post_like;
 DROP TABLE IF EXISTS pet_own;
 DROP TABLE IF EXISTS blog_tagged;
 DROP TABLE IF EXISTS blog_post_picture;
 DROP TABLE IF EXISTS blog_post;
-DROP TABLE IF EXISTS picture;
 DROP TABLE IF EXISTS pet;
 DROP TABLE IF EXISTS pet_type;
 DROP TABLE IF EXISTS blog_tag;
 DROP TABLE IF EXISTS user_account;
+DROP TABLE IF EXISTS picture;
 
 DROP TYPE IF EXISTS sex;
 
@@ -24,6 +25,8 @@ DROP TRIGGER IF EXISTS trigger_reply_count_increase ON blog_post;
 DROP TRIGGER IF EXISTS trigger_reply_count_decrease ON blog_post;
 DROP TRIGGER IF EXISTS trigger_owned_pet_count_increase ON pet_own;
 DROP TRIGGER IF EXISTS trigger_owned_pet_count_decrease ON pet_own;
+DROP TRIGGER IF EXISTS trigger_pet_feature_count_increase ON pet_own;
+DROP TRIGGER IF EXISTS trigger_pet_feature_count_decrease ON pet_own;
 DROP TRIGGER IF EXISTS trigger_blog_tag_times_used_increase ON blog_tagged;
 DROP TRIGGER IF EXISTS trigger_blog_tag_times_used_decrease ON blog_tagged;
 DROP TRIGGER IF EXISTS trigger_pet_type_times_used_increase ON pet_type;
@@ -33,6 +36,10 @@ DROP FUNCTION IF EXISTS account_follower_count_increase();
 DROP FUNCTION IF EXISTS account_follower_count_decrease();
 DROP FUNCTION IF EXISTS account_followed_count_increase();
 DROP FUNCTION IF EXISTS account_followed_count_decrease();
+DROP FUNCTION IF EXISTS pet_follower_count_increase();
+DROP FUNCTION IF EXISTS pet_follower_count_decrease();
+DROP FUNCTION IF EXISTS pet_followed_count_increase();
+DROP FUNCTION IF EXISTS pet_followed_count_decrease();
 DROP FUNCTION IF EXISTS blog_post_count_increase();
 DROP FUNCTION IF EXISTS blog_post_count_decrease();
 DROP FUNCTION IF EXISTS reply_count_increase();
@@ -47,8 +54,12 @@ DROP FUNCTION IF EXISTS pet_type_times_used_decrease();
 -- types
 CREATE TYPE sex AS ENUM ('m', 'f', 'n/a');
 
-
 -- main tables
+CREATE TABLE picture (
+    id serial PRIMARY KEY,
+    picture_path char(23)
+);
+
 CREATE TABLE user_account (
     id serial PRIMARY KEY,
     account_name varchar(50) UNIQUE,
@@ -56,7 +67,8 @@ CREATE TABLE user_account (
     password char(60),
     
     display_name varchar(50),
-    profile_picture_id int,
+    profile_picture_id int NULL REFERENCES picture(id)
+        ON DELETE SET NULL ON UPDATE CASCADE,
     bio varchar(300) NULL,
 
     likes_visible boolean DEFAULT TRUE,
@@ -86,22 +98,24 @@ CREATE TABLE blog_post (
     date_posted timestamptz DEFAULT NOW()
 );
 
-CREATE TABLE picture (
+CREATE TABLE pet_type (
     id serial PRIMARY KEY,
-    picture_path char(23)
+    type_name varchar(50),
+    times_used int DEFAULT 0
 );
 
 CREATE TABLE pet (
     id serial PRIMARY KEY,
     name varchar(50),
     sex sex DEFAULT 'n/a',
-    follower_count int DEFAULT 0
-);
 
-CREATE TABLE pet_type (
-    id serial PRIMARY KEY,
-    name varchar(50),
-    times_used int DEFAULT 0,
+    follower_count int DEFAULT 0,
+    feature_count int DEFAULT 0,
+
+    profile_picture_id int NULL REFERENCES picture(id)
+        ON DELETE SET NULL ON UPDATE CASCADE,
+    type_id int NULL REFERENCES pet_type(id)
+        ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 CREATE TABLE blog_tag (
@@ -200,7 +214,7 @@ END; $$ LANGUAGE plpgsql;
 CREATE FUNCTION account_followed_count_increase() RETURNS TRIGGER AS $$
 BEGIN
     UPDATE user_account
-    SET accounts_followed_count = followed_count + 1
+    SET accounts_followed_count = accounts_followed_count + 1
     WHERE id = NEW.follower_id;
 
     RETURN NULL;
@@ -209,7 +223,7 @@ END; $$ LANGUAGE plpgsql;
 CREATE FUNCTION account_followed_count_decrease() RETURNS TRIGGER AS $$
 BEGIN
     UPDATE user_account
-    SET accounts_followed_count = followed_count - 1
+    SET accounts_followed_count = accounts_followed_count - 1
     WHERE id = OLD.follower_id;
 
     RETURN NULL;
@@ -318,6 +332,25 @@ BEGIN
     RETURN NULL;
 END; $$ LANGUAGE plpgsql;
 
+-- pet feature count
+CREATE FUNCTION pet_feature_count_increase() RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE pet
+    SET feature_count = feature_count + 1
+    WHERE id = NEW.pet_id;
+
+    RETURN NULL;
+END; $$ LANGUAGE plpgsql;
+
+CREATE FUNCTION pet_feature_count_decrease() RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE pet
+    SET feature_count = feature_count - 1
+    WHERE id = OLD.pet_id;
+
+    RETURN NULL;
+END; $$ LANGUAGE plpgsql;
+
 -- blog tag times used count
 CREATE FUNCTION blog_tag_times_used_increase() RETURNS TRIGGER AS $$
 BEGIN
@@ -378,8 +411,11 @@ CREATE TRIGGER trigger_reply_count_decrease AFTER DELETE ON blog_post FOR EACH R
 CREATE TRIGGER trigger_owned_pet_count_increase AFTER INSERT ON pet_own FOR EACH ROW EXECUTE FUNCTION owned_pet_count_increase();
 CREATE TRIGGER trigger_owned_pet_count_decrease AFTER DELETE ON pet_own FOR EACH ROW EXECUTE FUNCTION owned_pet_count_decrease();
 
+CREATE TRIGGER trigger_pet_feature_count_increase AFTER INSERT ON blog_post_pet FOR EACH ROW EXECUTE FUNCTION pet_feature_count_increase();
+CREATE TRIGGER trigger_pet_feature_count_decrease AFTER DELETE ON blog_post_pet FOR EACH ROW EXECUTE FUNCTION pet_feature_count_decrease();
+
 CREATE TRIGGER trigger_blog_tag_times_used_increase AFTER INSERT ON blog_tagged FOR EACH ROW EXECUTE FUNCTION blog_tag_times_used_increase();
 CREATE TRIGGER trigger_blog_tag_times_used_decrease AFTER DELETE ON blog_tagged FOR EACH ROW EXECUTE FUNCTION blog_tag_times_used_decrease();
 
-CREATE TRIGGER trigger_pet_type_times_used_increase AFTER INSERT ON pet_type FOR EACH ROW EXECUTE FUNCTION pet_type_times_used_increase();
-CREATE TRIGGER trigger_pet_type_times_used_decrease AFTER DELETE ON pet_type FOR EACH ROW EXECUTE FUNCTION pet_type_times_used_decrease();
+CREATE TRIGGER trigger_pet_type_times_used_increase AFTER INSERT ON pet FOR EACH ROW EXECUTE FUNCTION pet_type_times_used_increase();
+CREATE TRIGGER trigger_pet_type_times_used_decrease AFTER DELETE ON pet FOR EACH ROW EXECUTE FUNCTION pet_type_times_used_decrease();

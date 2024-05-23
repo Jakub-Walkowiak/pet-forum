@@ -23,6 +23,8 @@ export default function Button({ dark = false, text, onClickHandler, disabled = 
     }
 
     return (
-        <button onClick={handleClick} className={`${baseStyle} ${colorModeStyle} ${loading && 'cursor-wait'} ${className}`} disabled={disabled || loading}>{loading ? <AiOutlineLoading className='font-xl animate-spin'/> : text}</button>
+        <button onClick={handleClick} className={`${baseStyle} ${colorModeStyle} ${loading && 'cursor-wait'} ${className}`} disabled={disabled || loading}>
+            {loading ? <AiOutlineLoading className='animate-spin'/> : text}
+        </button>
     )
 }

@@ -14,7 +14,7 @@ export const generatePetFetchQuery = (data: PetFetchData) => {
         data.followedBy !== undefined ? `follower_id = ${data.followedBy}` : '',
     ].filter(str => str !== '').join(',')
 
-    return whereBlock.length === 0 ? '' : `--sql
+    return `--sql
         SELECT A.id 
         FROM pet A 
             ${data.type !== undefined ? 'JOIN pet_type B ON type_id = B.id' : ''}

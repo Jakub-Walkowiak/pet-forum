@@ -1,9 +1,9 @@
 'use client'
 
-import ProfilePicture from '@/components/images/profile-picture'
+import AccountProfilePicture from '@/components/images/profile-picture/account'
 import AccountLabel from '@/components/labels/account-label'
 import TimeLabel from '@/components/labels/time-label'
-import FollowButton from '@/components/utils/follow-button'
+import AccountFollowButton from '@/components/utils/follow-button/account'
 import useAuth from '@/hooks/use-auth'
 import useProfile from '@/hooks/use-profile'
 import { useRouter } from 'next/navigation'
@@ -39,14 +39,14 @@ export default function UserHeader({ id, setLikesTab }: UserHeaderProps) {
             <div className='w-full aspect-[13/3] bg-emerald-800'/>
             <div className='w-full relative flex p-2 gap-2'>
                 <div className='bg-gray-900 rounded-full p-1 w-fit relative -top-12 flex-shrink-0'>
-                    <ProfilePicture userId={id} profileData={data} sizeOverride={10}/>
+                    <AccountProfilePicture id={id} sizeOverride={10}/>
                 </div>
                 <div className='flex flex-col'>
                     <AccountLabel id={id} text={data.displayName} size='extra_large' displayName/>
                     <AccountLabel id={id} text={data.accountName} size='extra_large'/>
                     <div className='break-all relative top-4 text-gray-200'>{data.bio}</div>
                 </div>
-                <div className='absolute top-36 left-3'><FollowButton id={id} followed={data.followed} onChange={setClientFollow}/></div>
+                <div className='absolute top-36 left-3'><AccountFollowButton id={id} followed={data.followed} onChange={setClientFollow}/></div>
             </div>
 
             <div className='flex px-3 py-4 items-end'>

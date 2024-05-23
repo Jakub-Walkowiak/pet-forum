@@ -1,8 +1,8 @@
-import BlogPostFetchOptions from '@/helpers/fetch-options/blog-post-fetch-options';
-import { useForm } from 'react-hook-form';
-import { AiOutlineSearch } from 'react-icons/ai';
-import Input from '../../input';
-import Select from '../../select';
+import BlogPostFetchOptions from '@/helpers/fetch-options/blog-post-fetch-options'
+import { useForm } from 'react-hook-form'
+import { AiOutlineSearch } from 'react-icons/ai'
+import Input from '../../input'
+import Select from '../../select'
 
 interface BlogPostSearchPanelProps {
     onSave: (options: BlogPostFetchOptions) => void,
@@ -32,7 +32,7 @@ export default function BlogPostSearchPanel({ onSave, defaults }: BlogPostSearch
                             ['like_count', 'Likes'],
                             ['date_posted', 'Date'],
                             ['reply_count', 'Replies'],
-                        ])} def={defaults?.orderBy === undefined ? 'like_count' : defaults.orderBy}/>
+                        ])} default={defaults?.orderBy === undefined ? 'like_count' : defaults.orderBy}/>
                     </div>
                 </div>
 
@@ -42,7 +42,7 @@ export default function BlogPostSearchPanel({ onSave, defaults }: BlogPostSearch
                         <Select register={register} name='orderMode' options={new Map([
                             ['DESC', 'Descending'],
                             ['ASC', 'Ascending'],
-                        ])} def={defaults?.orderMode === undefined ? 'DESC' : defaults.orderMode}/>
+                        ])} default={defaults?.orderMode === undefined ? 'DESC' : defaults.orderMode}/>
                     </div>
                 </div>
             </div>

@@ -23,7 +23,8 @@ export default async function* getBlogPosts(options?: BlogPostFetchOptions) {
         const response = await fetch(`http://localhost:3000/blog-posts?offset=${offset}&` +  queryBody, { credentials: 'include' })
 
         if (response.ok) {
-            const json = (await response.json()) as { id: number }[]
+            const json = await response.json()
+            
             if (json.length > 0) {
                 yield json
                 offset += json.length

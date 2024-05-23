@@ -1,9 +1,9 @@
 'use client'
 
-import ProfilePicture from '@/components/images/profile-picture';
-import AccountLabel from '@/components/labels/account-label';
-import FollowButton from '@/components/utils/follow-button';
-import useProfile from '@/hooks/use-profile';
+import AccountProfilePicture from '@/components/images/profile-picture/account'
+import AccountLabel from '@/components/labels/account-label'
+import AccountFollowButton from '@/components/utils/follow-button/account'
+import useProfile from '@/hooks/use-profile'
 
 interface UserPanelProps {
     id: number,
@@ -18,16 +18,14 @@ export default function UserPanel({ id }: UserPanelProps) {
                 ? <p className='inset-0 m-auto'>Failed to fetch account data</p>
                 : <>
                     <div className='flex gap-4'>
-                        <ProfilePicture userId={id} profileData={data} sizeOverride={3.5}/>
+                        <AccountProfilePicture id={id} sizeOverride={3.5}/>
                         <div className='flex flex-col'>
-                            <div className='gap-2 flex'>
-                                <AccountLabel id={id} text={data.displayName} displayName size='large'/>
-                                <AccountLabel id={id} text={data.accountName} size='large'/>
-                            </div>
+                            <AccountLabel id={id} text={data.displayName} displayName size='large'/>
+                            <AccountLabel id={id} text={data.accountName} size='large'/>
                             <p className='break-all'>{data.bio}</p>
                         </div>
                     </div>
-                    <div className='flex-0 inset-y-0 my-auto'><FollowButton id={id} followed={data.followed}/></div>
+                    <div className='flex-0 inset-y-0 my-auto'><AccountFollowButton id={id} followed={data.followed}/></div>
                 </>}
         </div>
     )

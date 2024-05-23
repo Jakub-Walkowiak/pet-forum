@@ -5,7 +5,7 @@ import showNotificationPopup from "@/helpers/show-notification-popup"
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react"
 import { z } from "zod"
 import SelectableForm from ".."
-import SelectableBlogTag from "../selectables/blog-tag"
+import SelectableBlogTag from "./selectable-blog-tag"
 
 export interface SelectableBlogTagFormProps {
     selectable: { 
@@ -80,5 +80,6 @@ export default function SelectableBlogTagForm({ selectable, added }: SelectableB
             validator: validator,
             onSubmit: handleAdd,
         }}
+        placeholder="Look for tags..."
     />
 }

@@ -26,9 +26,10 @@ export interface SelectableFormProps<T> {
     },
     loading?: boolean,
     onScroll?: () => void,
+    placeholder?: string,
 }
 
-export default function SelectableForm<T>({ added, selectable, loading = false, onScroll }: SelectableFormProps<T>) {
+export default function SelectableForm<T>({ added, selectable, loading = false, onScroll, placeholder }: SelectableFormProps<T>) {
     const [unAddTimeouts, setUnAddTimeouts] = useState(new Map<string, NodeJS.Timeout>())
 
     const SelectableFormValidator = z.object({
@@ -87,7 +88,7 @@ export default function SelectableForm<T>({ added, selectable, loading = false, 
                     : <li className='w-full flex items-center justify-center mb-2 mt-1 text-sm text-gray-500'>Nothing too see here...</li>}
             </ul>
             <div className='w-full h-10 border-t border-gray-600 p-1.5 bg-black/20 relative'>
-                <Input className='w-full h-full' placeholder='Look for tags...' register={register} name={'name'} handleKeyUp={() => selectable.onQuery(getValues('name'))}/>
+                <Input className='w-full h-full' placeholder={!placeholder ? 'Search...': placeholder} register={register} name={'name'} handleKeyUp={() => selectable.onQuery(getValues('name'))}/>
                 <AiOutlineSearch className='absolute inset-y-0 my-auto right-9 text-gray-400 text-lg cursor-pointer hover:text-white duration-200' onClick={() => selectable.onQuery(getValues('name'))}/>
                 {added && <AiOutlinePlusCircle className='absolute inset-y-0 my-auto right-3 text-gray-400 text-lg cursor-pointer hover:text-white duration-200' 
                     onClick={handleSubmit(async data => added.onSubmit(data.name), 

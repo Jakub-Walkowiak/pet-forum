@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 export default function showFloatingElement(element: ReactElement, x: number, y: number) {
     const rootElement = document.createElement('div')
 
+    rootElement.style.zIndex = '100'
     rootElement.style.position = 'fixed'
     rootElement.style.left = `${x}px`
     rootElement.style.top = `${y}px`

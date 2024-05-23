@@ -13,5 +13,6 @@ interface SelectableBlogTagProps {
 export default function SelectableBlogTag({ tagId,  checkHandler, uncheckHandler, createChecked = false }: SelectableBlogTagProps) {
     const tagInfo = useTag(tagId) 
 
-    if (tagInfo !== undefined) return <LabeledCheckbox createChecked={createChecked} text={tagInfo.tagName} value={tagId} postfix={`${tagInfo.timesUsed}`} checkHandler={checkHandler} uncheckHandler={uncheckHandler}/>
+    if (tagInfo !== undefined) 
+        return <LabeledCheckbox createChecked={createChecked} text={tagInfo.tagName} value={tagId} postfix={`${tagInfo.timesUsed}`} checkHandler={checkHandler} uncheckHandler={uncheckHandler}/>
 }

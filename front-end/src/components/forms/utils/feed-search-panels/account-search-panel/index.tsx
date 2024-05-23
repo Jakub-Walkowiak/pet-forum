@@ -34,13 +34,13 @@ export default function AccountSearchPanel({ onSave, defaults }: AccountSearchPa
                             ['account_name', 'Account name'],
                             ['display_name', 'Display name'],
                             ['follower_count', 'Followers'],
-                            ['followed_count', 'Follows'],
+                            ['accounts_followed_count', 'Follows'],
                             ['date_created', 'Join date'],
                             ['blog_post_count', 'Blog posts'],
                             ['reply_count', 'Replies'],
                             ['owned_pet_count', 'Pets'],
                             ['date_followed', 'Follow date'],
-                        ])} def={defaults?.orderBy === undefined ? 'like_count' : defaults.orderBy}/>
+                        ])} default={defaults?.orderBy === undefined ? 'like_count' : defaults.orderBy}/>
                     </div>
                 </div>
 
@@ -50,7 +50,7 @@ export default function AccountSearchPanel({ onSave, defaults }: AccountSearchPa
                         <Select register={register} name='orderMode' options={new Map([
                             ['DESC', 'Descending'],
                             ['ASC', 'Ascending'],
-                        ])} def={defaults?.orderMode === undefined ? 'DESC' : defaults.orderMode}/>
+                        ])} default={defaults?.orderMode === undefined ? 'DESC' : defaults.orderMode}/>
                     </div>
                 </div>
             </div>

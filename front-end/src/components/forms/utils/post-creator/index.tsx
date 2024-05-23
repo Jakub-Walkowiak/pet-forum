@@ -43,7 +43,7 @@ export default function PostCreator({ placeholder, replyTo, maxRows, afterSubmit
         const files = e.currentTarget.files
         if (files === null || files.length === 0) return
 
-        // @ts-ignore ts thinks that files can be null here, even though i've already checked for it by now 🤔
+        // @ts-ignore <- ts thinks that files can be null here, even though i've already checked for it by now 🤔
         for (let i = 0; i < files.length; ++i) await images.add(files.item(i)).then(response => {
             if (response === ImageError.InvalidType) showNotificationPopup(false, 'Unsupported file type')
             else if (response === ImageError.TooMany) showNotificationPopup(false, `Max. num. of images is ${images.maxCount}`)

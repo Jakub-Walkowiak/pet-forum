@@ -106,13 +106,13 @@ CREATE TABLE blog_post (
 
 CREATE TABLE pet_type (
     id serial PRIMARY KEY,
-    type_name varchar(50),
+    type_name varchar(50) UNIQUE,
     times_used int DEFAULT 0
 );
 
 CREATE TABLE pet (
     id serial PRIMARY KEY,
-    name varchar(50),
+    name varchar(50) UNIQUE,
     sex sex DEFAULT 'na',
 
     follower_count int DEFAULT 0,

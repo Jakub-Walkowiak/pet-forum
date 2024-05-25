@@ -58,7 +58,7 @@ DROP FUNCTION IF EXISTS pet_feature_count_increase();
 DROP FUNCTION IF EXISTS pet_feature_count_decrease();
 
 -- types
-CREATE TYPE sex AS ENUM ('m', 'f', 'n/a');
+CREATE TYPE sex AS ENUM ('m', 'f', 'na');
 
 -- main tables
 CREATE TABLE picture (
@@ -113,7 +113,7 @@ CREATE TABLE pet_type (
 CREATE TABLE pet (
     id serial PRIMARY KEY,
     name varchar(50),
-    sex sex DEFAULT 'n/a',
+    sex sex DEFAULT 'na',
 
     follower_count int DEFAULT 0,
     feature_count int DEFAULT 0,

@@ -15,6 +15,8 @@ DROP TABLE IF EXISTS picture;
 
 DROP TYPE IF EXISTS sex;
 
+DROP TRIGGER IF EXISTS trigger_post_like_count_increase ON post_like;
+DROP TRIGGER IF EXISTS trigger_post_like_count_decrease ON post_like;
 DROP TRIGGER IF EXISTS trigger_account_follower_count_increase ON account_follow;
 DROP TRIGGER IF EXISTS trigger_account_follower_count_decrease ON account_follow;
 DROP TRIGGER IF EXISTS trigger_account_followed_count_increase ON account_follow;
@@ -32,6 +34,8 @@ DROP TRIGGER IF EXISTS trigger_blog_tag_times_used_decrease ON blog_tagged;
 DROP TRIGGER IF EXISTS trigger_pet_type_times_used_increase ON pet_type;
 DROP TRIGGER IF EXISTS trigger_pet_type_times_used_decrease ON pet_type;
 
+DROP FUNCTION IF EXISTS post_like_count_increase();
+DROP FUNCTION IF EXISTS post_like_count_decrease();
 DROP FUNCTION IF EXISTS account_follower_count_increase();
 DROP FUNCTION IF EXISTS account_follower_count_decrease();
 DROP FUNCTION IF EXISTS account_followed_count_increase();
@@ -50,6 +54,8 @@ DROP FUNCTION IF EXISTS blog_tag_times_used_increase();
 DROP FUNCTION IF EXISTS blog_tag_times_used_decrease();
 DROP FUNCTION IF EXISTS pet_type_times_used_increase();
 DROP FUNCTION IF EXISTS pet_type_times_used_decrease();
+DROP FUNCTION IF EXISTS pet_feature_count_increase();
+DROP FUNCTION IF EXISTS pet_feature_count_decrease();
 
 -- types
 CREATE TYPE sex AS ENUM ('m', 'f', 'n/a');
@@ -191,6 +197,25 @@ CREATE TABLE blog_post_picture (
 
 
 -- functions
+-- post like
+CREATE FUNCTION post_like_count_increase() RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE blog_post
+    SET like_count = like_count + 1
+    WHERE id = NEW.post_id;
+
+    RETURN NULL;
+END; $$ LANGUAGE plpgsql;
+
+CREATE FUNCTION post_like_count_decrease() RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE blog_post
+    SET like_count = like_count - 1
+    WHERE id = OLD.post_id;
+
+    RETURN NULL;
+END; $$ LANGUAGE plpgsql;
+
 -- account follower count
 CREATE FUNCTION account_follower_count_increase() RETURNS TRIGGER AS $$
 BEGIN
@@ -390,6 +415,9 @@ BEGIN
 END; $$ LANGUAGE plpgsql;
 
 -- triggers
+CREATE TRIGGER trigger_post_like_count_increase AFTER INSERT ON post_like FOR EACH ROW EXECUTE FUNCTION post_like_count_increase();
+CREATE TRIGGER trigger_post_like_count_decrease AFTER DELETE ON post_like FOR EACH ROW EXECUTE FUNCTION post_like_count_decrease();
+
 CREATE TRIGGER trigger_account_follower_count_increase AFTER INSERT ON account_follow FOR EACH ROW EXECUTE FUNCTION account_follower_count_increase();
 CREATE TRIGGER trigger_account_follower_count_decrease AFTER DELETE ON account_follow FOR EACH ROW EXECUTE FUNCTION account_follower_count_decrease();
 

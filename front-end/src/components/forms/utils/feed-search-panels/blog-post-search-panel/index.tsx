@@ -32,7 +32,7 @@ export default function BlogPostSearchPanel({ onSave, defaults }: BlogPostSearch
                             ['like_count', 'Likes'],
                             ['date_posted', 'Date'],
                             ['reply_count', 'Replies'],
-                        ])} default={defaults?.orderBy === undefined ? 'like_count' : defaults.orderBy}/>
+                        ])} def={defaults?.orderBy === undefined ? 'like_count' : defaults.orderBy}/>
                     </div>
                 </div>
 
@@ -42,7 +42,7 @@ export default function BlogPostSearchPanel({ onSave, defaults }: BlogPostSearch
                         <Select register={register} name='orderMode' options={new Map([
                             ['DESC', 'Descending'],
                             ['ASC', 'Ascending'],
-                        ])} default={defaults?.orderMode === undefined ? 'DESC' : defaults.orderMode}/>
+                        ])} def={defaults?.orderMode === undefined ? 'DESC' : defaults.orderMode}/>
                     </div>
                 </div>
             </div>

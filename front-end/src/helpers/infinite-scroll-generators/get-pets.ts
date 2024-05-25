@@ -7,10 +7,10 @@ export default async function* getPets(options?: PetFetchOptions) {
         : [options.limit ? `limit=${options.limit}` : 'limit=10',
             options.orderBy ? `orderBy=${options.orderBy}` : '',
             options.orderMode ? `orderMode=${options.orderMode}` : '',
-            options.nameQuery ? `contains=${options.nameQuery}` : '',
-            options.sex ? `relatedTo=${options.sex}` : '',
-            options.followedBy ? `relationType=${options.followedBy}` : '',
-            options.owner ? `followsPet=${options.owner}` : '',
+            options.nameQuery ? `nameQuery=${options.nameQuery}` : '',
+            options.sex ? `sex=${options.sex}` : '',
+            options.followedBy ? `followedBy=${options.followedBy}` : '',
+            options.owner ? `owner=${options.owner}` : '',
             options.type ? `type=${options.type}` : '',
         ].filter(str => str !== '').join('&')
 

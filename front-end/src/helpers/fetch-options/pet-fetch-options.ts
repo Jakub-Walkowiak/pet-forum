@@ -4,6 +4,7 @@ export enum PetOrderByOption {
     NAME = 'name',
     TYPE_USES = 'use_count',
     DATE_FOLLOWED = 'date_followed',
+    FEATURE_COUNT = 'feature_count',
 }
 
 export enum PetSex {

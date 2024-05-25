@@ -24,7 +24,7 @@ PetRouter.post('/', authMandatory, (req, res, next) => {
 
     pool.query(petSql, [name, type, sex, profilePictureId])
         .then(result => {
-            const ownersData = owners.map(item => [result.rows[0].id, item])
+            const ownersData = owners.map(item => [item, result.rows[0].id])
             const ownersSql = format('INSERT INTO pet_own (owner_id, pet_id) VALUES %L', ownersData)
 
             return pool.query(ownersSql)

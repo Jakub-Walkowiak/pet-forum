@@ -3,7 +3,7 @@
 import PetProfilePicture from '@/components/images/profile-picture/pet'
 import PetLabel from '@/components/labels/pet-label'
 import TimeLabel from '@/components/labels/time-label'
-import AccountFollowButton from '@/components/utils/follow-button/account'
+import PetFollowButton from '@/components/utils/follow-button/pet'
 import usePet from '@/hooks/use-pet'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -33,7 +33,7 @@ export default function PetHeader({ id, }: PetHeaderProps) {
                 <div className='flex flex-col'>
                     <PetLabel id={id} text={data.name} size='extra_large'/>
                 </div>
-                <div className='absolute top-36 left-3'><AccountFollowButton id={id} followed={data.followed} onChange={setClientFollow}/></div>
+                <div className='absolute top-36 left-3'><PetFollowButton id={id} followed={data.followed} onChange={setClientFollow} owned={data.owned}/></div>
             </div>
 
             <div className='flex px-3 py-4 items-end'>

@@ -9,6 +9,9 @@ export interface PetData {
     owned: boolean,
     followed: boolean,
     profilePictureId?: number,
+    followerCount: number,
+    featureCount: number,
+    dateCreated: string,
 }
 
 export default function usePet(id: number | undefined) {

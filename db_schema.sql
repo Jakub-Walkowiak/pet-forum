@@ -114,6 +114,7 @@ CREATE TABLE pet (
     id serial PRIMARY KEY,
     name varchar(50) UNIQUE,
     sex sex DEFAULT 'na',
+    date_created timestamptz DEFAULT NOW(),
 
     follower_count int DEFAULT 0,
     feature_count int DEFAULT 0,

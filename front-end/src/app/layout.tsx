@@ -1,6 +1,6 @@
-import LoginPanel from '@/components/account/account-panel'
 import NavbarSideCompact from '@/components/layout/navbars/navbar-side-compact'
 import NavbarSideFull from '@/components/layout/navbars/navbar-side-full'
+import NavbarTop from '@/components/layout/navbars/navbar-top'
 import BackToTop from '@/components/utils/back-to-top'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
@@ -21,11 +21,11 @@ export default function RootLayout({
     return (
         <html lang='en' className='text-[12px] xs:text-[14px] sm:text-[16px]'>
             <body className={inter.className}>
-                <main className='mx-auto md:w-5/6 max-w-6xl flex'>
-                    <section className='flex flex-col place-content-between h-screen sticky top-0 z-10'>
-                        <NavbarSideCompact></NavbarSideCompact>
-                        <NavbarSideFull></NavbarSideFull>
-                        <LoginPanel/>
+                <main className='mx-auto md:w-5/6 max-w-6xl flex flex-col sm:flex-row'>
+                    <div className='sm:hidden'><NavbarTop/></div>
+                    <section className='flex-col place-content-between h-screen sticky top-0 z-10 hidden sm:flex'>
+                        <div className='hidden sm:max-lg:block h-full'><NavbarSideCompact/></div>
+                        <div className='hidden lg:block pe-2 h-full'><NavbarSideFull/></div>
                     </section>
                     <section className='grow sm:border-s md:border-e border-zinc-700 min-h-screen'>{children}</section>
                     <BackToTop/>

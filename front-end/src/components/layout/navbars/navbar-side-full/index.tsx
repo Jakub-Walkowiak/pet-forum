@@ -1,9 +1,10 @@
-import { routes } from '@/helpers/routes';
-import Link from 'next/link';
+import LoginPanel from '@/components/account/account-panel'
+import { routes } from '@/helpers/routes'
+import Link from 'next/link'
 
 export default function NavbarSideFull() {
     return (
-        <nav className='hidden lg:block pe-2'>
+        <nav className='flex flex-col h-full justify-between'>
             <ul className='list-none'>
                 {routes.filter(el => el.navbar).map(el => 
                     <li className='text-3xl font-medium rounded-lg duration-200 hover:bg-emerald-600 hover:bg-opacity-90' key={el.name}>
@@ -14,6 +15,7 @@ export default function NavbarSideFull() {
                     </li>
                 )}
             </ul>
+            <LoginPanel/>
         </nav>
     )
 }

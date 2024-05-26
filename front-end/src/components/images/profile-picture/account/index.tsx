@@ -4,9 +4,10 @@ import ProfilePicture from ".."
 interface AccountProfilePictureProps {
     id: number,
     sizeOverride?: number,
+    onClickReplacement?: () => void,
 }
 
-export default function AccountProfilePicture({ id, sizeOverride }: AccountProfilePictureProps) {
+export default function AccountProfilePicture({ id, sizeOverride, onClickReplacement }: AccountProfilePictureProps) {
     const data = useProfile(id)
-    return <ProfilePicture redirectDestination={`/users/${id}`} pictureId={data?.profilePictureId} sizeOverride={sizeOverride}/>
+    return <ProfilePicture onClick={onClickReplacement} redirectDestination={onClickReplacement ? undefined : `/users/${id}`} pictureId={data?.profilePictureId} sizeOverride={sizeOverride}/>
 }

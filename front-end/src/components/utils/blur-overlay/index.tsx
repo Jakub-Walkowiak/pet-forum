@@ -1,5 +1,9 @@
-import stopEvent from '@/helpers/stop-event';
+import stopEvent from '@/helpers/stop-event'
 
-export default function BlurOverlay() {
-    return <div onDragOver={stopEvent} onDragEnter={stopEvent} className='fixed top-0 right-0 w-screen h-screen backdrop-blur-sm z-10 bg-black/40'/>
+interface BlurOverlayProps {
+    onClick?: () => void,
+}
+
+export default function BlurOverlay({ onClick }: BlurOverlayProps) {
+    return <div onClick={onClick} onDragOver={stopEvent} onDragEnter={stopEvent} className='fixed top-0 right-0 w-screen h-screen backdrop-blur-sm z-10 bg-black/40'/>
 }

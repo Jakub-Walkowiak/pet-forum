@@ -18,7 +18,7 @@ export default function LoggedOut({ setRegisterMode, setShowPopup }: LoggedOutPr
     }
 
     return (
-        <div className='hidden lg:flex flex-col gap-2 p-2 rounded-lg grow-x m-2'>
+        <div className='flex flex-col gap-2 p-2 rounded-lg grow-x m-2'>
             <Button text='Log in' onClickHandler={loginHandler}/>
             <Button dark text='Register' onClickHandler={registerHandler}/>
         </div>

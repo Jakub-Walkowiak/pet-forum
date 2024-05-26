@@ -428,9 +428,6 @@ CREATE TRIGGER trigger_account_followed_count_decrease AFTER DELETE ON account_f
 CREATE TRIGGER trigger_follower_count_increase AFTER INSERT ON pet_follow FOR EACH ROW EXECUTE FUNCTION pet_follower_count_increase();
 CREATE TRIGGER trigger_follower_count_decrease AFTER DELETE ON pet_follow FOR EACH ROW EXECUTE FUNCTION pet_follower_count_decrease();
 
-CREATE TRIGGER trigger_followed_count_increase AFTER INSERT ON account_follow FOR EACH ROW EXECUTE FUNCTION account_followed_count_increase();
-CREATE TRIGGER trigger_followed_count_decrease AFTER DELETE ON account_follow FOR EACH ROW EXECUTE FUNCTION account_followed_count_decrease();
-
 CREATE TRIGGER trigger_blog_post_count_increase AFTER INSERT ON blog_post FOR EACH ROW EXECUTE FUNCTION blog_post_count_increase();
 CREATE TRIGGER trigger_blog_post_count_decrease AFTER DELETE ON blog_post FOR EACH ROW EXECUTE FUNCTION blog_post_count_decrease();
 

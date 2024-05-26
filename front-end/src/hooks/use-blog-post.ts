@@ -10,6 +10,7 @@ export interface BlogPostData {
     tags: Array<number>,
     images: Array<number>,
     liked: boolean,
+    pets: Array<number>,
 }
 
 export default function useBlogPost(id: number | undefined) {

@@ -2,6 +2,7 @@
 
 import PostImages from '@/components/images/post-images'
 import AccountProfilePicture from '@/components/images/profile-picture/account'
+import PetProfilePicture from '@/components/images/profile-picture/pet'
 import AccountLabel from '@/components/labels/account-label'
 import TagLabel from '@/components/labels/tag-label'
 import TimeLabel from '@/components/labels/time-label'
@@ -73,9 +74,15 @@ export default function BlogPostBody({ data, handleLike, handleUnlike, showReply
                 </div>}
                 {!maximized && <div className='h-1'/>}
 
-                <div className={`mb-3 ${maximized ? 'text-lg' : 'text-base'} break-all`}>{data.contents}</div>
+                <div className={`mb-4 ${maximized ? 'text-lg' : 'text-base'} break-all`}>{data.contents}</div>
 
-                {data.tags.length > 0 && <ul className='flex gap-2 flex-wrap list-none mb-4'>
+                {data.pets.length > 0 && <ul className={`flex gap-2 flex-wrap list-none mb-3 text-zinc-500 text-${maximized ? 'lg' : 'base'}`}>Featuring: 
+                    {data.pets.map(id => (
+                        <li className={maximized ? '*:text-base' : ''} key={id}><PetProfilePicture sizeOverride={maximized ? 1.9 : 1.5} id={id}/></li>
+                    ))}
+                </ul>}
+
+                {data.tags.length > 0 && <ul className='flex gap-2 flex-wrap list-none mb-3'>
                     {data.tags.map(id => (
                         <li className={maximized ? '*:text-base' : ''} key={id}><TagLabel tagId={id}/></li>
                     ))}

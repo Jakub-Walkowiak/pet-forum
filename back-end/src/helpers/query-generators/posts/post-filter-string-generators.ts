@@ -1,7 +1,7 @@
 import { OrderByMode } from '../../../types/order-by-mode'
-import { BlogPostOrderByOption, MultipleMode, PostType, PostTypeProperties, ResponseOrderByOption, UserTypeOption } from '../../../types/post-types'
+import { BlogPostOrderByOption, FollowedPetsMode, MultipleMode, PostType, PostTypeProperties, UserTypeOption } from '../../../types/post-types'
 
-export const getOrderByString = (by: BlogPostOrderByOption | ResponseOrderByOption, mode: OrderByMode) => `${by} ${mode}, date_posted DESC`
+export const getOrderByString = (by: BlogPostOrderByOption, mode: OrderByMode) => `${by} ${mode}, date_posted DESC`
 
 export const getUserTypeFilterString = (input: UserTypeOption, forUser?: number) => {
     if (forUser === undefined) return ''

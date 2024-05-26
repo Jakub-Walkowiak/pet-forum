@@ -5,11 +5,6 @@ export enum BlogPostOrderByOption {
     DATE_LIKED = 'date_liked',
 }
 
-export enum ResponseOrderByOption {
-    DATE = 'date_posted',
-    SCORE = 'score',
-}
-
 export enum UserTypeOption {
     FOLLOWED = 'followed',
     MUTUTALS = 'mutuals',

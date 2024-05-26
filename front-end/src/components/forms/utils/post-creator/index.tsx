@@ -140,6 +140,7 @@ export default function PostCreator({ placeholder, replyTo, maxRows, afterSubmit
             })
 
             if (postResponse.status === 401) showNotificationPopup(false, 'Authentication failed')
+            else if (postResponse.status === 403) showNotificationPopup(false, 'You lack ownership of 1+ pets')
             else if (!postResponse.ok && postResponse.status !== 404) showNotificationPopup(false, 'Encountered server errror')
             else {
                 for (let i = images.urls.length - 1; i >= 0 ; --i) images.remove(i)

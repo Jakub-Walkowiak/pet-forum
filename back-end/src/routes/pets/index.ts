@@ -6,7 +6,7 @@ import { generatePetFetchQuery } from '../../helpers/query-generators/pets/gener
 import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory, authOptional } from '../../middleware/auth'
 import { PetAddValidator, PetEditValidator, PetFetchValidator } from '../../validators/pet-validators'
-import { FollowRouter } from '../accounts/follows'
+import { FollowRouter } from './follows'
 import { authOwnership } from './owner-auth'
 import { OwnerRouter } from './owners'
 import { TypeRouter } from './types'

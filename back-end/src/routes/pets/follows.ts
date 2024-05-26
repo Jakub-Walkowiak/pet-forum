@@ -5,7 +5,8 @@ import { authMandatory } from "../../middleware/auth"
 const FollowRouter = Router({ mergeParams: true })
 
 FollowRouter.post('/', authMandatory, (req, res, next) => {
-    const sql = 'INSERT INTO pet_follow VALUES ($1, $2)'
+    const sql = 'INSERT INTO pet_follow (pet_id, follower_id) VALUES ($1, $2)'
+
     pool.query(sql, [req.params.pet_id, req.body.id])
         .then(() => res.status(204).send())
         .catch(err => next(err))
@@ -17,3 +18,5 @@ FollowRouter.delete('/', authMandatory, (req, res, next) => {
         .then(() => res.status(204).send())
         .catch(err => next(err))
 })
+
+export { FollowRouter }

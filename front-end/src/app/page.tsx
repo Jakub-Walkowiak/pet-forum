@@ -1,9 +1,9 @@
 'use client'
 
-import BlogFeed from '@/components/content/dynamic-feeds/blog-feed';
-import NewPostPanel from '@/components/layout/new-post-panel';
-import TabContainer from '@/components/layout/tab-container';
-import useAuth from '@/hooks/use-auth';
+import BlogFeed from '@/components/content/dynamic-feeds/blog-feed'
+import NewPostPanel from '@/components/layout/new-post-panel'
+import TabContainer from '@/components/layout/tab-container'
+import useAuth from '@/hooks/use-auth'
 
 
 export default function Home() {
@@ -13,7 +13,7 @@ export default function Home() {
         <>
             {auth ? <TabContainer header={<NewPostPanel/>} tabs={[
                 { title: 'Discover', element: <BlogFeed options={{ replies: false, orderBy: 'like_count' }}/> },
-                { title: 'Followed', element: <BlogFeed options={{ desiredUsers: 'followed', orderBy: 'date_posted' }}/> },
+                { title: 'Followed', element: <BlogFeed options={{ desiredUsers: 'followed', orderBy: 'date_posted', followedPets: 'append' }}/> },
             ]}/> : <BlogFeed options={{ replies: false, orderBy: 'like_count' }}/>}
         </>
     )

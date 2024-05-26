@@ -26,6 +26,7 @@ export const BlogPostFetchValidator = z
             .optional(),
         petMode: z.enum(['any', 'all']).optional(),
         likedBy: z.coerce.number().optional(),
+        followedPets: z.enum(['only', 'append', 'exclude']).optional(),
     })
 
 type BlogPostFetchOptions = z.infer<typeof BlogPostFetchValidator>

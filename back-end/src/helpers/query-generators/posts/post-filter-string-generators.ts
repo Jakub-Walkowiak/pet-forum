@@ -73,3 +73,10 @@ export const getBestFilterString = (isBest?: boolean) => isBest === undefined ? 
 export const getLikedByFilterString = (likedBy?: number) => {
     return likedBy !== undefined ? `user_account_id = ${likedBy}` : ''
 }
+
+export const getFollowedPetsFilterString = (option: FollowedPetsMode, forUser: number) => `--sql
+    (
+        SELECT COUNT(*)
+        FROM pet_follow A JOIN blog_post_pet B ON A.pet_id = B.pet_id
+        WHERE follower_id = ${forUser} AND post_id = id
+    ) ${option === FollowedPetsMode.EXCLUDE ? '=' : '>'} 0`

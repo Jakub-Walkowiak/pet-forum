@@ -1,6 +1,6 @@
 import z from 'zod'
 import { OrderByMode } from '../types/order-by-mode'
-import { BlogPostOrderByOption, MultipleMode, UserTypeOption } from '../types/post-types'
+import { BlogPostOrderByOption, FollowedPetsMode, MultipleMode, UserTypeOption } from '../types/post-types'
 
 export const BlogPostAddValidator = z.
     object({
@@ -27,6 +27,7 @@ export const BlogPostFetchValidator = z.
         pets: z.coerce.number().array().optional(),
         petMode: z.nativeEnum(MultipleMode).default(MultipleMode.ANY),
         likedBy: z.coerce.number().optional(),
+        followedPets: z.nativeEnum(FollowedPetsMode).optional(),
     })
 
 export type BlogPostFetchData = z.infer<typeof BlogPostFetchValidator>

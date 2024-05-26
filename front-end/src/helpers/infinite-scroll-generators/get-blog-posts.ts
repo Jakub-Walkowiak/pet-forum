@@ -17,6 +17,7 @@ export default async function* getBlogPosts(options?: BlogPostFetchOptions) {
             options.tags && options.tags.length > 0 ? options.tags.map(tag => `tags[]=${tag}`).join('&') : '',
             options.pets && options.pets.length > 0 ? options.pets.map(pet => `pets[]=${pet}`).join('&') : '',
             options.likedBy ? `likedBy=${options.likedBy}` : '',
+            options.followedPets ? `followedPets=${options.followedPets}` : '',
         ].filter(str => str !== '').join('&')
 
     while (true) {

@@ -16,6 +16,12 @@ export enum MultipleMode {
     ALL = 'all',
 }
 
+export enum FollowedPetsMode {
+    ONLY = 'only',
+    APPEND = 'append',
+    EXCLUDE = 'exclude',
+}
+
 export enum PostType {
     BLOG,
 }

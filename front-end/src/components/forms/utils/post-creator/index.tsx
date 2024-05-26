@@ -6,9 +6,10 @@ import showNotificationPopup from '@/helpers/show-notification-popup'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { AiOutlineFileImage, AiOutlineTags } from 'react-icons/ai'
+import { AiOutlineBug, AiOutlineFileImage, AiOutlineTags } from 'react-icons/ai'
 import { z } from 'zod'
 import SelectableBlogTagForm from '../../selectable-forms/blog-tag-form'
+import SelectablePetForm from '../../selectable-forms/pet-form'
 import Button from '../button'
 import ImageUploaderWrapper from '../image-uploader-wrapper'
 import UploaderImages, { ImageError } from '../image-uploader-wrapper/uploader-images'
@@ -36,6 +37,7 @@ export default function PostCreator({ placeholder, replyTo, maxRows, afterSubmit
 
     const [selectedTags, setSelectedTags] = useState(new Array<number>())
     const [addedTags, setAddedTags] = useState(new Array<string>())
+    const [selectedPets, setSelectedPets] = useState(new Array<number>())
 
     useEffect(() => setUpdate(false), [update])
 
@@ -60,6 +62,12 @@ export default function PostCreator({ placeholder, replyTo, maxRows, afterSubmit
         showFloatingElement(<SelectableBlogTagForm
             selectable={{ selected: selectedTags, set: setSelectedTags, }}
             added={{ values: addedTags, set: setAddedTags, }}
+        />, e.clientX, e.clientY)
+    }
+
+    const handlePetButtonClick = (e: React.MouseEvent<SVGElement>) => {
+        showFloatingElement(<SelectablePetForm
+            selectable={{ selected: selectedPets, set: setSelectedPets, }}
         />, e.clientX, e.clientY)
     }
 
@@ -127,7 +135,7 @@ export default function PostCreator({ placeholder, replyTo, maxRows, afterSubmit
                 method: 'POST',
                 credentials: 'include',
                 mode: 'cors',
-                body: JSON.stringify({ replyTo, contents, pictures, tags }),
+                body: JSON.stringify({ replyTo, contents, pictures, tags, pets: selectedPets }),
                 headers: { 'Content-Type': 'application/json' }
             })
 
@@ -167,6 +175,7 @@ export default function PostCreator({ placeholder, replyTo, maxRows, afterSubmit
 
                         <AiOutlineFileImage className='h-full text-xl text-gray-400 inline me-2 hover:cursor-pointer hover:text-white duration-200' onClick={handleFileButtonClick}/>
                         <AiOutlineTags className='h-full text-xl text-gray-400 inline me-2 hover:cursor-pointer hover:text-white duration-200' onClick={handleTagButtonClick}/>
+                        <AiOutlineBug className='h-full text-xl text-gray-400 inline me-2 hover:cursor-pointer hover:text-white duration-200' onClick={handlePetButtonClick}/>
                     </div>
                     <Button disabled={getErrorState()} className='!p-1.5 text-md' text={replyTo !== undefined ? 'Reply' : 'Post'}/>
                 </div>

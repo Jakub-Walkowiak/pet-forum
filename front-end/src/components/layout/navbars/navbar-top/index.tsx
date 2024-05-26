@@ -14,7 +14,9 @@ export default function NavbarTop() {
     return (
         <>
             <div className="w-full h-16 p-2 border-b border-zinc-700 text-5xl">
-                {auth ? <AccountProfilePicture sizeOverride={3} id={auth} onClickReplacement={() => setShowBig(true)}/> : <AiOutlineMenu onClick={() => setShowBig(true)}/>}
+                {auth 
+                    ? <AccountProfilePicture sizeOverride={3} id={auth} onClickReplacement={() => setShowBig(true)}/> 
+                    : <AiOutlineMenu className="text-zinc-400 cursor-pointer duration-200 hover:opacity-70" onClick={() => setShowBig(true)}/>}
             </div>
             {showBig && <BlurOverlay onClick={() => setShowBig(false)}/>}
             <div className={`text-[16px] fixed h-full w-fit top-0 left-0 z-20 p-2 bg-gray-900 duration-200 ${!showBig && '-translate-x-full'}`}>

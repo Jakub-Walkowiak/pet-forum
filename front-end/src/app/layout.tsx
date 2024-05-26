@@ -22,7 +22,7 @@ export default function RootLayout({
         <html lang='en' className='text-[12px] xs:text-[14px] sm:text-[16px]'>
             <body className={inter.className}>
                 <main className='mx-auto md:w-5/6 max-w-6xl flex flex-col sm:flex-row'>
-                    <div className='sm:hidden'><NavbarTop/></div>
+                    <div className='sm:hidden sticky top-0 z-20 bg-gray-900'><NavbarTop/></div>
                     <section className='flex-col place-content-between h-screen sticky top-0 z-10 hidden sm:flex'>
                         <div className='hidden sm:max-lg:block h-full'><NavbarSideCompact/></div>
                         <div className='hidden lg:block pe-2 h-full'><NavbarSideFull/></div>

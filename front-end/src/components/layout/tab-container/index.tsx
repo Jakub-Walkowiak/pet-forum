@@ -29,7 +29,7 @@ export default function TabContainer({ tabs, header }: TabContainerProps) {
 
     return (
         <div className='w-full relative z-0'>
-            <ul className={`h-min flex w-full border-b border-zinc-700 sticky ${hidePanel ? '-top-[60px]' : 'top-0'} duration-200 z-10 bg-gray-900`}>{tabs.map((row, idx) => (
+            <ul className={`h-min flex w-full border-b border-zinc-700 sticky ${hidePanel ? 'top-0 sm:-top-16' : 'top-16 sm:top-0'} duration-200 z-10 bg-gray-900`}>{tabs.map((row, idx) => (
                 <li className={`${idx === selected ? 'bg-black/10 after:w-full' : 'cursor-pointer'} relative h-14 flex-1 flex items-center justify-center font-semibold text-xl hover:bg-black/20 after:block after:absolute after:w-0 after:bg-emerald-600 after:h-0.5 after:duration-200 after:ease-in-out hover:after:w-full after:inset-x-0 after:mx-auto after:bottom-0 duration-200`} key={row.title} onClick={() => { 
                     setScrollPositions(old => old.toSpliced(selected, 1, document.documentElement.scrollTop))
                     setSelected(idx)

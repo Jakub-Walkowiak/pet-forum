@@ -5,6 +5,7 @@ import { generateBlogPostFetchQuery } from '../../helpers/query-generators/posts
 import { FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory, authOptional } from '../../middleware/auth'
 import { BlogPostAddValidator, BlogPostFetchData, BlogPostFetchValidator } from '../../validators/blog-post-validators'
+import { authOwnership } from '../pets/owner-auth'
 import { LikeRouter } from './likes'
 import { TagRouter } from './tags'
 
@@ -17,41 +18,55 @@ BlogPostRouter.post('/', authMandatory, async (req, res, next) => {
     try {
         const { contents, replyTo, pictures, tags, pets } = BlogPostAddValidator.parse(req.body)
     
-        const postSql = 'INSERT INTO blog_post (poster_id, contents, reply_to) VALUES ($1, $2, $3) RETURNING id'
-        let idCreated: number
+        const doQuery = () => {
+            const postSql = 'INSERT INTO blog_post (poster_id, contents, reply_to) VALUES ($1, $2, $3) RETURNING id'
+            let idCreated: number
 
-        pool.query(postSql, [req.body.id, contents, replyTo])
-            .then(result => { 
-                idCreated = result.rows[0].id
+            pool.query(postSql, [req.body.id, contents, replyTo])
+                .then(result => { 
+                    idCreated = result.rows[0].id
 
-                let picturesPromise
-                let tagsPromise
-                let petsPromise
+                    let picturesPromise
+                    let tagsPromise
+                    let petsPromise
 
-                if (pictures !== undefined && pictures.length > 0) {
-                    const picturesData = pictures.map(item => [item, result.rows[0].id])
-                    const picturesSql = format('INSERT INTO blog_post_picture (picture_id, post_id) VALUES %L', picturesData)
-                    picturesPromise = pool.query(picturesSql)
-                } 
+                    if (pictures !== undefined && pictures.length > 0) {
+                        const picturesData = pictures.map(item => [item, result.rows[0].id])
+                        const picturesSql = format('INSERT INTO blog_post_picture (picture_id, post_id) VALUES %L', picturesData)
+                        picturesPromise = pool.query(picturesSql)
+                    } 
 
-                if (tags !== undefined && tags.length > 0) {
-                    const tagsData = tags.map(item => [item, result.rows[0].id])
-                    const tagsSql = format('INSERT INTO blog_tagged (tag_id, post_id) VALUES %L', tagsData)
-                    tagsPromise = pool.query(tagsSql)
-                } 
+                    if (tags !== undefined && tags.length > 0) {
+                        const tagsData = tags.map(item => [item, result.rows[0].id])
+                        const tagsSql = format('INSERT INTO blog_tagged (tag_id, post_id) VALUES %L', tagsData)
+                        tagsPromise = pool.query(tagsSql)
+                    } 
 
-                if (pets !== undefined && pets.length > 0) {
-                    const petsData = pets.map(item => [item, result.rows[0].id])
-                    const petsSql = format('INSERT INTO blog_post_pet (pet_id, post_id) VALUES %L', petsData)
-                    petsPromise = pool.query(petsSql)
-                }
+                    if (pets !== undefined && pets.length > 0) {
+                        const petsData = pets.map(item => [item, result.rows[0].id])
+                        const petsSql = format('INSERT INTO blog_post_pet (pet_id, post_id) VALUES %L', petsData)
+                        petsPromise = pool.query(petsSql)
+                    }
 
-                return Promise.all([picturesPromise, tagsPromise, petsPromise])
-            }).then(() => res.status(201).json({ id: idCreated }))
-            .catch(err => {
-                if (err.code === 23503) res.status(404).json({ id: idCreated })
-                else next(err)
-            })
+                    return Promise.all([picturesPromise, tagsPromise, petsPromise])
+                }).then(() => res.status(201).json({ id: idCreated }))
+                .catch(err => {
+                    if (err.code === 23503) res.status(404).json({ id: idCreated })
+                    else next(err)
+                })
+        }
+        
+        if (pets) { 
+            const notOwned = 
+                (await Promise.all(
+                    pets.map(pet => authOwnership(pet.toString(), req.body.id))
+                ))
+                .filter((owned) =>  !owned )
+                .map((_, idx) => pets[idx])
+
+            if (notOwned.length > 0) res.status(403).json({ notOwned })
+            else doQuery()
+        } else doQuery()
     } catch (err) { next(err) }
 })
 

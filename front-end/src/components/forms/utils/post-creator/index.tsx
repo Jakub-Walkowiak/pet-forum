@@ -146,6 +146,7 @@ export default function PostCreator({ placeholder, replyTo, maxRows, afterSubmit
                 for (let i = images.urls.length - 1; i >= 0 ; --i) images.remove(i)
                 setAddedTags([])
                 setSelectedTags([])
+                setSelectedPets([])
                 setValue('contents', '')
 
                 if (postResponse.status === 404) showNotificationPopup(false, 'Failed to attach resources')

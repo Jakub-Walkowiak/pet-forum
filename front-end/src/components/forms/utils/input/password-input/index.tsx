@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react';
-import { FieldValues, Path, UseFormRegister } from 'react-hook-form';
-import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import { useState } from 'react'
+import { FieldValues, Path, UseFormRegister } from 'react-hook-form'
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 
 interface PasswordInputProps<T extends FieldValues> {
     placeholder: string,
@@ -12,9 +12,10 @@ interface PasswordInputProps<T extends FieldValues> {
     className?: string,
     handleKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void,
     defaultValue?: string,
+    focused?: boolean,
 }
 
-export default function PasswordInput<T extends FieldValues>({ placeholder, error, register, name, className, handleKeyUp, defaultValue }: PasswordInputProps<T>) {
+export default function PasswordInput<T extends FieldValues>({ placeholder, error, register, name, className, handleKeyUp, defaultValue, focused = false }: PasswordInputProps<T>) {
     const [show, setShow] = useState(false)
 
     const styles = error
@@ -26,6 +27,6 @@ export default function PasswordInput<T extends FieldValues>({ placeholder, erro
         : <AiOutlineEyeInvisible className='absolute right-4 inset-y-0 m-auto text-2xl text-gray-500 hover:cursor-pointer hover:text-white' onClick={() => setShow(false)}/>
 
     return register !== undefined && name !== undefined
-        ? <div className='relative'><input defaultValue={defaultValue} placeholder={placeholder} className={`${className} ${styles}`} onKeyUp={handleKeyUp} {...register(name)} type={show ? 'text' : 'password'}/>{showIcon}</div>
-        : <div className='relative'><input defaultValue={defaultValue} placeholder={placeholder} className={`${className} ${styles}`} onKeyUp={handleKeyUp} type={show ? 'text' : 'password'}/>{showIcon}</div>
+        ? <div autoFocus={focused} className='relative'><input defaultValue={defaultValue} placeholder={placeholder} className={`${className} ${styles}`} onKeyUp={handleKeyUp} {...register(name)} type={show ? 'text' : 'password'}/>{showIcon}</div>
+        : <div autoFocus={focused} className='relative'><input defaultValue={defaultValue} placeholder={placeholder} className={`${className} ${styles}`} onKeyUp={handleKeyUp} type={show ? 'text' : 'password'}/>{showIcon}</div>
 }

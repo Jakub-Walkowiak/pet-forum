@@ -1,4 +1,4 @@
-import LoginPanel from '@/components/account/account-panel'
+import AccountPanelFull from '@/components/account/account-panel/full'
 import { routes } from '@/helpers/routes'
 import Link from 'next/link'
 
@@ -15,7 +15,7 @@ export default function NavbarSideFull() {
                     </li>
                 )}
             </ul>
-            <LoginPanel/>
+            <AccountPanelFull/>
         </nav>
     )
 }

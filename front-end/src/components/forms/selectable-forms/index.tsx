@@ -63,7 +63,7 @@ export default function SelectableForm<T>({ added, selectable, loading = false, 
     }
 
     return (
-        <form className='flex flex-col w-60 border border-gray-600 rounded-lg bg-gray-800' onClick={stopEvent} onScroll={stopEvent}>
+        <form className='flex flex-col w-60 border border-gray-600 rounded-lg bg-gray-800 shadow-md shadow-black/70' onClick={stopEvent} onScroll={stopEvent}>
             <ul className='list-none flex flex-col h-40 w-full bg-black/10 overflow-y-auto' onScroll={handleScroll}>
                 {added?.values
                     .filter(name => !getValues('name') || name.toLowerCase().includes(getValues('name')))

@@ -1,6 +1,6 @@
 import UploaderImages from "@/components/forms/utils/image-uploader-wrapper/uploader-images"
 import { z } from "zod"
-import showNotificationPopup from "../show-notification-popup"
+import showNotificationPopup from "../../show-notification-popup"
 
 export const PatchProfileInputsValidator = z
     .object({

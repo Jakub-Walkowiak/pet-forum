@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { pool } from '../../helpers/pg-pool'
-import { CREATED, FORBIDDEN } from '../../helpers/status-codes'
+import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory } from '../../middleware/auth'
 import { OwnerAddValidator } from '../../validators/pet-validators'
 import { authOwnership } from './owner-auth'
@@ -17,7 +17,10 @@ OwnerRouter.post('/', authMandatory, (req, res, next) => {
                 return pool.query(sql, [req.params.pet_id, user])
             }
         }).then(() => res.status(201).json(CREATED))
-        .catch(err => next(err))
+        .catch(err => {
+            if (err.code === '23503') res.status(404).json(RESOURCE_NOT_FOUND)
+            next(err)
+        })
 })
 
 OwnerRouter.delete('/:owner_id(\\d+)', authMandatory, (req, res, next) => {

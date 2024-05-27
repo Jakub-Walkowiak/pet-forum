@@ -3,13 +3,32 @@
 import AccountProfilePicture from "@/components/images/profile-picture/account"
 import BlurOverlay from "@/components/utils/blur-overlay"
 import useAuth from "@/hooks/use-auth"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { AiOutlineMenu } from "react-icons/ai"
 import NavbarSideFull from "../navbar-side-full"
 
 export default function NavbarTop() {
     const auth = useAuth()
     const [showBig, setShowBig] = useState(false)
+    const [swipeXStart, setSwipeXStart] = useState<number>()
+
+    const startSwipe = (e: TouchEvent) => setSwipeXStart(e.changedTouches[0].clientX)
+    const endSwipe = (e: TouchEvent) => {
+        if (swipeXStart === undefined) return
+        const swipeXEnd = e.changedTouches[0].clientX
+        if (showBig && swipeXEnd + 40 < swipeXStart) setShowBig(false)
+        else if (!showBig && swipeXEnd - 40 > swipeXStart) setShowBig(true)
+        setSwipeXStart(undefined)
+    }
+
+    useEffect(() => {
+        document.addEventListener('touchstart', startSwipe)
+        document.addEventListener('touchend', endSwipe)
+        return () => {
+            document.removeEventListener('touchstart', startSwipe)
+            document.removeEventListener('touchend', endSwipe)
+        }
+    })
 
     return (
         <>

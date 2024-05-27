@@ -1,4 +1,5 @@
 import showNotificationPopup from "@/helpers/show-notification-popup"
+import { useRouter } from "next/navigation"
 import FollowButton from ".."
 
 interface PetFollowButtonProps {
@@ -9,6 +10,8 @@ interface PetFollowButtonProps {
 }
 
 export default function PetFollowButton({ id, followed = false, onChange, owned }: PetFollowButtonProps) {
+    const router = useRouter()
+
     const handleUnfollow = async () => {
         try {
             const response = await fetch(`http://localhost:3000/pets/${id}/follow`, {
@@ -35,5 +38,13 @@ export default function PetFollowButton({ id, followed = false, onChange, owned 
         } catch (err) { showNotificationPopup(false, 'Failed to follow') }
     }
 
-    return <FollowButton followed={followed} onChange={onChange} handleFollow={handleFollow} handleUnfollow={handleUnfollow} disabledChecker={() => owned}/>
+    return <FollowButton 
+        followed={followed} 
+        onChange={onChange} 
+        handleFollow={handleFollow} 
+        handleUnfollow={handleUnfollow} 
+        altChecker={() => owned} 
+        altClick={() => router.push(`/pets/${id}/edit`)}
+        altText='Edit'
+    />
 }

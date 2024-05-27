@@ -13,6 +13,7 @@ export interface ProfileData {
     bio?: string,
     followed: boolean,
     likesVisible: boolean,
+    followedVisible: boolean,
 }
 
 export default function useProfile(id: number | undefined) {

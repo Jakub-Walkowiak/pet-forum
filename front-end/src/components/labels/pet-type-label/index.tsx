@@ -13,7 +13,7 @@ export default function PetTypeLabel({ typeId }: PetTypeLabel) {
 
     const handleClick = (e: React.BaseSyntheticEvent) => {
         e.stopPropagation()
-        router.replace(`/pets?types=[${typeId}]`)
+        router.replace(`/pets?type=${typeId}`)
     }
 
     if (data !== undefined) return <div onClick={handleClick} className='cursor-pointer rounded-full py-0.5 px-2 bg-emerald-900 text-emerald-200 text-xl duration-200 hover:opacity-80'>{data.typeName}</div>

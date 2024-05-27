@@ -13,9 +13,10 @@ export const PetAddValidator = z.
 
 export const PetEditValidator = z.
     object({
-        name: z.string().trim().min(1).max(50),
-        type: z.coerce.number(),
-        sex: z.nativeEnum(PetSex).default(PetSex.NOT_APPLICABLE),
+        name: z.string().trim().min(1).max(50).optional(),
+        type: z.coerce.number().optional(),
+        sex: z.nativeEnum(PetSex).optional(),
+        profilePictureId: z.coerce.number().optional(),
     })
 
 export type PetEditData = z.infer<typeof PetEditValidator>

@@ -54,6 +54,7 @@ PetRouter.patch('/:id(\\d+)', authMandatory, (req, res, next) => {
             if (!result) res.status(403).json(FORBIDDEN)
             else {
                 const sql = generatePetEditQuery(PetEditValidator.parse(req.body), req.params.id)
+                console.log(sql)
                 return pool.query(sql)
             }
         }).then(() => res.status(204).send())

@@ -4,8 +4,8 @@ export const generateAccountEditQuery = (data: AccountEditData, user: number) =>
     const setBlock = [
         data.displayName !== undefined ? `display_name = \'${data.displayName}\'` : '',
         data.email !== undefined ? `email = \'${data.email}\'` : '',
-        data.likeVisibility !== undefined ? `like_visibility = ${data.likeVisibility}` : '',
-        data.followedVisibility !== undefined ? `followed_visible = ${data.followedVisibility}` : '',
+        data.likesVisible !== undefined ? `likes_visible = ${data.likesVisible}` : '',
+        data.followedVisible !== undefined ? `followed_visible = ${data.followedVisible}` : '',
         data.profilePictureId !== undefined ? `profile_picture_id = ${data.profilePictureId}` : '',
         data.bio !== undefined ? `bio = \'${data.bio}\'` : '',
     ].filter(string => string !== '').join(',')

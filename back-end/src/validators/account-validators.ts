@@ -40,12 +40,12 @@ export type AccountFollowFetchData = z.infer<typeof AccountFollowFetchValidator>
 
 export const AccountEditValidator = z
     .object({
-        displayName: z.string().trim().max(50).transform(value => value === '' ? undefined : value),
+        displayName: z.string().trim().max(50).transform(value => value === '' ? undefined : value).optional(),
         email: z.string().trim().email().optional(),
-        likeVisibility: z.coerce.boolean().optional(),
-        followedVisibility: z.coerce.boolean().optional(),
+        likesVisible: z.coerce.boolean().optional(),
+        followedVisible: z.coerce.boolean().optional(),
         profilePictureId: z.coerce.number().optional(),
-        bio: z.string().trim().max(300).transform(value => value === '' ? undefined : value),
+        bio: z.string().trim().max(300).transform(value => value === '' ? undefined : value).optional(),
     })
 
 export type AccountEditData = z.infer<typeof AccountEditValidator>

@@ -142,7 +142,8 @@ AccountRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
                owned_pet_count AS "ownedPetCount",
                profile_picture_id AS "profilePictureId",
                bio,
-               likes_visible AS "likesVisible"
+               likes_visible AS "likesVisible",
+               followed_visible AS "followedVisible"
         FROM user_account
         WHERE id = $1`
 

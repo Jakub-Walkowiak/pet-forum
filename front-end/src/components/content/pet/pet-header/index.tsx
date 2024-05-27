@@ -3,6 +3,7 @@
 import AccountProfilePicture from '@/components/images/profile-picture/account'
 import PetProfilePicture from '@/components/images/profile-picture/pet'
 import PetLabel from '@/components/labels/pet-label'
+import PetTypeLabel from '@/components/labels/pet-type-label'
 import TimeLabel from '@/components/labels/time-label'
 import PetFollowButton from '@/components/utils/follow-button/pet'
 import usePet from '@/hooks/use-pet'
@@ -32,7 +33,10 @@ export default function PetHeader({ id, }: PetHeaderProps) {
                     <PetProfilePicture id={id} sizeOverride={10}/>
                 </div>
                 <div className='flex flex-col'>
-                    <PetLabel id={id} text={data.name} size='extra_large'/>
+                    <div className='flex'>
+                        <PetLabel id={id} text={data.name} size='extra_large'/>
+                        <div className='w-min self-center ms-2'><PetTypeLabel typeId={data.typeId}/></div>
+                    </div>
                     <span className='text-lg text-zinc-500'>{data.owners.length > 1 ? 'Owners:' : 'Owner:'}</span>
                     <ul className='flex gap-1'>
                         {data.owners.map(id => (

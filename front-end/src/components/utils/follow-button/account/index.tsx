@@ -1,4 +1,5 @@
 import showNotificationPopup from "@/helpers/show-notification-popup"
+import { useRouter } from "next/navigation"
 import FollowButton from ".."
 
 interface AccountFollowButtonProps {
@@ -8,6 +9,8 @@ interface AccountFollowButtonProps {
 }
 
 export default function AccountFollowButton({ id, followed = false, onChange }: AccountFollowButtonProps) {
+    const router = useRouter()
+
     const handleUnfollow = async () => {
         try {
             const response = await fetch(`http://localhost:3000/accounts/${id}/follow`, {
@@ -34,5 +37,13 @@ export default function AccountFollowButton({ id, followed = false, onChange }: 
         } catch (err) { showNotificationPopup(false, 'Failed to follow') }
     }
 
-    return <FollowButton followed={followed} onChange={onChange} handleFollow={handleFollow} handleUnfollow={handleUnfollow} disabledChecker={(auth) => auth === id}/>
+    return <FollowButton 
+        followed={followed} 
+        onChange={onChange} 
+        handleFollow={handleFollow} 
+        handleUnfollow={handleUnfollow} 
+        altChecker={(auth) => auth === id}
+        altClick={() => router.push(`/users/${id}/edit`)}
+        altText='Edit'
+    />
 }

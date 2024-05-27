@@ -9,10 +9,12 @@ interface FollowButtonProps {
     onChange?: (clientFollow: boolean) => void,
     handleFollow: () => void,
     handleUnfollow: () => void,
-    disabledChecker: (auth: number) => boolean,
+    altChecker: (auth: number) => boolean,
+    altClick?: () => void,
+    altText?: string,
 }
 
-export default function FollowButton({ followed = false, onChange, handleFollow, handleUnfollow, disabledChecker }: FollowButtonProps) {
+export default function FollowButton({ followed = false, onChange, handleFollow, handleUnfollow, altChecker, altClick, altText }: FollowButtonProps) {
     const auth = useAuth()
 
     const [clientFollow, setClientFollow] = useState(followed)
@@ -29,9 +31,21 @@ export default function FollowButton({ followed = false, onChange, handleFollow,
         }, 350))
     }
 
+    const handleClick = () => {
+        if (auth && altChecker(auth) && altClick) altClick()
+        else handleFollowClick()
+    }
+
+    const getText = () => {
+        if (auth === undefined) return 'Login to follow'
+        else if (altChecker(auth) && altClick && altText) return altText
+        else if (!clientFollow) return 'Follow'
+        else return 'Unfollow'
+    }
+
     return <Button className='w-40 h-10' 
-        text={auth !== undefined ? (!clientFollow ? 'Follow' : 'Unfollow') : 'Login to follow'} 
-        disabled={auth === undefined || disabledChecker(auth)} 
+        text={getText()} 
+        disabled={auth === undefined || (altChecker(auth) && !altClick)} 
         dark={clientFollow} 
-        onClickHandler={handleFollowClick}/>
+        onClickHandler={handleClick}/>
 }

@@ -6,25 +6,16 @@ import ImageUploaderWrapper from '@/components/forms/utils/image-uploader-wrappe
 import UploaderImages from '@/components/forms/utils/image-uploader-wrapper/uploader-images'
 import Input from '@/components/forms/utils/input'
 import showNotificationPopup from '@/helpers/show-notification-popup'
+import patchProfile, { PatchProfileInputs, PatchProfileInputsValidator } from '@/helpers/uploaders/patch-profile'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { AiOutlineClose } from 'react-icons/ai'
-import { z } from 'zod'
 
 interface CreateProfileFormProps {
     hide: VoidFunction,
-}
-
-const ProfileInputsValidator = z
-    .object({
-        displayName: z.string().trim().max(50, { message: 'Max. name length is 50 chars' }).optional(),
-        bio: z.string().trim().max(300, { message: 'Max bio length is 300 chars' }).optional(),
-    })
-
-type ProfileInputs = z.infer<typeof ProfileInputsValidator>
-    
+}   
 
 export default function CreateProfileForm({ hide }: CreateProfileFormProps) {
     const [loading, setLoading] = useState(false)
@@ -37,8 +28,8 @@ export default function CreateProfileForm({ hide }: CreateProfileFormProps) {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<ProfileInputs>({
-        resolver: zodResolver(ProfileInputsValidator)
+    } = useForm<PatchProfileInputs>({
+        resolver: zodResolver(PatchProfileInputsValidator)
     })
 
     const error = () => errors.displayName !== undefined
@@ -60,43 +51,12 @@ export default function CreateProfileForm({ hide }: CreateProfileFormProps) {
         setUpdate(true)
     }
 
-    const onSubmit = async (images: UploaderImages, data: ProfileInputs) => {
+    const onSubmit = async (images: UploaderImages, data: PatchProfileInputs) => {
         setLoading(true)
 
-        try {
-            const imagesResponse = await images.upload()
-
-            if (images.urls.length !== 0) {
-                if (imagesResponse === undefined) throw error
-                else if (!imagesResponse.ok) {
-                    showNotificationPopup(false, 'Failed to upload image')
-                    return
-                }
-            }
-
-            const pfpId: number | undefined = imagesResponse !== undefined
-                ? (await imagesResponse.json())[0].id
-                : undefined
-            const reqBody = { displayName: data.displayName, profilePictureId: pfpId, bio: data.bio }
-
-            const response = await fetch('http://localhost:3000/accounts', {
-                method: 'PATCH',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(reqBody),
-                credentials: 'include',
-            })
-
-            if (response.status === 404) showNotificationPopup(false, 'Couldn\'t set your profile picture')
-            else if (response.ok) {
-                showNotificationPopup(true, 'Changes saved')
-                document.dispatchEvent(new CustomEvent('refreshprofile'))
-                hide()
-            } else showNotificationPopup(false, 'Encountered server error')
-        } catch (err) { showNotificationPopup(false, 'Error contacting server')
-        } finally { setLoading(false) }
+        try { patchProfile(images, data, hide) }
+        catch (err) { showNotificationPopup(false, 'Error contacting server') } 
+        finally { setLoading(false) }
     }
 
     return (

@@ -2,14 +2,14 @@
 
 import { getPetTypes } from "@/helpers/infinite-scroll-generators/get-pet-types"
 import showNotificationPopup from "@/helpers/show-notification-popup"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { z } from "zod"
 import SelectableForm from ".."
 import SelectablePetType from "./selectable-pet-type"
 
 export interface SelectablePetTypeFormProps {
     chosen?: string | number,
-    set: (choice: string | number) => void,
+    set: (choice?: string | number) => void,
 }
 
 export default function SelectablePetTypeForm({ chosen, set }: SelectablePetTypeFormProps) {
@@ -20,25 +20,35 @@ export default function SelectablePetTypeForm({ chosen, set }: SelectablePetType
     const [selected, setSelected] = useState(new Array<number>())
     const [added, setAdded] = useState(new Array<string>())
 
+    const selectedCount = useRef(0)
+    const addedCount = useRef(0)
+
     useEffect(() => {
         if (typeof(chosen) === 'string') setAdded([chosen])
         else if (typeof(chosen) === 'number') setSelected([chosen])
     }, [chosen])
 
+    useEffect(() => { selectedCount.current = selected.length }, [selected])
+    useEffect(() => { addedCount.current = added.length }, [added])
+
     useEffect(() => {
         if (selected.length !== 0) { 
-            if (selected.length > 1) setSelected(old => [old[0]])
-            setAdded([])
-            set(selected[0])
-        }
+            if (selected.length > 1) setSelected(old => [old[old.length - 1]])
+            else {
+                setAdded([])
+                set(selected[0])
+            }   
+        } else if (addedCount.current === 0) set()
     }, [selected, set])
 
     useEffect(() => {
         if (added.length !== 0) {
-            if (added.length > 1) setAdded(old => [old[0]])
-            setSelected([])
-            set(added[0])
-        }
+            if (added.length > 1) setAdded(old => [old[old.length - 1]])
+            else {
+                setSelected([])
+                set(added[0])
+            }
+        } else if (selectedCount.current === 0) set()
     }, [added, set])
 
     const fetchTypes = useCallback(async () => {
@@ -67,9 +77,9 @@ export default function SelectablePetTypeForm({ chosen, set }: SelectablePetType
             const response = await fetch(`http://localhost:3000/pets/types?limit=1&nameQuery=${name}&exactMatch=true`)
             if (!response.ok) showNotificationPopup(false, 'Error verifying availability')
             else {
-                const json = (await response.json()) as { id: number }[]
+                const json = (await response.json()) as Array<number>
                 if (json.length === 0) setAdded([name])
-                else setSelected([json[0].id])
+                else setSelected([json[0]])
             }  
         } catch (err) { showNotificationPopup(false, 'Error contacting server') }
     }

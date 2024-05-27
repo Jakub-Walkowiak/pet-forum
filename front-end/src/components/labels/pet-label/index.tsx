@@ -15,5 +15,5 @@ export default function PetLabel({ text, size = 'normal', id }: PetLabelProps) {
         case 'extra_large': sizeStyle = 'text-5xl font-semibold'; break
     }
 
-    return <Link onClick={stopEvent} href={`/pets/${id}`}><span title={`${text}`} className={`hover:underline flex-none font-normal max-w-full truncate ${sizeStyle}`}>{text}</span></Link>
+    return <Link onClick={stopEvent} href={`/pets/${id}`}><span title={`${text}`} className={`break-all hover:underline flex-none font-normal max-w-full ${sizeStyle}`}>{text}</span></Link>
 }

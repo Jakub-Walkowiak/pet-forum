@@ -17,7 +17,7 @@ import { useForm } from 'react-hook-form'
 import { AiOutlineClose } from 'react-icons/ai'
 import { z } from 'zod'
 import SelectablePetTypeForm from '../selectable-forms/pet-type-form'
-import Select from '../utils/select'
+import PetSexSelect from '../utils/pet-sex-select'
 
 interface CreatePetFormProps {
     hide: VoidFunction,
@@ -143,11 +143,7 @@ export default function CreatePetForm({ hide }: CreatePetFormProps) {
                         <Input placeholder={'Pet\'s name'} register={register} name='name' error={errors.name !== undefined}/>
 
                         <div className='flex gap-2'>Sex: 
-                            <Select register={register} name={'sex'} options={new Map([
-                                ['m', 'Male'],
-                                ['f', 'Female'],
-                                ['na', 'Not Applicable'],
-                            ])} def='na'/>
+                            <PetSexSelect register={register} name='sex' def={PetSex.NOT_APPLICABLE}/>
                         </div>
 
                         <div className='flex gap-2 items-center'>Species:

@@ -31,8 +31,10 @@ DROP TRIGGER IF EXISTS trigger_pet_feature_count_increase ON pet_own;
 DROP TRIGGER IF EXISTS trigger_pet_feature_count_decrease ON pet_own;
 DROP TRIGGER IF EXISTS trigger_blog_tag_times_used_increase ON blog_tagged;
 DROP TRIGGER IF EXISTS trigger_blog_tag_times_used_decrease ON blog_tagged;
-DROP TRIGGER IF EXISTS trigger_pet_type_times_used_increase ON pet_type;
-DROP TRIGGER IF EXISTS trigger_pet_type_times_used_decrease ON pet_type;
+DROP TRIGGER IF EXISTS trigger_pet_type_times_used_increase_insert ON pet_type;
+DROP TRIGGER IF EXISTS trigger_pet_type_times_used_decrease_delete ON pet_type;
+DROP TRIGGER IF EXISTS trigger_pet_type_times_used_increase_update ON pet_type;
+DROP TRIGGER IF EXISTS trigger_pet_type_times_used_decrease_update ON pet_type;
 
 DROP FUNCTION IF EXISTS post_like_count_increase();
 DROP FUNCTION IF EXISTS post_like_count_decrease();
@@ -443,5 +445,7 @@ CREATE TRIGGER trigger_pet_feature_count_decrease AFTER DELETE ON blog_post_pet 
 CREATE TRIGGER trigger_blog_tag_times_used_increase AFTER INSERT ON blog_tagged FOR EACH ROW EXECUTE FUNCTION blog_tag_times_used_increase();
 CREATE TRIGGER trigger_blog_tag_times_used_decrease AFTER DELETE ON blog_tagged FOR EACH ROW EXECUTE FUNCTION blog_tag_times_used_decrease();
 
-CREATE TRIGGER trigger_pet_type_times_used_increase AFTER INSERT ON pet FOR EACH ROW EXECUTE FUNCTION pet_type_times_used_increase();
-CREATE TRIGGER trigger_pet_type_times_used_decrease AFTER DELETE ON pet FOR EACH ROW EXECUTE FUNCTION pet_type_times_used_decrease();
+CREATE TRIGGER trigger_pet_type_times_used_increase_insert AFTER INSERT ON pet FOR EACH ROW EXECUTE FUNCTION pet_type_times_used_increase();
+CREATE TRIGGER trigger_pet_type_times_used_decrease_delete AFTER DELETE ON pet FOR EACH ROW EXECUTE FUNCTION pet_type_times_used_decrease();
+CREATE TRIGGER trigger_pet_type_times_used_increase_update AFTER UPDATE ON pet FOR EACH ROW EXECUTE FUNCTION pet_type_times_used_increase();
+CREATE TRIGGER trigger_pet_type_times_used_decrease_update AFTER UPDATE ON pet FOR EACH ROW EXECUTE FUNCTION pet_type_times_used_decrease();

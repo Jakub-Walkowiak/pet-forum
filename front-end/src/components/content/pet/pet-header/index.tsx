@@ -37,8 +37,8 @@ export default function PetHeader({ id, }: PetHeaderProps) {
                     <div className='flex'>
                         <PetLabel id={id} text={data.name} size='extra_large'/>
                         <div className='w-min self-center ms-2 flex gap-2'>
-                            <PetTypeLabel typeId={data.typeId}/>
-                            <PetSexLabel sex={data.sex}/>
+                            <PetTypeLabel typeId={data.typeId} size='large'/>
+                            <PetSexLabel sex={data.sex} size='large'/>
                         </div>
                     </div>
                     <span className='text-lg text-zinc-500'>{data.owners.length > 1 ? 'Owners:' : 'Owner:'}</span>

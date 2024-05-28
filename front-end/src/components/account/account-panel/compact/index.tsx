@@ -1,26 +1,12 @@
 'use client'
 
-import useAuthId from '@/hooks/use-auth'
-import { useState } from 'react'
-import AccountForm from '../../account-form'
-import { FormMode } from '../../account-form/form-mode'
+import useAuth from '@/hooks/use-auth'
 import LoggedIn from './logged-in'
 import LoggedOut from './logged-out'
 
 export default function AccountPanelCompact() {
-    const [registerMode, setRegisterMode] = useState(true)
-    const [showPopup, setShowPopup] = useState(false)
+    const auth = useAuth()
 
-    const authId = useAuthId()
-
-    return (
-        <>
-            {authId !== undefined
-                ? <LoggedIn authId={authId}/>
-                : <LoggedOut setShowPopup={setShowPopup} setRegisterMode={setRegisterMode}/>}
-
-            {showPopup && <AccountForm openAs={registerMode ? FormMode.Register : FormMode.Login} hide={() => setShowPopup(false)}/>}
-        </>
-    )
-    
+    if (auth) return <LoggedIn authId={auth}/>
+    else return <LoggedOut/>
 }

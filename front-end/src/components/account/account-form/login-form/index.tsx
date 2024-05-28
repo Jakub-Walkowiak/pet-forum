@@ -3,6 +3,7 @@
 import Button from '@/components/forms/utils/button'
 import ErrorContainer from '@/components/forms/utils/error-container'
 import Input from '@/components/forms/utils/input'
+import dismissModal from '@/helpers/dismiss-modal'
 import showNotificationPopup from '@/helpers/show-notification-popup'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
@@ -13,7 +14,6 @@ import { FormMode } from '../form-mode'
 
 interface LoginFormProps {
     switchForm: (mode: FormMode) => void,
-    hide: VoidFunction,
 }
 
 const LoginInputsValidator = z
@@ -31,7 +31,7 @@ const LoginInputsValidator = z
 type LoginInputs = z.infer<typeof LoginInputsValidator>
 
 
-export default function LoginForm({ switchForm, hide }: LoginFormProps) {
+export default function LoginForm({ switchForm }: LoginFormProps) {
     const [loading, setLoading] = useState(false)
 
     const {
@@ -66,7 +66,7 @@ export default function LoginForm({ switchForm, hide }: LoginFormProps) {
             if (response.ok) {
                 showNotificationPopup(true, 'Logged in successfully')
                 document.dispatchEvent(new CustomEvent('refreshauth'))
-                hide()
+                dismissModal()
             } else if (response.status === 401) setError('password', { message: 'Incorrect password' })
             else if (response.status === 404) setError('loginKey', { message: 'No account exists with given e-mail/name' })
             else showNotificationPopup(false, 'Encountered server error')
@@ -76,7 +76,7 @@ export default function LoginForm({ switchForm, hide }: LoginFormProps) {
 
     return (
         <form onSubmit={handleSubmit(async (data) => await onSubmit(data))} className='flex flex-col gap-4 px-8 py-5 fixed inset-y-0 inset-x-0 m-auto z-50 h-fit w-full max-w-xl bg-gray-900 rounded-lg items-stretch'>
-            <AiOutlineClose className='text-xl self-end hover:cursor-pointer' onClick={hide}/>
+            <AiOutlineClose className='text-xl self-end hover:cursor-pointer' onClick={dismissModal}/>
 
             <Input placeholder='E-mail or account name' register={register} name='loginKey' error={errors.loginKey !== undefined}/>
             <Input placeholder='Password' register={register} name='password' error={errors.password !== undefined} password/>

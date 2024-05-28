@@ -5,10 +5,11 @@ import ErrorContainer from '@/components/forms/utils/error-container'
 import ImageUploaderWrapper from '@/components/forms/utils/image-uploader-wrapper'
 import UploaderImages from '@/components/forms/utils/image-uploader-wrapper/uploader-images'
 import Input from '@/components/forms/utils/input'
-import BlurOverlay from '@/components/utils/blur-overlay'
+import dismissModal from '@/helpers/dismiss-modal'
 import { PetSex } from '@/helpers/fetch-options/pet-fetch-options'
 import showFloatingElement from '@/helpers/show-floating-element'
 import showNotificationPopup from '@/helpers/show-notification-popup'
+import stopEvent from '@/helpers/stop-event'
 import useAuth from '@/hooks/use-auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
@@ -18,10 +19,6 @@ import { AiOutlineClose } from 'react-icons/ai'
 import { z } from 'zod'
 import SelectablePetTypeForm from '../selectable-forms/pet-type-form'
 import PetSexSelect from '../utils/pet-sex-select'
-
-interface CreatePetFormProps {
-    hide: VoidFunction,
-}
 
 const PetInputsValidator = z
     .object({
@@ -35,7 +32,7 @@ const PetInputsValidator = z
 type PetInputs = z.infer<typeof PetInputsValidator>
     
 
-export default function CreatePetForm({ hide }: CreatePetFormProps) {
+export default function CreatePetForm() {
     const auth = useAuth()
 
     const [loading, setLoading] = useState(false)
@@ -50,7 +47,7 @@ export default function CreatePetForm({ hide }: CreatePetFormProps) {
         formState: { errors },
         setError,
         getValues,
-        setValue
+        setValue,
     } = useForm<PetInputs>({
         resolver: zodResolver(PetInputsValidator)
     })
@@ -76,6 +73,7 @@ export default function CreatePetForm({ hide }: CreatePetFormProps) {
 
     const handleSpeciesButtonClick = (e: React.MouseEvent) => {
         e.preventDefault()
+        stopEvent(e)
         showFloatingElement(<SelectablePetTypeForm chosen={getValues().type} set={(choice) => setValue('type', choice)}/>, e.clientX, e.clientY)
     }
 
@@ -126,55 +124,52 @@ export default function CreatePetForm({ hide }: CreatePetFormProps) {
             else if (response.ok) {
                 showNotificationPopup(true, 'Pet profile created!')
                 document.dispatchEvent(new CustomEvent('refreshpet'))
-                hide()
+                dismissModal()
             } else showNotificationPopup(false, 'Encountered server error')
         } catch (err) { showNotificationPopup(false, 'Error contacting server')
         } finally { setLoading(false) }
     }
 
     return (
-        <>
-            <BlurOverlay/>
-            <div className='fixed inset-x-0 inset-y-0 m-auto w-full max-w-xl z-50 h-fit overflow-y-auto max-h-full'>
-                <ImageUploaderWrapper forceSquare maxCount={1} maxResX={400} maxResY={400} overrideOnMax render={(images) => (
-                    <form onSubmit={handleSubmit(async (data) => await onSubmit(images, data))} className='flex flex-col h-fit gap-4 px-8 py-5 bg-gray-900 rounded-lg items-stretch'>
-                        <AiOutlineClose className='text-xl self-end hover:cursor-pointer' onClick={hide}/>
+        <div className='fixed inset-x-0 inset-y-0 m-auto w-full max-w-xl z-50 h-fit overflow-y-auto max-h-full'>
+            <ImageUploaderWrapper forceSquare maxCount={1} maxResX={400} maxResY={400} overrideOnMax render={(images) => (
+                <form onSubmit={handleSubmit(async (data) => await onSubmit(images, data))} className='flex flex-col h-fit gap-4 px-8 py-5 bg-gray-900 rounded-lg items-stretch'>
+                    <AiOutlineClose className='text-xl self-end hover:cursor-pointer' onClick={dismissModal}/>
 
-                        <Input placeholder={'Pet\'s name'} register={register} name='name' error={errors.name !== undefined}/>
+                    <Input placeholder={'Pet\'s name'} register={register} name='name' error={errors.name !== undefined}/>
 
-                        <div className='flex gap-2'>Sex: 
-                            <PetSexSelect register={register} name='sex' def={PetSex.NOT_APPLICABLE}/>
+                    <div className='flex gap-2'>Sex: 
+                        <PetSexSelect register={register} name='sex' def={PetSex.NOT_APPLICABLE}/>
+                    </div>
+
+                    <div className='flex gap-2 items-center'>Species:
+                        <Button text='Choose' dark className='w-full' onClickHandler={handleSpeciesButtonClick}/>
+                    </div>
+                    
+                    <div className='h-5'/>
+
+                    <span className='text-center font-semibold text-xl'>Profile picture</span>
+                    <div className='px-24 flex flex-col items-stretch bg-gray-800/60 border border-zinc-700 rounded-lg p-4'>
+                        <input id={fileInputId} type='file' accept='image/png, image/jpeg, image/webp' className='hidden' onChange={e => handleFileChange(images, e)}/>
+                        <Button text='Choose file' onClickHandler={handleFileButtonClick}/>
+                        <div className='w-64 h-64 self-center my-4'>
+                            {images.urls[0] !== undefined
+                                ? <Image src={images.urls[0]} width={400} height={400} alt={'Your profile picture'} className='rounded-full w-full h-full'/>
+                                : <div className='w-full h-full rounded-full bg-emerald-600'/>}
                         </div>
+                        <Button disabled={images.urls[0] === undefined} text='Remove' onClickHandler={e => handleRemoveButtonClick(images, e)}/>
+                    </div>
 
-                        <div className='flex gap-2 items-center'>Species:
-                            <Button text='Choose' dark className='w-full' onClickHandler={handleSpeciesButtonClick}/>
-                        </div>
-                        
-                        <div className='h-5'/>
+                    <div className='h-10'/>        
 
-                        <span className='text-center font-semibold text-xl'>Profile picture</span>
-                        <div className='px-24 flex flex-col items-stretch bg-gray-800/60 border border-zinc-700 rounded-lg p-4'>
-                            <input id={fileInputId} type='file' accept='image/png, image/jpeg, image/webp' className='hidden' onChange={e => handleFileChange(images, e)}/>
-                            <Button text='Choose file' onClickHandler={handleFileButtonClick}/>
-                            <div className='w-64 h-64 self-center my-4'>
-                                {images.urls[0] !== undefined
-                                    ? <Image src={images.urls[0]} width={400} height={400} alt={'Your profile picture'} className='rounded-full w-full h-full'/>
-                                    : <div className='w-full h-full rounded-full bg-emerald-600'/>}
-                            </div>
-                            <Button disabled={images.urls[0] === undefined} text='Remove' onClickHandler={e => handleRemoveButtonClick(images, e)}/>
-                        </div>
-
-                        <div className='h-10'/>        
-
-                        <ErrorContainer>
-                            {errors.name && <p>{errors.name.message}</p>}
-                            {errors.type && <p>Species must be chosen</p>}
-                        </ErrorContainer>
-                        
-                        <Button text='Save changes' disabled={error()} loading={loading}/>
-                    </form>
-                )}/>  
-            </div>
-        </>
+                    <ErrorContainer>
+                        {errors.name && <p>{errors.name.message}</p>}
+                        {errors.type && <p>Species must be chosen</p>}
+                    </ErrorContainer>
+                    
+                    <Button text='Save changes' disabled={error()} loading={loading}/>
+                </form>
+            )}/>  
+        </div>
     )
 }

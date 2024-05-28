@@ -1,20 +1,12 @@
-import { Dispatch, SetStateAction } from 'react'
+import AccountForm from '@/components/account/account-form'
+import { FormMode } from '@/components/account/account-form/form-mode'
+import showModal from '@/helpers/show-modal'
 import { AiOutlineLogin } from 'react-icons/ai'
 
-interface LoggedOutProps {
-    setRegisterMode: Dispatch<SetStateAction<boolean>>,
-    setShowPopup: Dispatch<SetStateAction<boolean>>,
-}
-
-export default function LoggedOut({ setRegisterMode, setShowPopup }: LoggedOutProps) {
-    const loginHandler = () => {
-        setRegisterMode(false)
-        setShowPopup(true)
-    }
-
+export default function LoggedOut() {
     return (
         <div className='flex flex-col gap-2 p-2 rounded-lg grow-x m-2'>
-            <AiOutlineLogin onClick={loginHandler} className='text-4xl duration-200 hover:opacity-70 cursor-pointer'/>
+            <AiOutlineLogin onClick={() => showModal(<AccountForm openAs={FormMode.Login}/>)} className='text-4xl duration-200 hover:opacity-70 cursor-pointer'/>
         </div>
     )
 }

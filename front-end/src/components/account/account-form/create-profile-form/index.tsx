@@ -5,6 +5,7 @@ import ErrorContainer from '@/components/forms/utils/error-container'
 import ImageUploaderWrapper from '@/components/forms/utils/image-uploader-wrapper'
 import UploaderImages from '@/components/forms/utils/image-uploader-wrapper/uploader-images'
 import Input from '@/components/forms/utils/input'
+import dismissModal from '@/helpers/dismiss-modal'
 import patchProfile, { PatchProfileInputs, PatchProfileInputsValidator } from '@/helpers/fetch-helpers/account/patch-profile'
 import showNotificationPopup from '@/helpers/show-notification-popup'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -13,11 +14,7 @@ import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { AiOutlineClose } from 'react-icons/ai'
 
-interface CreateProfileFormProps {
-    hide: VoidFunction,
-}   
-
-export default function CreateProfileForm({ hide }: CreateProfileFormProps) {
+export default function CreateProfileForm() {
     const [loading, setLoading] = useState(false)
     const [update, setUpdate] = useState(false)
     const fileInputId = useId()
@@ -54,7 +51,7 @@ export default function CreateProfileForm({ hide }: CreateProfileFormProps) {
     const onSubmit = async (images: UploaderImages, data: PatchProfileInputs) => {
         setLoading(true)
 
-        try { patchProfile(images, data, hide) }
+        try { patchProfile(images, data, dismissModal) }
         catch (err) { showNotificationPopup(false, 'Error contacting server') } 
         finally { setLoading(false) }
     }
@@ -63,7 +60,7 @@ export default function CreateProfileForm({ hide }: CreateProfileFormProps) {
         <div className='fixed inset-x-0 inset-y-0 m-auto w-full max-w-xl z-50 h-fit overflow-y-auto max-h-full'>
             <ImageUploaderWrapper forceSquare maxCount={1} maxResX={400} maxResY={400} overrideOnMax render={(images) => (
                 <form onSubmit={handleSubmit(async (data) => await onSubmit(images, data))} className='flex flex-col h-fit gap-4 px-8 py-5 bg-gray-900 rounded-lg items-stretch'>
-                    <AiOutlineClose className='text-xl self-end hover:cursor-pointer' onClick={hide}/>
+                    <AiOutlineClose className='text-xl self-end hover:cursor-pointer' onClick={dismissModal}/>
 
                     <p className='text-center text-3xl font-semibold leading-none'>
                         Set up your profile!<br/>

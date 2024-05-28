@@ -126,13 +126,7 @@ export default function UserHeaderEdit({ id, setLikesTab }: UserHeaderProps) {
 
                 <div className='flex px-3 py-4 items-end gap-3'>
                     <ValueAndText className='text-lg' value={data.followerCount} text='Followers'/>
-
-                    <TogglableWrapper 
-                        innerRenderer={() => <ValueAndText className='text-lg' value={data.accountsFollowedCount} text='Followed'/>}
-                        baseState={data.followedVisible}
-                        form={{ watcher: watchFollowedVisible, set: (state) => setValue('followedVisible', state) }}
-                        text={{ true: 'Shown', false: 'Hidden' }}
-                    />
+                    <ValueAndText className='text-lg' value={data.ownedPetCount} text='Pets owned'/>
 
                     {showStats
                         ? <AiFillInfoCircle className='text-xl inset-y-0 my-auto cursor-pointer hover:text-gray-500 duration-200 me-3' onClick={() => setShowStats(false)}/>
@@ -146,11 +140,21 @@ export default function UserHeaderEdit({ id, setLikesTab }: UserHeaderProps) {
                     />
                 </div>
 
-                <div className={`${!showStats ? 'h-0' : 'h-8 xs:h-10'} text-sm xs:text-base overflow-hidden duration-200`}>
-                    <div className={`p-2 grid grid-cols-3 grid-flow-col overflow-hidden bg-black/20`}>
+                <div className={`${!showStats ? 'h-0' : 'h-14 xs:h-16 sm:h-10'} text-sm xs:text-base overflow-hidden duration-200`}>
+                    <div className={`p-2 grid grid-cols-2 grid-rows-2 sm:grid-cols-4 sm:grid-rows-1 grid-flow-col overflow-hidden bg-black/20`}>
                         <ValueAndText value={data.blogPostCount} text='Blog posts'/>
                         <ValueAndText value={data.replyCount} text='Replies'/>
-                        <ValueAndText value={data.ownedPetCount} text='Owned pets'/>
+                        <TogglableWrapper 
+                            innerRenderer={() => 
+                                <div className='sm:grid grid-cols-2'>
+                                    <ValueAndText value={data.accountsFollowedCount} text='Accs. followed'/>
+                                    <ValueAndText value={data.petsFollowedCount} text='Pets followed'/>
+                                </div>}
+                            baseState={data.followedVisible}
+                            form={{ watcher: watchFollowedVisible, set: (state) => setValue('followedVisible', state) }}
+                            text={{ true: 'Shown', false: 'Hidden' }}
+                            className='row-span-2 sm:col-span-2 sm:row-span-1'
+                        />
                     </div>
                 </div>
             </form>

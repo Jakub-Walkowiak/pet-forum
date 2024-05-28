@@ -29,8 +29,9 @@ export default function UserHeader({ id, setLikesTab }: UserHeaderProps) {
     }, [data, auth, id, setLikesTab])
 
     const redirectFollowers = () => router.push(`/users?relationType=followers&relatedTo=${id}`)
-    const redirectFollowed = () => router.push(`/users?relationType=followed&relatedTo=${id}`)
-
+    const redirectFollowedAccounts = () => router.push(`/users?relationType=followed&relatedTo=${id}`)
+    const redirectFollowedPets = () => router.push(`/pets?followedBy=${id}`)
+    const redirectOwnedPets = () => router.push(`/pets?owner=${id}`)
 
     if (data === undefined) return (
         <div className='flex items-center justify-center text-2xl font-semibold'>Encountered error fetching profile</div>
@@ -52,7 +53,7 @@ export default function UserHeader({ id, setLikesTab }: UserHeaderProps) {
 
             <div className='flex px-3 py-4 items-end gap-3'>
                 <ValueAndText className='text-lg' value={data.followerCount + (clientFollow === data.followed ? 0 : clientFollow ? 1 : -1)} text='Followers' onClick={redirectFollowers}/>
-                <ValueAndText className='text-lg' value={data.accountsFollowedCount} text='Followed' onClick={redirectFollowed}/>
+                <ValueAndText className='text-lg' value={data.ownedPetCount} text='Pets owned' onClick={redirectOwnedPets}/>
 
                 {showStats
                     ? <AiFillInfoCircle className='text-xl inset-y-0 my-auto cursor-pointer hover:text-gray-500 duration-200' onClick={() => setShowStats(false)}/>
@@ -63,11 +64,12 @@ export default function UserHeader({ id, setLikesTab }: UserHeaderProps) {
                 </div>
             </div>
 
-            <div className={`${!showStats ? 'h-0' : 'h-8 xs:h-10'} text-sm xs:text-base overflow-hidden duration-200`}>
-                <div className={`p-2 grid grid-cols-3 grid-flow-col overflow-hidden bg-black/20`}>
+            <div className={`${!showStats ? 'h-0' : 'h-14 xs:h-16 sm:h-10'} text-sm xs:text-base overflow-hidden duration-200`}>
+                <div className={`p-2 grid grid-cols-2 grid-rows-2 sm:grid-cols-4 sm:grid-rows-1 grid-flow-col overflow-hidden bg-black/20`}>
                     <ValueAndText value={data.blogPostCount} text='Blog posts'/>
                     <ValueAndText value={data.replyCount} text='Replies'/>
-                    <ValueAndText value={data.ownedPetCount} text='Owned pets'/>
+                    <ValueAndText value={data.accountsFollowedCount} text='Accs. followed' onClick={redirectFollowedAccounts}/>
+                    <ValueAndText value={data.petsFollowedCount} text='Pets followed' onClick={redirectFollowedPets}/>
                 </div>
             </div>
         </div>

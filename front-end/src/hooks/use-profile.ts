@@ -14,6 +14,7 @@ export interface ProfileData {
     followed: boolean,
     likesVisible: boolean,
     followedVisible: boolean,
+    petsFollowedCount: number,
 }
 
 export default function useProfile(id: number | undefined) {

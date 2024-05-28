@@ -5,6 +5,7 @@ import ErrorContainer from '@/components/forms/utils/error-container'
 import ImageUploaderWrapper from '@/components/forms/utils/image-uploader-wrapper'
 import UploaderImages from '@/components/forms/utils/image-uploader-wrapper/uploader-images'
 import Input from '@/components/forms/utils/input'
+import CloseModalButton from '@/components/utils/close-modal-button'
 import dismissModal from '@/helpers/dismiss-modal'
 import { PetSex } from '@/helpers/fetch-options/pet-fetch-options'
 import showFloatingElement from '@/helpers/show-floating-element'
@@ -15,7 +16,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import React, { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { AiOutlineClose } from 'react-icons/ai'
 import { z } from 'zod'
 import SelectablePetTypeForm from '../selectable-forms/pet-type-form'
 import PetSexSelect from '../utils/pet-sex-select'
@@ -134,7 +134,7 @@ export default function CreatePetForm() {
         <div className='fixed inset-x-0 inset-y-0 m-auto w-full max-w-xl z-50 h-fit overflow-y-auto max-h-full'>
             <ImageUploaderWrapper forceSquare maxCount={1} maxResX={400} maxResY={400} overrideOnMax render={(images) => (
                 <form onSubmit={handleSubmit(async (data) => await onSubmit(images, data))} className='flex flex-col h-fit gap-4 px-8 py-5 bg-gray-900 rounded-lg items-stretch'>
-                    <AiOutlineClose className='text-xl self-end hover:cursor-pointer' onClick={dismissModal}/>
+                    <CloseModalButton/>
 
                     <Input placeholder={'Pet\'s name'} register={register} name='name' error={errors.name !== undefined}/>
 

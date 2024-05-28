@@ -7,9 +7,9 @@ import showNotificationPopup from '@/helpers/show-notification-popup'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { AiOutlineClose } from 'react-icons/ai'
 import { z } from 'zod'
 import { FormMode } from '../form-mode'
+import CloseModalButton from '@/components/utils/close-modal-button'
 
 interface RegisterFormProps {
     switchForm: (mode: FormMode) => void,
@@ -97,7 +97,7 @@ export default function RegisterForm({ switchForm }: RegisterFormProps) {
 
     return (
         <form onSubmit={handleSubmit(async (data) => await onSubmit(data))} className='flex flex-col gap-4 px-8 py-5 fixed inset-y-0 inset-x-0 m-auto z-50 h-fit w-full max-w-xl bg-gray-900 rounded-lg items-stretch'>
-            <AiOutlineClose className='text-xl self-end hover:cursor-pointer' onClick={() => document.dispatchEvent(new CustomEvent('modaldismiss'))}/>
+            <CloseModalButton/>
 
             <Input placeholder='E-mail' register={register} name='email' error={errors.email !== undefined}/>
             <Input placeholder='Account name' register={register} name='accountName' error={errors.accountName !== undefined}/>

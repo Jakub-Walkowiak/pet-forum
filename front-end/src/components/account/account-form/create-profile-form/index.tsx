@@ -5,6 +5,7 @@ import ErrorContainer from '@/components/forms/utils/error-container'
 import ImageUploaderWrapper from '@/components/forms/utils/image-uploader-wrapper'
 import UploaderImages from '@/components/forms/utils/image-uploader-wrapper/uploader-images'
 import Input from '@/components/forms/utils/input'
+import CloseModalButton from '@/components/utils/close-modal-button'
 import dismissModal from '@/helpers/dismiss-modal'
 import patchProfile, { PatchProfileInputs, PatchProfileInputsValidator } from '@/helpers/fetch-helpers/account/patch-profile'
 import showNotificationPopup from '@/helpers/show-notification-popup'
@@ -12,7 +13,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { AiOutlineClose } from 'react-icons/ai'
 
 export default function CreateProfileForm() {
     const [loading, setLoading] = useState(false)
@@ -60,7 +60,7 @@ export default function CreateProfileForm() {
         <div className='fixed inset-x-0 inset-y-0 m-auto w-full max-w-xl z-50 h-fit overflow-y-auto max-h-full'>
             <ImageUploaderWrapper forceSquare maxCount={1} maxResX={400} maxResY={400} overrideOnMax render={(images) => (
                 <form onSubmit={handleSubmit(async (data) => await onSubmit(images, data))} className='flex flex-col h-fit gap-4 px-8 py-5 bg-gray-900 rounded-lg items-stretch'>
-                    <AiOutlineClose className='text-xl self-end hover:cursor-pointer' onClick={dismissModal}/>
+                    <CloseModalButton/>
 
                     <p className='text-center text-3xl font-semibold leading-none'>
                         Set up your profile!<br/>

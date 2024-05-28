@@ -60,8 +60,15 @@ PetRouter.patch('/:id(\\d+)', authMandatory, (req, res, next) => {
         .catch(err => next(err))
 })
 
-PetRouter.get('/', (req, res, next) => {
-    const sql = generatePetFetchQuery(PetFetchValidator.parse(req.query))
+PetRouter.get('/', authOptional, async (req, res, next) => {
+    const data = PetFetchValidator.parse(req.query)
+    const sql = generatePetFetchQuery(data)
+
+    if (data.followedBy) {
+        const privacySql = 'SELECT followed_visible FROM user_account WHERE id = $1'
+        const shouldFetch = (req.body.auth && req.body.id === data.followedBy) || (await pool.query(privacySql, [data.followedBy])).rows[0].followed_visible
+        if (!shouldFetch) return res.status(403).json(FORBIDDEN)
+    }
 
     pool.query(sql)
         .then(result => res.status(200).json(result.rows.map(row => row.id)))

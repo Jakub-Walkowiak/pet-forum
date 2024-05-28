@@ -69,8 +69,17 @@ export default function UserHeaderEdit({ id, setLikesTab }: UserHeaderProps) {
     const onSubmit = async (images: UploaderImages, data: PatchProfileInputs) => {
         setLoading(true)
 
-        try { patchProfile(images, data, () => router.push(`/users/${id}`)) }
-        catch (err) { showNotificationPopup(false, 'Error contacting server') } 
+        try { 
+            const response = await patchProfile(images, data).catch(err => { throw err })
+
+            if (response === false) showNotificationPopup(false, 'Failed to upload image')
+            else if (response.status === 404) showNotificationPopup(false, 'Couldn\'t set your profile picture')
+            else if (response.ok) {
+                showNotificationPopup(true, 'Changes saved')
+                document.dispatchEvent(new CustomEvent('refreshprofile'))
+                router.push(`/users/${id}`)
+            } else showNotificationPopup(false, 'Encountered server error')
+        } catch (err) { showNotificationPopup(false, 'Error contacting server') } 
         finally { setLoading(false) }
     }
 

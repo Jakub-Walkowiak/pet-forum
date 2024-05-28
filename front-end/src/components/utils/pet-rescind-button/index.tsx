@@ -18,8 +18,15 @@ export default function PetRescindButton({ id, soleOwner }: PetRescindButtonProp
         if (!await showConfirmModal('Are you sure you wish to rescind ownership of this pet?\n\n This action cannot be undone', 'Rescind')) return
         setLoading(true)
 
-        try { rescindOwnership(id) }
-        catch (err) { showNotificationPopup(false, 'Error contacting server') }
+        try { 
+            const response = await rescindOwnership(id).catch(err => { throw err }) 
+
+            if (response.status === 403) showNotificationPopup(false, 'You do not own this pet')
+            else if (response.ok) {
+                showNotificationPopup(true, 'Ownership rescinded')
+                document.dispatchEvent(new CustomEvent('refreshpet'))
+            } else showNotificationPopup(false, 'Encountered server error')
+        } catch (err) { showNotificationPopup(false, 'Error contacting server') }
         finally { setLoading(false) }
     }
 

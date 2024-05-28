@@ -1,6 +1,7 @@
 'use client'
 
 import FormImage from '@/components/images/form-image'
+import postBlogPost, { PostContentsValidator } from '@/helpers/fetch-helpers/blog-posts/post-blog-post'
 import showFloatingElement from '@/helpers/show-floating-element'
 import showNotificationPopup from '@/helpers/show-notification-popup'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -21,12 +22,9 @@ interface PostCreatorProps {
     afterSubmit?: (id: number) => void,
 }
 
-const PostCreatorValidator = z
-    .object({
-        contents: z.string().trim()
-            .min(1, { message: 'Post must contain at least one character' })
-            .max(300, { message: 'Post can\'t contain more than 300 characters' }),
-    })
+const PostCreatorValidator = z.object({
+    contents: PostContentsValidator,
+})
 
 type PostCreatorInputs = z.infer<typeof PostCreatorValidator>
 
@@ -98,63 +96,23 @@ export default function PostCreator({ placeholder, replyTo, maxRows, afterSubmit
 
     const onSubmit = async (contents: string, images: UploaderImages) => {
         try {
-            let pictures: Array<number> | undefined
-            if (images.urls.length !== 0) {
-                const imagesResponse = await images.upload()
-                if (imagesResponse === undefined || !imagesResponse.ok) {
-                    showNotificationPopup(false, 'Error uploading images')
-                    return
-                } else pictures = ((await imagesResponse.json()) as { id: number }[]).map(value => value.id)
-            }
+            const response = await postBlogPost(contents, images, replyTo, selectedPets, { added: addedTags, selected: selectedTags })
+                .catch(err => { throw err })
 
-            const tagPromises = addedTags.map(name => fetch('http://localhost:3000/blog-posts/tags', {
-                method: 'POST',
-                credentials: 'include',
-                mode: 'cors',
-                body: JSON.stringify({ name }),
-                headers: { 'Content-Type': 'application/json' }
-            }))
-
-            const tagResponses = await Promise.all(tagPromises)
-            for (let i = 0; i < tagResponses.length; ++i) {
-                if (tagResponses[i].status === 401) {
-                    showNotificationPopup(false, 'Authentication failed')
-                    return
-                } else if (tagResponses[i].status === 409) {
-                    showNotificationPopup(false, 'Tried to add duplicate tag')
-                    return
-                } else if (!tagResponses[i].ok) {
-                    showNotificationPopup(false, 'Error adding tag')
-                    return
-                }
-            }
-            const tagsAdded = await Promise.all(tagResponses.map(async response => ((await response.json()) as { id: number }).id ))
-            const tags = tagsAdded.concat(selectedTags)
-
-            const postResponse = await fetch('http://localhost:3000/blog-posts', {
-                method: 'POST',
-                credentials: 'include',
-                mode: 'cors',
-                body: JSON.stringify({ replyTo, contents, pictures, tags, pets: selectedPets }),
-                headers: { 'Content-Type': 'application/json' }
-            })
-
-            if (postResponse.status === 401) showNotificationPopup(false, 'Authentication failed')
-            else if (postResponse.status === 403) showNotificationPopup(false, 'You lack ownership of 1+ pets')
-            else if (!postResponse.ok && postResponse.status !== 404) showNotificationPopup(false, 'Encountered server errror')
-            else {
+            if (response === 'images') showNotificationPopup(false, 'Failed to upload images')
+            else if (response === 'tags') showNotificationPopup(false, 'Failed to attach tags')
+            else if (response.status === 401) showNotificationPopup(false, 'Authentication failed')
+            else if (response.status === 403) showNotificationPopup(false, 'You lack ownership of 1+ pets')
+            else if (response.ok || response.status === 404) {
                 for (let i = images.urls.length - 1; i >= 0 ; --i) images.remove(i)
                 setAddedTags([])
                 setSelectedTags([])
                 setSelectedPets([])
                 setValue('contents', '')
 
-                if (postResponse.status === 404) showNotificationPopup(false, 'Failed to attach resources')
-                else showNotificationPopup(true, 'Post created successfully!')
-
-                if (afterSubmit) afterSubmit((await postResponse.json()).id)
-                    
-            }
+                showNotificationPopup(true, response.ok ? 'Post created successfully' : 'Post created (attachment failure)')
+                if (afterSubmit) afterSubmit((await response.json()).id)
+            } else showNotificationPopup(false, 'Encountered server errror')
         } catch (err) { showNotificationPopup(false, 'Error contacting server') }
     }
 

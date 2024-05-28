@@ -3,41 +3,18 @@
 import Button from '@/components/forms/utils/button'
 import ErrorContainer from '@/components/forms/utils/error-container'
 import Input from '@/components/forms/utils/input'
+import CloseModalButton from '@/components/utils/close-modal-button'
+import login from '@/helpers/fetch-helpers/account/login'
+import registerAccount, { RegisterInputs, RegisterInputsValidator } from '@/helpers/fetch-helpers/account/register-account'
 import showNotificationPopup from '@/helpers/show-notification-popup'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { z } from 'zod'
 import { FormMode } from '../form-mode'
-import CloseModalButton from '@/components/utils/close-modal-button'
 
 interface RegisterFormProps {
     switchForm: (mode: FormMode) => void,
-}
-
-const RegisterInputsValidator = z
-    .object({
-        email: z
-            .string().trim()
-            .min(1, { message: 'E-mail required' })
-            .email({ message: 'Incorrect e-mail format' })
-            .max(254, { message: 'E-mail must be at most 254 characters' }),
-        accountName: z
-            .string().trim()
-            .min(1, { message: 'Account name required' })
-            .max(50, { message: 'Account name must be at most 50 characters' })
-            .regex(/^\w+$/, { message: 'Disallowed character in account name' }),
-        password: z
-            .string().trim()
-            .min(10, { message: 'Password must be at least 10 characters' })
-            .max(32, { message: 'Password must be at most 32 characters' })
-            .regex(/^([\w~`!@#$%^&*()_\-\+={[}\]\|\\:'',.?\/]+)$/, { message: 'Invalid character(s) in password' }),
-        repeatPassword: z.string({ required_error: 'Please repeat password' }),
-    })
-    .refine(data => data.password === data.repeatPassword, { message: 'Passwords do not match', path: ['repeatPassword'] })
-
-type RegisterInputs = z.infer<typeof RegisterInputsValidator>
-    
+}    
 
 export default function RegisterForm({ switchForm }: RegisterFormProps) {
     const [loading, setLoading] = useState(false)
@@ -60,30 +37,15 @@ export default function RegisterForm({ switchForm }: RegisterFormProps) {
         setLoading(true)
 
         try {
-            const response = await fetch('http://localhost:3000/accounts/register', {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email: data.email, accountName: data.accountName, password: data.password }),
-            })
+            const response = await registerAccount(data)
     
             if (response.ok) {
                 showNotificationPopup(true, 'Registered, logging in...')
 
-                await fetch('http://localhost:3000/accounts/login', {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email: data.email, password: data.password }),
-                    credentials: 'include',
-                })
+                await login({ loginKey: data.email, password: data.password })
                 showNotificationPopup(true, 'Logged in successfully')
                 document.dispatchEvent(new CustomEvent('refreshauth'))
-            
+                
                 switchForm(FormMode.CreateProfile)
             } else if (response.status === 409) {
                 const body = await response.json()

@@ -1,6 +1,5 @@
 import UploaderImages from "@/components/forms/utils/image-uploader-wrapper/uploader-images"
 import { z } from "zod"
-import showNotificationPopup from "../../show-notification-popup"
 
 export const PatchProfileInputsValidator = z
     .object({
@@ -12,15 +11,12 @@ export const PatchProfileInputsValidator = z
 
 export type PatchProfileInputs = z.infer<typeof PatchProfileInputsValidator>
 
-export default async function patchProfile(images: UploaderImages, data: PatchProfileInputs, onSuccess?: () => void) {
+export default async function patchProfile(images: UploaderImages, data: PatchProfileInputs) {
     const imagesResponse = await images.upload()
 
     if (images.urls.length !== 0) {
         if (imagesResponse === undefined) throw new Error('Upload error')
-        else if (!imagesResponse.ok) {
-            showNotificationPopup(false, 'Failed to upload image')
-            return
-        }
+        else if (!imagesResponse.ok) return false
     }
 
     const pfpId: number | undefined = imagesResponse !== undefined
@@ -28,7 +24,7 @@ export default async function patchProfile(images: UploaderImages, data: PatchPr
         : undefined
     const reqBody = { displayName: data.displayName, profilePictureId: pfpId, bio: data.bio, likesVisible: data.likesVisible, followedVisible: data.followedVisible }
 
-    const response = await fetch('http://localhost:3000/accounts', {
+    return fetch('http://localhost:3000/accounts', {
         method: 'PATCH',
         mode: 'cors',
         headers: {
@@ -37,11 +33,4 @@ export default async function patchProfile(images: UploaderImages, data: PatchPr
         body: JSON.stringify(reqBody),
         credentials: 'include',
     })
-
-    if (response.status === 404) showNotificationPopup(false, 'Couldn\'t set your profile picture')
-    else if (response.ok) {
-        showNotificationPopup(true, 'Changes saved')
-        document.dispatchEvent(new CustomEvent('refreshprofile'))
-        if (onSuccess) onSuccess()
-    } else showNotificationPopup(false, 'Encountered server error')
 }

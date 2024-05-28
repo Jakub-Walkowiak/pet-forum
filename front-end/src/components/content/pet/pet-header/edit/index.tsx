@@ -18,7 +18,6 @@ import patchPet, { PatchPetInputs, PatchPetInputsValidator } from '@/helpers/fet
 import showFloatingElement from '@/helpers/show-floating-element'
 import showNotificationPopup from '@/helpers/show-notification-popup'
 import stopEvent from '@/helpers/stop-event'
-import useAuth from '@/hooks/use-auth'
 import usePet from '@/hooks/use-pet'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
@@ -33,7 +32,6 @@ interface PetHeaderEditProps {
 export default function PetHeaderEdit({ id, }: PetHeaderEditProps) {
     const data = usePet(id)
     const router = useRouter()
-    const auth = useAuth()
 
     const [update, setUpdate] = useState(false)
     const fileInputId = useId()
@@ -70,8 +68,21 @@ export default function PetHeaderEdit({ id, }: PetHeaderEditProps) {
     const onSubmit = async (images: UploaderImages, data: PatchPetInputs) => {
         setLoading(true)
 
-        try { patchPet(id, images, data, () => router.push(`/pets/${id}`)) }
-        catch (err) { showNotificationPopup(false, 'Error contacting server') } 
+        try { 
+            const response = await patchPet(id, images, data).catch(err => { throw err })
+            
+            if (response === false) showNotificationPopup(false, 'Failed to upload image')
+            else {
+                const main = await response.response
+                if (main.status === 404) showNotificationPopup(false, 'Couldn\'t set pet\'s profile picture')
+                else if (main.status === 403) showNotificationPopup(false, 'You do not own this pet')
+                else if (main.ok) {
+                    showNotificationPopup(true, response.ownersSuccess ? 'Changes saved' : 'Changes saved (failed to set owners)')
+                    document.dispatchEvent(new CustomEvent('refreshpet'))
+                    router.push(`/pets/${id}`)
+                } else showNotificationPopup(false, 'Encountered server error')
+            }
+        } catch (err) { showNotificationPopup(false, 'Error contacting server') } 
         finally { setLoading(false) }
     }
 

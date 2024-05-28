@@ -3,33 +3,18 @@
 import Button from '@/components/forms/utils/button'
 import ErrorContainer from '@/components/forms/utils/error-container'
 import Input from '@/components/forms/utils/input'
+import CloseModalButton from '@/components/utils/close-modal-button'
 import dismissModal from '@/helpers/dismiss-modal'
+import login, { LoginInputs, LoginInputsValidator } from '@/helpers/fetch-helpers/account/login'
 import showNotificationPopup from '@/helpers/show-notification-popup'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { z } from 'zod'
 import { FormMode } from '../form-mode'
-import CloseModalButton from '@/components/utils/close-modal-button'
 
 interface LoginFormProps {
     switchForm: (mode: FormMode) => void,
 }
-
-const LoginInputsValidator = z
-    .object({
-        loginKey: z
-            .string().trim().min(1).email().max(254)
-            .or(z.string().trim().min(1).max(50).regex(/^\w+$/)),
-        password: z
-            .string().trim()
-            .min(10, { message: 'Password must be at least 10 characters' })
-            .max(32, { message: 'Password must be at most 32 characters' })
-            .regex(/^([\w~`!@#$%^&*()_\-\+={[}\]\|\\:'',.?\/]+)$/, { message: 'Invalid character(s) in password' }),
-    })
-
-type LoginInputs = z.infer<typeof LoginInputsValidator>
-
 
 export default function LoginForm({ switchForm }: LoginFormProps) {
     const [loading, setLoading] = useState(false)
@@ -49,20 +34,8 @@ export default function LoginForm({ switchForm }: LoginFormProps) {
         setLoading(true)
 
         try {
-            const reqBody = data.loginKey.includes('@')
-                ? { email: data.loginKey, password: data.password }
-                : { accountName: data.loginKey, password: data.password }
+            const response = await login(data).catch(err => { throw err })
 
-            const response = await fetch('http://localhost:3000/accounts/login', {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(reqBody),
-                credentials: 'include',
-            })
-    
             if (response.ok) {
                 showNotificationPopup(true, 'Logged in successfully')
                 document.dispatchEvent(new CustomEvent('refreshauth'))

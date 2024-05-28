@@ -6,9 +6,18 @@ import Button from "@/components/forms/utils/button"
 import { PetOrderByOption } from "@/helpers/fetch-options/pet-fetch-options"
 import showModal from "@/helpers/show-modal"
 import useAuth from "@/hooks/use-auth"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 
 export default function Page() {
     const auth = useAuth()
+    const router = useRouter()
+
+    const refresh = () => router.refresh()
+    useEffect(() => {
+        document.addEventListener('refreshpet', refresh)
+        return () => document.removeEventListener('refreshpet', refresh)
+    })
 
     if (auth) return (
         <>
@@ -16,7 +25,7 @@ export default function Page() {
                 <p className='text-3xl font-semibold'>Your pets</p>
                 <div className='flex text-xl'><Button text='Add pet' onClickHandler={() => showModal(<CreatePetForm/>)}/></div>
             </div>
-            <PetFeed options={{ owner: auth, orderBy: PetOrderByOption.NAME }}/>
+            <PetFeed options={{ owner: auth, orderBy: PetOrderByOption.NAME }} allowRescindButton={true}/>
         </>
     )
     else return (

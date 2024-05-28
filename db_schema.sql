@@ -21,6 +21,10 @@ DROP TRIGGER IF EXISTS trigger_account_follower_count_increase ON account_follow
 DROP TRIGGER IF EXISTS trigger_account_follower_count_decrease ON account_follow;
 DROP TRIGGER IF EXISTS trigger_account_followed_count_increase ON account_follow;
 DROP TRIGGER IF EXISTS trigger_account_followed_count_decrease ON account_follow;
+DROP TRIGGER IF EXISTS trigger_pet_follower_count_decrease ON pet_follow;
+DROP TRIGGER IF EXISTS trigger_pet_followed_count_increase ON pet_follow;
+DROP TRIGGER IF EXISTS trigger_pet_follower_count_increase ON pet_follow;
+DROP TRIGGER IF EXISTS trigger_pet_followed_count_decrease ON pet_follow;
 DROP TRIGGER IF EXISTS trigger_blog_post_count_increase ON blog_post;
 DROP TRIGGER IF EXISTS trigger_blog_post_count_decrease ON blog_post;
 DROP TRIGGER IF EXISTS trigger_reply_count_increase ON blog_post;
@@ -426,6 +430,12 @@ CREATE TRIGGER trigger_account_follower_count_decrease AFTER DELETE ON account_f
 
 CREATE TRIGGER trigger_account_followed_count_increase AFTER INSERT ON account_follow FOR EACH ROW EXECUTE FUNCTION account_followed_count_increase();
 CREATE TRIGGER trigger_account_followed_count_decrease AFTER DELETE ON account_follow FOR EACH ROW EXECUTE FUNCTION account_followed_count_decrease();
+
+CREATE TRIGGER trigger_pet_follower_count_increase AFTER INSERT ON pet_follow FOR EACH ROW EXECUTE FUNCTION pet_follower_count_increase();
+CREATE TRIGGER trigger_pet_follower_count_decrease AFTER DELETE ON pet_follow FOR EACH ROW EXECUTE FUNCTION pet_follower_count_decrease();
+
+CREATE TRIGGER trigger_pet_followed_count_increase AFTER INSERT ON pet_follow FOR EACH ROW EXECUTE FUNCTION pet_followed_count_increase();
+CREATE TRIGGER trigger_pet_followed_count_decrease AFTER DELETE ON pet_follow FOR EACH ROW EXECUTE FUNCTION pet_followed_count_decrease();
 
 CREATE TRIGGER trigger_follower_count_increase AFTER INSERT ON pet_follow FOR EACH ROW EXECUTE FUNCTION pet_follower_count_increase();
 CREATE TRIGGER trigger_follower_count_decrease AFTER DELETE ON pet_follow FOR EACH ROW EXECUTE FUNCTION pet_follower_count_decrease();

@@ -7,6 +7,7 @@ import UploaderImages from '@/components/forms/utils/image-uploader-wrapper/uplo
 import TogglableWrapper from '@/components/forms/utils/togglable-wrapper'
 import AccountProfilePicture from '@/components/images/profile-picture/account'
 import AccountLabel from '@/components/labels/account-label'
+import ValueAndText from '@/components/labels/value-and-text'
 import patchProfile, { PatchProfileInputs, PatchProfileInputsValidator } from '@/helpers/fetch-helpers/account/patch-profile'
 import showNotificationPopup from '@/helpers/show-notification-popup'
 import useAuth from '@/hooks/use-auth'
@@ -123,18 +124,11 @@ export default function UserHeaderEdit({ id, setLikesTab }: UserHeaderProps) {
                     <div className='absolute top-36 left-3'><Button text='Save' className='w-40 h-10'/></div>
                 </div>
 
-                <div className='flex px-3 py-4 items-end'>
-                    <span className='cursor-pointer group'>
-                        <span className='font-bold pe-1 text-lg'>{data.followerCount}</span>
-                        <span className='text-gray-500 text-lg pe-3 group-hover:underline'>Followers</span>
-                    </span>
+                <div className='flex px-3 py-4 items-end gap-3'>
+                    <ValueAndText className='text-lg' value={data.followerCount} text='Followers'/>
 
                     <TogglableWrapper 
-                        innerRenderer={() => (<>
-                            <span className={`font-bold pe-1 text-lg duration-200`}>{data.accountsFollowedCount}</span>
-                            <span className={`text-gray-500 text-lg duration-200`}>Followed</span>
-                        </>)}
-                        className='me-3'
+                        innerRenderer={() => <ValueAndText className='text-lg' value={data.accountsFollowedCount} text='Followed'/>}
                         baseState={data.followedVisible}
                         form={{ watcher: watchFollowedVisible, set: (state) => setValue('followedVisible', state) }}
                         text={{ true: 'Shown', false: 'Hidden' }}
@@ -142,11 +136,10 @@ export default function UserHeaderEdit({ id, setLikesTab }: UserHeaderProps) {
 
                     {showStats
                         ? <AiFillInfoCircle className='text-xl inset-y-0 my-auto cursor-pointer hover:text-gray-500 duration-200 me-3' onClick={() => setShowStats(false)}/>
-                        : <AiOutlineInfoCircle className='text-xl text-gray-500 inset-y-0 my-auto cursor-pointer hover:text-white duration-200 me-3' onClick={() => setShowStats(true)}/>}
+                        : <AiOutlineInfoCircle className='text-xl text-gray-500 inset-y-0 my-auto cursor-pointer hover:text-white duration-200' onClick={() => setShowStats(true)}/>}
 
                     <TogglableWrapper 
                         innerRenderer={(visible) => <span className={`${visible ? 'font-semibold' : 'font-normal'} text-lg`}>Likes {visible ? 'shown' : 'hidden'}</span>}
-                        className='me-3'
                         baseState={data.likesVisible}
                         form={{ watcher: watchLikesVisible, set: (state) => setValue('likesVisible', state) }}
                         text={{ true: 'Shown', false: 'Hidden' }}
@@ -155,18 +148,9 @@ export default function UserHeaderEdit({ id, setLikesTab }: UserHeaderProps) {
 
                 <div className={`${!showStats ? 'h-0' : 'h-8 xs:h-10'} text-sm xs:text-base overflow-hidden duration-200`}>
                     <div className={`p-2 grid grid-cols-3 grid-flow-col overflow-hidden bg-black/20`}>
-                        <div>
-                            <span className='font-bold pe-1'>{data.blogPostCount}</span>
-                            <span className='text-gray-500 pe-3'>Blog posts</span>
-                        </div>
-                        <div>
-                            <span className='font-bold pe-1'>{data.replyCount}</span>
-                            <span className='text-gray-500 pe-3'>Replies</span>
-                        </div>
-                        <div>
-                            <span className='font-bold pe-1'>{data.ownedPetCount}</span>
-                            <span className='text-gray-500 pe-3'>Owned pets</span>
-                        </div>
+                        <ValueAndText value={data.blogPostCount} text='Blog posts'/>
+                        <ValueAndText value={data.replyCount} text='Replies'/>
+                        <ValueAndText value={data.ownedPetCount} text='Owned pets'/>
                     </div>
                 </div>
             </form>

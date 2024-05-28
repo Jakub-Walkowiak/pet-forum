@@ -14,6 +14,7 @@ import PetSexLabel from '@/components/labels/pet-sex-label'
 import PetTypeLabel from '@/components/labels/pet-type-label'
 import TagLikeLabel from '@/components/labels/tag-like-label'
 import TimeLabel from '@/components/labels/time-label'
+import ValueAndText from '@/components/labels/value-and-text'
 import patchPet, { PatchPetInputs, PatchPetInputsValidator } from '@/helpers/fetch-helpers/pet/patch-pet'
 import showFloatingElement from '@/helpers/show-floating-element'
 import showNotificationPopup from '@/helpers/show-notification-popup'
@@ -85,8 +86,6 @@ export default function PetHeaderEdit({ id, }: PetHeaderEditProps) {
         } catch (err) { showNotificationPopup(false, 'Error contacting server') } 
         finally { setLoading(false) }
     }
-
-    const redirectFollowers = () => router.push(`/pets?relationType=followers&relatedTo=${id}`)
 
     const handleSpeciesEdit = (e: React.MouseEvent) => {
         stopEvent(e)
@@ -164,15 +163,9 @@ export default function PetHeaderEdit({ id, }: PetHeaderEditProps) {
                     <div className='absolute top-36 left-3'><Button text='Save' className='w-40 h-10'/></div>
                 </div>
 
-                <div className='flex px-3 py-4 items-end'>
-                    <span className='cursor-pointer group' onClick={redirectFollowers}>
-                        <span className='font-bold pe-1 text-lg'>{data.followerCount}</span>
-                        <span className='text-gray-500 text-lg pe-3 group-hover:underline'>Followers</span>
-                    </span>
-                    <span>
-                        <span className='font-bold pe-1 text-lg'>{data.featureCount}</span>
-                        <span className='text-gray-500 text-lg pe-3'>Posts featured in</span>
-                    </span>
+                <div className='flex px-3 py-4 items-end gap-3'>
+                    <ValueAndText className='text-lg' value={data.followerCount} text='Followers'/>
+                    <ValueAndText className='text-lg' value={data.featureCount} text='Posts featured in'/>
 
                     <div className='flex-1 flex justify-end h-fit'>
                         <TimeLabel mode='date' date={new Date(data.dateCreated)} prefix='Joined'/>

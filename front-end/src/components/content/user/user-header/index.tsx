@@ -3,6 +3,7 @@
 import AccountProfilePicture from '@/components/images/profile-picture/account'
 import AccountLabel from '@/components/labels/account-label'
 import TimeLabel from '@/components/labels/time-label'
+import ValueAndText from '@/components/labels/value-and-text'
 import AccountFollowButton from '@/components/utils/follow-button/account'
 import useAuth from '@/hooks/use-auth'
 import useProfile from '@/hooks/use-profile'
@@ -49,16 +50,9 @@ export default function UserHeader({ id, setLikesTab }: UserHeaderProps) {
                 <div className='absolute top-36 left-3'><AccountFollowButton id={id} followed={data.followed} onChange={setClientFollow}/></div>
             </div>
 
-            <div className='flex px-3 py-4 items-end'>
-                <span className='cursor-pointer group' onClick={redirectFollowers}>
-                    <span className='font-bold pe-1 text-lg'>{data.followerCount + (clientFollow === data.followed ? 0 : clientFollow ? 1 : -1)}</span>
-                    <span className='text-gray-500 text-lg pe-3 group-hover:underline'>Followers</span>
-                </span>
-
-                <span className='cursor-pointer group' onClick={redirectFollowed}>
-                    <span className='font-bold pe-1 text-lg'>{data.accountsFollowedCount}</span>
-                    <span className='text-gray-500 text-lg pe-3 group-hover:underline'>Followed</span>
-                </span>
+            <div className='flex px-3 py-4 items-end gap-3'>
+                <ValueAndText className='text-lg' value={data.followerCount + (clientFollow === data.followed ? 0 : clientFollow ? 1 : -1)} text='Followers' onClick={redirectFollowers}/>
+                <ValueAndText className='text-lg' value={data.accountsFollowedCount} text='Followed' onClick={redirectFollowed}/>
 
                 {showStats
                     ? <AiFillInfoCircle className='text-xl inset-y-0 my-auto cursor-pointer hover:text-gray-500 duration-200' onClick={() => setShowStats(false)}/>
@@ -71,18 +65,9 @@ export default function UserHeader({ id, setLikesTab }: UserHeaderProps) {
 
             <div className={`${!showStats ? 'h-0' : 'h-8 xs:h-10'} text-sm xs:text-base overflow-hidden duration-200`}>
                 <div className={`p-2 grid grid-cols-3 grid-flow-col overflow-hidden bg-black/20`}>
-                    <div>
-                        <span className='font-bold pe-1'>{data.blogPostCount}</span>
-                        <span className='text-gray-500 pe-3'>Blog posts</span>
-                    </div>
-                    <div>
-                        <span className='font-bold pe-1'>{data.replyCount}</span>
-                        <span className='text-gray-500 pe-3'>Replies</span>
-                    </div>
-                    <div>
-                        <span className='font-bold pe-1'>{data.ownedPetCount}</span>
-                        <span className='text-gray-500 pe-3'>Owned pets</span>
-                    </div>
+                    <ValueAndText value={data.blogPostCount} text='Blog posts'/>
+                    <ValueAndText value={data.replyCount} text='Replies'/>
+                    <ValueAndText value={data.ownedPetCount} text='Owned pets'/>
                 </div>
             </div>
         </div>

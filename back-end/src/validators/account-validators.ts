@@ -38,10 +38,28 @@ export const AccountFollowFetchValidator = z
 
 export type AccountFollowFetchData = z.infer<typeof AccountFollowFetchValidator>
 
+// Weird validation clarification:
+// somewhat unintuitevily, simply slapping .optional() onto the end of a validator
+// does not, in fact, only do the rest of the validation if it IS defined.
+// This is a somewhat ugly workaround to that: if it's undefined, passes,
+// if it's not, do the rest of the validation
 export const AccountEditValidator = z
     .object({
+        accountName: z.string().trim().max(50).transform(value => value === '' ? undefined : value).optional()
+            .refine(accountName => {
+                if (accountName === undefined) return true
+                else try { z.string().regex(/^(\w+)$/).parse(accountName) }
+                catch { return false }
+                return true
+        }),
         displayName: z.string().trim().max(50).transform(value => value === '' ? undefined : value).optional(),
-        email: z.string().trim().email().optional(),
+        email: z.string().trim().max(254).transform(value => value === '' ? undefined : value).optional()
+            .refine(email => {
+                if (email === undefined) return true
+                else try { z.string().email().parse(email) }
+                catch { return false }
+                return true
+            }),
         likesVisible: z.coerce.boolean().optional(),
         followedVisible: z.coerce.boolean().optional(),
         profilePictureId: z.coerce.number().optional(),

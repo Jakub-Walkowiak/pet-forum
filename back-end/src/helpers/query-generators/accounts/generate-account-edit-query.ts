@@ -2,6 +2,7 @@ import { AccountEditData } from '../../../validators/account-validators'
 
 export const generateAccountEditQuery = (data: AccountEditData, user: number) => {
     const setBlock = [
+        data.accountName !== undefined ? `account_name = \'${data.accountName}\'` : '',
         data.displayName !== undefined ? `display_name = \'${data.displayName}\'` : '',
         data.email !== undefined ? `email = \'${data.email}\'` : '',
         data.likesVisible !== undefined ? `likes_visible = ${data.likesVisible}` : '',

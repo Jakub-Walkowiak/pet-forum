@@ -70,7 +70,7 @@ export default function PetHeaderEdit({ id, }: PetHeaderEditProps) {
         setLoading(true)
 
         try { 
-            const response = await patchPet(id, images, data).catch(err => { throw err })
+            const response = await patchPet(id, images, data)
             
             if (response === false) showNotificationPopup(false, 'Failed to upload image')
             else {

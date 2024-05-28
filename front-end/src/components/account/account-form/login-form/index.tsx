@@ -34,7 +34,7 @@ export default function LoginForm({ switchForm }: LoginFormProps) {
         setLoading(true)
 
         try {
-            const response = await login(data).catch(err => { throw err })
+            const response = await login(data)
 
             if (response.ok) {
                 showNotificationPopup(true, 'Logged in successfully')

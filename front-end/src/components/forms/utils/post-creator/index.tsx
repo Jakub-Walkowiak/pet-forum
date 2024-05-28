@@ -97,7 +97,6 @@ export default function PostCreator({ placeholder, replyTo, maxRows, afterSubmit
     const onSubmit = async (contents: string, images: UploaderImages) => {
         try {
             const response = await postBlogPost(contents, images, replyTo, selectedPets, { added: addedTags, selected: selectedTags })
-                .catch(err => { throw err })
 
             if (response === 'images') showNotificationPopup(false, 'Failed to upload images')
             else if (response === 'tags') showNotificationPopup(false, 'Failed to attach tags')

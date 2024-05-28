@@ -52,7 +52,7 @@ export default function CreateProfileForm() {
         setLoading(true)
 
         try { 
-            const response = await patchProfile(images, data).catch(err => { throw err })
+            const response = await patchProfile(images, data)
 
             if (response === false) showNotificationPopup(false, 'Failed to upload image')
             else if (response.status === 404) showNotificationPopup(false, 'Couldn\'t set your profile picture')

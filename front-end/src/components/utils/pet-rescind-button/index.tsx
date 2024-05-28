@@ -19,7 +19,7 @@ export default function PetRescindButton({ id, soleOwner }: PetRescindButtonProp
         setLoading(true)
 
         try { 
-            const response = await rescindOwnership(id).catch(err => { throw err }) 
+            const response = await rescindOwnership(id)
 
             if (response.status === 403) showNotificationPopup(false, 'You do not own this pet')
             else if (response.ok) {

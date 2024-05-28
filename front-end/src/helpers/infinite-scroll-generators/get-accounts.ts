@@ -17,7 +17,7 @@ export default async function* getAccounts(options?: AccountFetchOptions) {
         const response = await fetch(`http://localhost:3000/accounts?offset=${offset}&` +  queryBody, { credentials: 'include' })
 
         if (response.ok) {
-            const json = await response.json()
+            const json = await response.json() as Array<number>
             
             if (json.length > 0) {
                 yield json

@@ -179,5 +179,12 @@ AccountRouter.post('/:id(\\d+)/pfp', authMandatory, (req, res, next) => {
         .catch(err => next(err))
 })
 
+AccountRouter.get('/email', authMandatory, (req, res, next) => {
+    const sql = 'SELECT email FROM user_account WHERE id = $1'
+    pool.query(sql, [req.body.id])
+        .then(response => res.status(200).json(response.rows[0].email))
+        .catch(err => next(err))
+})
+
 export { AccountRouter }
 

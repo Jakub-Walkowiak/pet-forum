@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 export default function NavbarSideFull() {
     return (
-        <nav className='flex flex-col h-full justify-between'>
+        <nav className='flex flex-col h-full justify-between w-72'>
             <ul className='list-none'>
                 {routes.filter(el => el.navbar).map(el => 
                     <li className='text-3xl font-medium rounded-lg duration-200 hover:bg-emerald-600 hover:bg-opacity-90' key={el.name}>

@@ -16,6 +16,6 @@ interface InputProps<T extends FieldValues> {
 
 export default function Input<T extends FieldValues>({ defaultValue, placeholder, error = false, password = false, register, name, className, handleKeyUp, focused = false }: InputProps<T>) {
     return !password
-        ? <PlainTextInput focused handleKeyUp={handleKeyUp} placeholder={placeholder} error={error} register={register} name={name} className={className} defaultValue={defaultValue}/>
-        : <PasswordInput focused handleKeyUp={handleKeyUp} placeholder={placeholder} error={error} register={register} name={name} className={className} defaultValue={defaultValue}/>
+        ? <PlainTextInput focused={focused} handleKeyUp={handleKeyUp} placeholder={placeholder} error={error} register={register} name={name} className={className} defaultValue={defaultValue}/>
+        : <PasswordInput focused={focused} handleKeyUp={handleKeyUp} placeholder={placeholder} error={error} register={register} name={name} className={className} defaultValue={defaultValue}/>
 }

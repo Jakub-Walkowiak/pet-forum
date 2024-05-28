@@ -3,7 +3,7 @@ import { Router } from 'express'
 import { pool } from '../../helpers/pg-pool'
 import { generateAccountEditQuery } from '../../helpers/query-generators/accounts/generate-account-edit-query'
 import generateRelationTypeJoin from '../../helpers/query-generators/accounts/generate-relation-type-join'
-import { CONFLICT, CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
+import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory, authOptional } from '../../middleware/auth'
 import { AccountOrderByOption, RelationType } from '../../types/account-types'
 import { AccountEditValidator, AccountFetchValidator, AddProfilePictureValidator, ChangePasswordValidator, LoginValidator, RegistrationValidator } from '../../validators/account-validators'
@@ -61,14 +61,22 @@ AccountRouter.delete('/', authMandatory, (req, res, next) => {
 })
 
 AccountRouter.patch('/', authMandatory, (req, res, next) => {
-    const sql = generateAccountEditQuery(AccountEditValidator.parse(req.body), req.body.id)
+    const details = AccountEditValidator.parse(req.body)
+    const sql = generateAccountEditQuery(details, req.body.id)
     
     if (sql !== '') {
         pool.query(sql)
             .then(() => res.status(204).send())
-            .catch(err => {
-                if (err.code === '23505') res.status(409).json(CONFLICT)
-                else if (err.code === '23503') res.status(404).json(RESOURCE_NOT_FOUND)
+            .catch(async err => {
+                if (err.code === '23505') {
+                    const accountNameDupeSql = 'SELECT COUNT(*) AS dupe FROM user_account WHERE account_name = $1'
+                    const emailDupeSql = 'SELECT COUNT(*) AS dupe FROM user_account WHERE email = $1'
+
+                    const accountNameDupe = (await pool.query(accountNameDupeSql, [details.accountName])).rows[0].dupe !== 0
+                    const emailDupe = (await pool.query(emailDupeSql, [details.email])).rows[0].dupe !== 0
+
+                    res.status(409).json({ accountNameDupe, emailDupe })
+                } else if (err.code === '23503') res.status(404).json(RESOURCE_NOT_FOUND)
                 else next(err)
             })
     } else res.status(204).send()

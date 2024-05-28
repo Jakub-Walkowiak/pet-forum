@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export interface ProfileData {
     accountName: string,
@@ -19,7 +19,7 @@ export interface ProfileData {
 export default function useProfile(id: number | undefined) {
     const [profileData, setProfileData] = useState<ProfileData>()
 
-    const getProfileData = () => {
+    const getProfileData = useCallback(() => {
         const fetchData = async () => {
             if (!id) setProfileData(undefined)
             else {
@@ -31,13 +31,13 @@ export default function useProfile(id: number | undefined) {
             }
         }
         try { fetchData() } catch (err) { setProfileData(undefined) }
-    }
+    }, [id])
 
-    useEffect(getProfileData, [id])
+    useEffect(getProfileData, [id, getProfileData])
     useEffect(() => {
         document.addEventListener('refreshprofile', getProfileData)
         return () => document.removeEventListener('refreshprofile', getProfileData)
-    }, [])
+    }, [getProfileData])
 
     return profileData
 }

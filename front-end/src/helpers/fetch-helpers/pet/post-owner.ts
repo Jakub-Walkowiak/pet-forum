@@ -7,7 +7,7 @@ export default async function postOwner(account: number, pet: number, onSuccess?
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ id: account }),
+        body: JSON.stringify({ user: account }),
         credentials: 'include',
     })
 

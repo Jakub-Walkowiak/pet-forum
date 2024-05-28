@@ -68,8 +68,8 @@ export default function UserHeader({ id, setLikesTab }: UserHeaderProps) {
                 <div className={`p-2 grid grid-cols-2 grid-rows-2 sm:grid-cols-4 sm:grid-rows-1 grid-flow-col overflow-hidden bg-black/20`}>
                     <ValueAndText value={data.blogPostCount} text='Blog posts'/>
                     <ValueAndText value={data.replyCount} text='Replies'/>
-                    <ValueAndText value={data.accountsFollowedCount} text='Accs. followed' onClick={redirectFollowedAccounts}/>
-                    <ValueAndText value={data.petsFollowedCount} text='Pets followed' onClick={redirectFollowedPets}/>
+                    <ValueAndText value={data.accountsFollowedCount} text='Accs. followed' onClick={data.followedVisible || id === auth ? redirectFollowedAccounts : undefined}/>
+                    <ValueAndText value={data.petsFollowedCount} text='Pets followed' onClick={data.followedVisible || id === auth ? redirectFollowedPets : undefined}/>
                 </div>
             </div>
         </div>

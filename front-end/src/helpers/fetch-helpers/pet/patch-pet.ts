@@ -7,7 +7,7 @@ import postOwner from "./post-owner"
 export const PatchPetInputsValidator = z
     .object({
         name: z.string().trim().max(50, { message: 'Max. name length is 50 chars' }).optional(),
-        type: z.number().optional(),
+        type: z.union([z.string(), z.number()]).optional(),
         sex: z.nativeEnum(PetSex).optional(),
         owners: z.number().array().optional(),
     })
@@ -19,6 +19,19 @@ export default async function patchPet(id: number, images: UploaderImages, data:
     const ownerPromises = data.owners?.map(owner => postOwner(owner, id))
 
     await Promise.all(ownerPromises ? ownerPromises : [])
+
+    if (typeof data.type === 'string') {
+        const response = await fetch('http://localhost:3000/pets/types', {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: data.type }),
+            credentials: 'include',
+        })
+        data.type = (await response.json()).id as number
+    }
 
     const imagesResponse = await imagesPromise
     if (images.urls.length !== 0) {

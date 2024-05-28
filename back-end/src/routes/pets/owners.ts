@@ -23,15 +23,15 @@ OwnerRouter.post('/', authMandatory, (req, res, next) => {
         })
 })
 
-OwnerRouter.delete('/:owner_id(\\d+)', authMandatory, (req, res, next) => {
+OwnerRouter.delete('/rescind', authMandatory, (req, res, next) => {
     authOwnership(req.params.pet_id, req.body.id)
         .then(result => {
             if (!result) res.status(403).json(FORBIDDEN)
             else {
                 const sql = 'DELETE FROM pet_own WHERE pet_id = $1 AND owner_id = $2'
-                return pool.query(sql, [req.params.pet_id, Number(req.params.owner_id)])
+                return pool.query(sql, [req.params.pet_id, req.body.id])
             }
-        }).then(() => res.status(201).json(CREATED))
+        }).then(() => res.status(204).send())
         .catch(err => next(err))
 })
 

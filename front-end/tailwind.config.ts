@@ -1,4 +1,4 @@
-import type { Config } from 'tailwindcss';
+import type { Config } from 'tailwindcss'
 
 const config: Config = {
     content: [
@@ -31,6 +31,9 @@ const config: Config = {
                 'fade-in': 'fadein 0.15s ease-in',
                 'fade-out': 'fadeout 3s ease-out'
             },
+            spacing: {
+                '0.75': '0.1875rem'
+            }
         }
     }
 };

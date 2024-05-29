@@ -98,7 +98,7 @@ BlogPostRouter.delete('/:id(\\d+)', authMandatory, (req, res, next) => {
                 const deleteSql = 'DELETE FROM blog_post WHERE id = $1'
 
                 pool.query(deleteSql, [req.params.id])
-                    .then(() => res.status(204))
+                    .then(() => res.status(204).send())
             }
         }).catch(err => next(err))
 })

@@ -29,8 +29,8 @@ AccountRouter.post('/register', async (req, res, next) => {
                     const accountNameDupeSql = 'SELECT COUNT(*) AS dupe FROM user_account WHERE account_name = $1'
                     const emailDupeSql = 'SELECT COUNT(*) AS dupe FROM user_account WHERE email = $1'
 
-                    const accountNameDupe = (await pool.query(accountNameDupeSql, [accountName])).rows[0].dupe !== 0
-                    const emailDupe = (await pool.query(emailDupeSql, [email])).rows[0].dupe !== 0
+                    const accountNameDupe = (await pool.query(accountNameDupeSql, [accountName])).rows[0].dupe > 0
+                    const emailDupe = (await pool.query(emailDupeSql, [email])).rows[0].dupe > 0
 
                     res.status(409).json({ accountNameDupe, emailDupe })
                 } else next(err)
@@ -72,8 +72,8 @@ AccountRouter.patch('/', authMandatory, (req, res, next) => {
                     const accountNameDupeSql = 'SELECT COUNT(*) AS dupe FROM user_account WHERE account_name = $1'
                     const emailDupeSql = 'SELECT COUNT(*) AS dupe FROM user_account WHERE email = $1'
 
-                    const accountNameDupe = (await pool.query(accountNameDupeSql, [details.accountName])).rows[0].dupe !== 0
-                    const emailDupe = (await pool.query(emailDupeSql, [details.email])).rows[0].dupe !== 0
+                    const accountNameDupe = (await pool.query(accountNameDupeSql, [details.accountName])).rows[0].dupe > 0
+                    const emailDupe = (await pool.query(emailDupeSql, [details.email])).rows[0].dupe > 0
 
                     res.status(409).json({ accountNameDupe, emailDupe })
                 } else if (err.code === '23503') res.status(404).json(RESOURCE_NOT_FOUND)

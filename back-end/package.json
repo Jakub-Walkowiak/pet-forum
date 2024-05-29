@@ -2,11 +2,11 @@
   "name": "back-end",
   "version": "1.0.0",
   "description": "REST API for pet forum app",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "NODE_ENV=test jest --silent",
     "test_troubleshoot": "NODE_ENV=test jest --detectOpenHandles",
-    "start": "nodemon src/index.ts"
+    "start": "nodemon src/server.ts"
   },
   "author": "",
   "license": "ISC",

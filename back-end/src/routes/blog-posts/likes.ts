@@ -22,10 +22,7 @@ LikeRouter.delete('/', authMandatory, (req, res, next) => {
 
     pool.query(sql, [req.params.id, req.body.id])
         .then(() => res.status(204).send())
-        .catch(err => {
-            if (err.code = '23503') res.status(404).json(RESOURCE_NOT_FOUND)
-            else next(err)
-        })
+        .catch(err => next(err))
 })
 
 LikeRouter.get('/', authOptional, async (req, res, next) => {
@@ -45,11 +42,11 @@ LikeRouter.get('/', authOptional, async (req, res, next) => {
         const fetchSql = `--sql
             SELECT user_account_id AS id FROM post_like
             WHERE post_id = $1
-            AND id NOT IN (
+            AND user_account_id NOT IN (
                 SELECT id FROM user_account WHERE NOT likes_visible
             )`
 
-        res.status(200).json((await pool.query(fetchSql, [req.params.id])).rows.concat(selfHasPrivateLikesAppendix))
+        res.status(200).json((await pool.query(fetchSql, [req.params.id])).rows.concat(selfHasPrivateLikesAppendix).map(row => row.id))
     } catch (err) { next(err) }
 })
 

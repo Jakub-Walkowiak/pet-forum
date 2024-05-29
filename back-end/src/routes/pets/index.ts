@@ -3,7 +3,7 @@ import format from 'pg-format'
 import { pool } from '../../helpers/pg-pool'
 import { generatePetEditQuery } from '../../helpers/query-generators/pets/generate-pet-edit-query'
 import { generatePetFetchQuery } from '../../helpers/query-generators/pets/generate-pet-fetch-query'
-import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
+import { CONFLICT, CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory, authOptional } from '../../middleware/auth'
 import { PetAddValidator, PetEditValidator, PetFetchValidator } from '../../validators/pet-validators'
 import { FollowRouter } from './follows'
@@ -57,7 +57,10 @@ PetRouter.patch('/:id(\\d+)', authMandatory, (req, res, next) => {
                 return pool.query(sql)
             }
         }).then(() => res.status(204).send())
-        .catch(err => next(err))
+        .catch(err => {
+            if (err.code === '23505') res.status(409).json(CONFLICT)
+            else next(err)
+        })
 })
 
 PetRouter.get('/', authOptional, async (req, res, next) => {

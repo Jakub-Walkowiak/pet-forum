@@ -61,10 +61,11 @@ BlogPostRouter.post('/', authMandatory, async (req, res, next) => {
                 (await Promise.all(
                     pets.map(pet => authOwnership(pet.toString(), req.body.id))
                 ))
-                .filter((owned) =>  !owned )
-                .map((_, idx) => pets[idx])
+                .map((owned, idx): [boolean, number] => [owned, idx])
+                .filter(([owned]) =>  !owned)
+                .map(([_, idx]) => pets[idx])
 
-            if (notOwned.length > 0) res.status(403).json({ notOwned })
+            if (notOwned.length > 0) res.status(403).json(notOwned)
             else doQuery()
         } else doQuery()
     } catch (err) { next(err) }

@@ -317,7 +317,7 @@ describe('/accounts', () => {
 
     describe('/email GET', () => {
         it('should require authorization (401)', (done) => { request(app).get('/accounts/email').expect(401, done) })
-        
+
         it('should return an email when authorized (200)', () => 
             agent
                 .get('/accounts/email')
@@ -326,5 +326,25 @@ describe('/accounts', () => {
                     expect(() => z.string().email().parse(res.body)).not.toThrow()
                 ) 
         )
+    })
+
+    describe('/[id]/follow', () => {
+        describe('/ POST', () => {
+            it('should require authorization (401)', (done) => { request(app).post('/accounts/1/follow/').expect(401, done) })
+
+            it('should respond (204)', (done) => { agent.post('/accounts/4/follow').expect(204, done) })
+
+            it('should prevent double follow (409)', (done) => { agent.post('/accounts/4/follow').expect(409, done) })
+
+            it('should prevent non-existent follow (404)', (done) => { agent.post('/accounts/999/follow').expect(404, done) })
+
+            it('should prevent self-follow (403)', (done) => { agent.post('/accounts/1/follow').expect(403, done) })
+        })
+
+        describe('/ DELETE', () => {
+            it('should require authorization (401)', (done) => { request(app).delete('/accounts/1/follow/').expect(401, done) })
+
+            it('should respond (204)', (done) => { agent.delete('/accounts/4/follow').expect(204, done) })
+        })
     })
 })

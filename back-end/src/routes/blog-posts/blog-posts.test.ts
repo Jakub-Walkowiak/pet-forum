@@ -55,7 +55,7 @@ describe('/blog-posts', () => {
     })
 
     describe('/[id] GET', () => {
-        it('should get pet if exists (200)', (done) => {
+        it('should get blog-post if exists (200)', (done) => {
             request(app)
                 .get('/blog-posts/1')
                 .expect(200)
@@ -103,6 +103,31 @@ describe('/blog-posts', () => {
             it('should require authorization (401)', (done) => { request(app).delete('/blog-posts/6/likes').expect(401, done) })
 
             it('should respond (204)', (done) => { agent.delete('/blog-posts/6/likes').expect(204, done) })
+        })
+
+        describe('/ GET', () => {
+            it('should return array of ids (200)', () => {
+                return request(app).get('/blog-posts/1/likes').expect(200).then(res => {
+                    expect(
+                        res.body instanceof Array 
+                        && res.body.every(id => typeof id === 'number')
+                    ).toBeTruthy()
+                })
+            })
+
+            it('should append private likes when correctly authorized (200)', async () => {
+                const privateCred = {
+                    password: 'i2#UL8Fx9#u&r7',
+                    accountName: 'moisturizer',
+                }
+
+                const agent = request.agent(app)
+                await agent.post('/accounts/login/').send(privateCred).expect(204)
+
+                await agent.get('/blog-posts/2/likes').expect(200).then(res => {
+                    expect(res.body).toContain(4)
+                })
+            })
         })
     })
 

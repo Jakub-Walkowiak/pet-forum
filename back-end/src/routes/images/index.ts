@@ -7,7 +7,7 @@ import { BAD_REQUEST, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 
 const storage = multer.diskStorage({
     destination: (req: Request, file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
-        cb(null, 'imgs/')
+        cb(null, `${process.env.NODE_ENV === 'test' ? process.env.IMGS_DIR_TEST : process.env.IMGS_DIR}/`)
     },
     filename: (req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
         const fileName = Date.now() + '-' + Math.round(Math.random() * 1E9).toString().padStart(9, '0') + '.webp'

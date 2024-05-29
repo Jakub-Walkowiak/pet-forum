@@ -103,7 +103,6 @@ CREATE TABLE blog_post (
     contents varchar(150),
     reply_to int NULL,
 
-
     like_count int DEFAULT 0,
     reply_count int DEFAULT 0,
     

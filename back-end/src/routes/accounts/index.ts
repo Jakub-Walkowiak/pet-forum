@@ -6,7 +6,7 @@ import generateRelationTypeJoin from '../../helpers/query-generators/accounts/ge
 import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory, authOptional } from '../../middleware/auth'
 import { AccountOrderByOption, RelationType } from '../../types/account-types'
-import { AccountEditValidator, AccountFetchValidator, AddProfilePictureValidator, ChangePasswordValidator, LoginValidator, RegistrationValidator } from '../../validators/account-validators'
+import { AccountEditValidator, AccountFetchValidator, ChangePasswordValidator, LoginValidator, RegistrationValidator } from '../../validators/account-validators'
 import { FollowRouter } from './follows'
 import { attemptLogin } from './functions'
 
@@ -168,16 +168,6 @@ AccountRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
                 else res.status(200).json({ ...result.rows[0], followed })
             }).catch(err => next(err))
     } catch (err) { next(err) }
-})
-
-AccountRouter.post('/:id(\\d+)/pfp', authMandatory, (req, res, next) => {
-    const { pictureId } = AddProfilePictureValidator.parse(req.body)
-
-    const sql = 'INSERT INTO profile_picture (user_account_id, picture_id) VALUES ($1, $2)'
-
-    pool.query(sql, [req.params.id, pictureId])
-        .then(() => res.status(201).json(CREATED))
-        .catch(err => next(err))
 })
 
 AccountRouter.get('/email', authMandatory, (req, res, next) => {

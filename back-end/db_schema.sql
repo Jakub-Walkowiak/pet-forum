@@ -132,7 +132,7 @@ CREATE TABLE pet (
 
 CREATE TABLE blog_tag (
     id serial PRIMARY KEY,
-    tag_name varchar(50),
+    tag_name varchar(50) UNIQUE,
     times_used int DEFAULT 0
 );
 

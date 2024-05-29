@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { pool } from '../../helpers/pg-pool'
-import { CONFLICT, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
+import { RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory } from '../../middleware/auth'
 import { PetTypeAddValidator, PetTypeFetchValidator } from '../../validators/pet-validators'
 
@@ -42,10 +42,9 @@ TypeRouter.post('/', authMandatory, (req, res, next) => {
     pool.query(sql, [name])
         .then(result => res.status(201).json(result.rows[0]))
         .catch(err => {
-            if (err.code === 23505) { 
+            if (err.code === '23505') { 
                 const confictSql = 'SELECT id FROM pet_type WHERE type_name = $1'
                 pool.query(confictSql, [name]).then(result => res.status(409).send(result.rows[0]))
-                res.status(409).send(CONFLICT)
             } else next(err)
         })
 })

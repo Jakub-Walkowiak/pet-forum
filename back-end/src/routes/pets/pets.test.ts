@@ -116,21 +116,21 @@ describe('/pets', () => {
                 request(app)
                     .get('/pets/1')
                     .expect(200)
-                    .expect(res => expect(res.body.followed).toBeFalsy())
+                    .expect(res => expect(res.body.owned).toBeFalsy())
             )
 
             it('should be false if not owned (200)', () => 
                 agent
                     .get('/pets/4')
                     .expect(200)
-                    .expect(res => expect(res.body.followed).toBeFalsy())
+                    .expect(res => expect(res.body.owned).toBeFalsy())
             )
 
             it('should be true if owned (200)', () => 
                 agent
                     .get('/pets/1')
                     .expect(200)
-                    .expect(res => expect(res.body.followed).toBeTruthy())
+                    .expect(res => expect(res.body.owned).toBeTruthy())
             )
         })
     })

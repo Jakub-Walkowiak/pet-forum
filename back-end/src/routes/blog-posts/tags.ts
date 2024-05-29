@@ -42,7 +42,7 @@ TagRouter.post('/', authMandatory, (req, res, next) => {
     pool.query(sql, [name])
         .then(result => res.status(201).json(result.rows[0]))
         .catch(err => {
-            if (err.code === 23505) res.status(409).send(CONFLICT)
+            if (err.code === '23505') res.status(409).send(CONFLICT)
             else next(err)
         })
 })

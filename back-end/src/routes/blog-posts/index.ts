@@ -51,7 +51,7 @@ BlogPostRouter.post('/', authMandatory, async (req, res, next) => {
                     return Promise.all([picturesPromise, tagsPromise, petsPromise])
                 }).then(() => res.status(201).json({ id: idCreated }))
                 .catch(err => {
-                    if (err.code === 23503) res.status(404).json({ id: idCreated })
+                    if (err.code === '23503') res.status(404).json({ id: idCreated })
                     else next(err)
                 })
         }

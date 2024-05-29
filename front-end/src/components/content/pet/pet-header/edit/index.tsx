@@ -77,6 +77,7 @@ export default function PetHeaderEdit({ id, }: PetHeaderEditProps) {
                 const main = await response.response
                 if (main.status === 404) showNotificationPopup(false, 'Couldn\'t set pet\'s profile picture')
                 else if (main.status === 403) showNotificationPopup(false, 'You do not own this pet')
+                else if (main.status === 409) showNotificationPopup(false, 'Pet with such name already exists')
                 else if (main.ok) {
                     showNotificationPopup(true, response.ownersSuccess ? 'Changes saved' : 'Changes saved (failed to set owners)')
                     document.dispatchEvent(new CustomEvent('refreshpet'))

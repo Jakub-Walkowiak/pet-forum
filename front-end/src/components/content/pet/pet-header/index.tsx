@@ -22,7 +22,7 @@ export default function PetHeader({ id, }: PetHeaderProps) {
 
     const [clientFollow, setClientFollow] = useState(false)
 
-    const redirectFollowers = () => router.push(`/pets?relationType=followers&relatedTo=${id}`)
+    const redirectFollowers = () => router.push(`/users?followsPet=${id}`)
 
     if (data === undefined) return (
         <div className='flex items-center justify-center text-2xl font-semibold'>Encountered error fetching pet profile</div>

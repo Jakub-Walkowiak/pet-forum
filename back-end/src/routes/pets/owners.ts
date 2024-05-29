@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { pool } from '../../helpers/pg-pool'
-import { CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
+import { CONFLICT, CREATED, FORBIDDEN, RESOURCE_NOT_FOUND } from '../../helpers/status-codes'
 import { authMandatory } from '../../middleware/auth'
 import { OwnerAddValidator } from '../../validators/pet-validators'
 import { authOwnership } from './owner-auth'
@@ -19,7 +19,8 @@ OwnerRouter.post('/', authMandatory, (req, res, next) => {
         }).then(() => res.status(201).json(CREATED))
         .catch(err => {
             if (err.code === '23503') res.status(404).json(RESOURCE_NOT_FOUND)
-            next(err)
+            else if (err.code === '23505') res.status(409).json(CONFLICT)
+            else next(err)
         })
 })
 

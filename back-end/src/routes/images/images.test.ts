@@ -51,4 +51,12 @@ describe('/images', () => {
                 .expect(201, done);
         })
     })
+
+    describe('/[id] GET', () => {
+        it('should get a file (200)', (done) => {
+            request(app).get('/images/1').expect(200).expect('Content-Type', 'image/webp', done)
+        })
+
+        it('should respond if no image found (404)', (done) => { request(app).get('/images/999').expect(404, done) })
+    })
 })

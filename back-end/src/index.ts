@@ -51,6 +51,4 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     res.status(500).json(INTERNAL_SERVER_ERROR)
 })
 
-app.listen(process.env.PORT, () => {
-    console.log(`App is running at localhost:${process.env.PORT}`)
-})
+export { app }

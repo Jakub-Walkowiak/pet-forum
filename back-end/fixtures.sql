@@ -52,10 +52,10 @@ VALUES
 INSERT INTO user_account 
     (account_name, email, password, display_name, profile_picture_id, bio, likes_visible, followed_visible) 
 VALUES
-    ('dogfan', 'dogs@gmail.com', 'ILoveDogs1234', 'Dog Fan', 10, 'A big fan dogs!', TRUE, TRUE), -- 1
-    ('cats123', 'cats@gmail.com', 'MyCatIsNamedPloff', 'cat enjoyer', 5, '🐱🐱🐱🐱🐱🐱🐱', FALSE, TRUE), -- 2
-    ('birder', 'birds@gmail.com', 'secure-password', 'Lover of birds', 4, 'Eagle and parrot owner! All birds welcome 😁😁😁', TRUE, TRUE), -- 3
-    ('moisturizer', 'wets@gmail.com', 'i2#UL8Fx9#u&r7', 'MoistPets', 24, 'wetss only!! dries beware', FALSE, FALSE); -- 4
+    ('dogfan', 'dogs@gmail.com', '$2b$10$HlkZkarPFZSbS3odyGthfONuwRFCW1uJBrKjHEadeJOkVp22M6l22', 'Dog Fan', 10, 'A big fan dogs!', TRUE, TRUE), -- 1 -- raw password: 'ILoveDogs1234'
+    ('cats123', 'cats@gmail.com', '$2b$10$mfjBidwrr2uWvbsMnKGPrOgjJArVVMNXkFXlBaMyDHZo.7aadIDcK', 'cat enjoyer', 5, '🐱🐱🐱🐱🐱🐱🐱', FALSE, TRUE), -- 2 -- raw password: 'MyCatIsNamedPloff'
+    ('birder', 'birds@gmail.com', '$2b$10$YseKHshEb995NSY1D7g4ReUrmDdPnr7QLhR0hZViXKCaR4pfqTy0u', 'Lover of birds', 4, 'Eagle and parrot owner! All birds welcome 😁😁😁', TRUE, TRUE), -- 3 --raw password: 'secure-password'
+    ('moisturizer', 'wets@gmail.com', '$2b$10$qiPcFltmTgrYyuhcDVP9N.BbCLIZRXpPPwEr1vWvtzuWBYiUhAoA.', 'MoistPets', 24, 'wetss only!! dries beware', FALSE, FALSE); -- 4 -- raw password: 'i2#UL8Fx9#u&r7'
 
 -- sample pets (7)
 INSERT INTO pet

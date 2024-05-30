@@ -2,12 +2,8 @@ import { render } from "@testing-library/react"
 import TagLikeLabel from "."
 
 jest.mock("next/navigation", () => ({
-    useRouter() {
-        return {
-            prefetch: () => null
-        };
-    }
-}));
+    useRouter() {}
+}))
 
 describe('Tag-like label', () => {
     const props = {

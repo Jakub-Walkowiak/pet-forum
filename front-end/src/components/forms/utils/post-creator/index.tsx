@@ -45,6 +45,7 @@ export default function PostCreator({ placeholder, replyTo, maxRows, afterSubmit
 
     // @ts-ignore <- ts thinks that files can be null here, even though i've already checked for it by now 🤔
     for (let i = 0; i < files.length; ++i)
+      // @ts-ignore <- ditto (somehow this wasn't being flagged before??)
       await images.add(files.item(i)).then((response) => {
         if (response === ImageError.InvalidType) showNotificationPopup(false, 'Unsupported file type')
         else if (response === ImageError.TooMany)

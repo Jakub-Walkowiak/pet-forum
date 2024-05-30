@@ -28,7 +28,7 @@ export default function RootLayout({
                         <div className='hidden lg:block pe-2 h-full'><NavbarSideFull/></div>
                     </section>
                     <section className='grow sm:border-s md:border-e border-zinc-700 min-h-screen'>{children}</section>
-                    <BackToTop/>
+                    <BackToTop threshold={900}/>
                 </main>
             </body>
         </html>

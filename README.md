@@ -151,7 +151,7 @@ IMGS_DIR_TEST="imgs-test"
 The other db parameters will be the same as the ones used for the regular connection, so put the testing db on the same server.
 
 > [!CAUTION]
-> Running test will automatically and without waring clear the testing img directory and the testing databse. Do *not* use the same database or images directory for testing and standard execution unless you do not care about preserving the data.
+> Running test will automatically and without warning clear the testing img directory and the testing databse. Do *not* use the same database or images directory for testing and standard execution unless you do not care about preserving the data.
 
 #### Running
 

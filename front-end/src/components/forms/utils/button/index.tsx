@@ -20,7 +20,6 @@ export default function Button({ dark = false, text, onClickHandler, disabled = 
         : 'border-0 bg-emerald-500'
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        if (loading) return
         if (onClickHandler !== undefined) onClickHandler(e)
     }
 

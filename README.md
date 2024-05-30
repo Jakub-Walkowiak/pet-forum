@@ -151,7 +151,7 @@ IMGS_DIR_TEST="imgs-test"
 The other db parameters will be the same as the ones used for the regular connection, so put the testing db on the same server.
 
 > [!CAUTION]
-> Running test will automatically and without waring clear the testing img directory and the testing databse. Do *not* use the same database or images directory for testing and standard execution unless you do not care about preserving the data.
+> Running test will automatically and without warning clear the testing img directory and the testing databse. Do *not* use the same database or images directory for testing and standard execution unless you do not care about preserving the data.
 
 #### Running
 
@@ -193,4 +193,7 @@ The app should be almost entirely stable and bug-free, however there are some is
 - When attempting to link pets to a blog post, the popup will at first display a list of all pets rather than your owned ones. Click the search icon again to refresh the list and display the correct list (trying to add them anyways *should* give an error when posting).
 - Rescinding ownership when you are the sole owner of a pet is prevented in the front-end UI, but is *not* prevented in the back-end API. 
 - useAuth() hook is needlessly re-instantiated for every single component that uses it instead of being globally provided.
+<<<<<<< HEAD
 - Components that are loading in briefly flash their error state.
+=======
+>>>>>>> refs/remotes/origin/main

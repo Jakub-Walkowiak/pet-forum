@@ -87,8 +87,8 @@ The app should run on localhost:8080 by default
 Database structure and queries to recreate it (in an existing psql database) can be found in /back-end/db_schema.sql
 Additionally, you can run fixtures.sql on your database to fill it with some starting data
 
-[!IMPORTANT]
-While the fixture db contains file *paths* for images, you will still need to copy the *actual* images from imgs-fixtures into the images directory set in .env. I would *not* recommend using imgs-fixtures as that directory, as it is also used during testing, and changing its structure could potentially affect testing. Additionally, /back-end/testing.png is not registered in the databse and is only relevant for tests.
+> [!IMPORTANT]
+> While the fixture db contains file *paths* for images, you will still need to copy the *actual* images from imgs-fixtures into the images directory set in .env. I would *not* recommend using imgs-fixtures as that directory, as it is also used during testing, and changing its structure could potentially affect testing. Additionally, /back-end/testing.png is not registered in the databse and is only relevant for tests.
 
 #### .env
 
@@ -110,8 +110,8 @@ PORT=3000 // port to listen on
 JWT_SECRET="" // a secret used for jwt token signing
 ```
 
-[!WARNING]
-It is not recommended to change the port from 3000, as the frontend, in its current state, has been hardcoded to make requests to http://localhost:3000. Change at your own discretion!
+> [!WARNING]
+> It is not recommended to change the port from 3000, as the frontend, in its current state, has been hardcoded to make requests to http://localhost:3000. Change at your own discretion!
 
 #### Running
 
@@ -125,8 +125,8 @@ npm run dev
 
 ## Testing
 
-[!NOTE]
-Due to time/'workforce' limitations (I made this alone!) as well as due to the project's fairly large size, only a limited amount of tests has been implemented, and a they may not fully be up to quality standards due to burnout.
+> [!NOTE]
+> Due to time/'workforce' limitations (I made this alone!) as well as due to the project's fairly large size, only a limited amount of tests has been implemented, and a they may not fully be up to quality standards due to burnout.
 
 ### Front-end
 
@@ -150,8 +150,8 @@ IMGS_DIR_TEST="imgs-test"
 
 The other db parameters will be the same as the ones used for the regular connection, so put the testing db on the same server.
 
-[!CAUTION]
-Running test will automatically and without waring clear the testing img directory and the testing databse. Do *not* use the same database or images directory for testing and standard execution unless you do not care about preserving the data.
+> [!CAUTION]
+> Running test will automatically and without waring clear the testing img directory and the testing databse. Do *not* use the same database or images directory for testing and standard execution unless you do not care about preserving the data.
 
 #### Running
 
@@ -162,8 +162,8 @@ cd back-end
 npm run test
 ```
 
-[!NOTE]
-Due to an issue whose cause I could not diagnose, it is possible that 2 of the tests will occasionally fail because of beforeAll setup not executing as intended. If this is the case, simply running the test again should fix the issue.
+> [!NOTE]
+> Due to an issue whose cause I could not diagnose, it is possible that 2 of the tests will occasionally fail because of beforeAll setup not executing as intended. If this is the case, simply running the test again should fix the issue.
 
 #### Windows (and other POSIX non-compliant shells)
 
@@ -183,8 +183,8 @@ npm i -D cross-env
 "test": "cross-env NODE_ENV=test jest --silent",
 ```
 
-[!CAUTION]
-If you attempt to run back-end tests in a POSIX non-compliant environment without following either of the aforementioned instructions you are putting your main database at risk of being overriden. You have been warned!
+> [!CAUTION]
+> If you attempt to run back-end tests in a POSIX non-compliant environment without following either of the aforementioned instructions you are putting your main database at risk of being overriden. You have been warned!
 
 ## Known issues
 

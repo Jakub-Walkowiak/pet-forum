@@ -62,7 +62,7 @@ The application is split into a front- and back-end, both of which need to be ru
 Starting from the repo root directory, run
 
 ```sh
-cd back-end
+cd front-end
 npm i
 # compiled
 npm run build
@@ -71,7 +71,7 @@ npm run start
 npm run dev
 ```
 
-The app should run on localhost:8080 by default
+The app should run on localhost:8080 by default.
 
 ### Back-end
 
@@ -84,8 +84,8 @@ The app should run on localhost:8080 by default
 
 #### Database setup
 
-Database structure and queries to recreate it (in an existing psql database) can be found in /back-end/db_schema.sql
-Additionally, you can run fixtures.sql on your database to fill it with some starting data
+Database structure and queries to recreate it (in an existing psql database) can be found in /back-end/db_schema.sql.
+Additionally, you can run fixtures.sql on your database to fill it with some starting data.
 
 > [!IMPORTANT]
 > While the fixture db contains file *paths* for images, you will still need to copy the *actual* images from imgs-fixtures into the images directory set in .env. I would *not* recommend using imgs-fixtures as that directory, as it is also used during testing, and changing its structure could potentially affect testing. Additionally, /back-end/testing.png is not registered in the databse and is only relevant for tests.
@@ -120,7 +120,7 @@ Starting from the repo root directory, run
 ```sh
 cd back-end
 npm i
-npm run dev
+npm run start
 ```
 
 ## Testing
@@ -193,3 +193,4 @@ The app should be almost entirely stable and bug-free, however there are some is
 - When attempting to link pets to a blog post, the popup will at first display a list of all pets rather than your owned ones. Click the search icon again to refresh the list and display the correct list (trying to add them anyways *should* give an error when posting).
 - Rescinding ownership when you are the sole owner of a pet is prevented in the front-end UI, but is *not* prevented in the back-end API. 
 - useAuth() hook is needlessly re-instantiated for every single component that uses it instead of being globally provided.
+- Components that are loading in briefly flash their error state.

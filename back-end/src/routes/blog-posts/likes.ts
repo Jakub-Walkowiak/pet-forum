@@ -10,7 +10,7 @@ LikeRouter.post('/', authMandatory, (req, res, next) => {
 
     pool.query(sql, [req.params.id, req.body.id])
         .then(() => res.status(204).send())
-        .catch(err => {
+        .catch((err) => {
             if (err.code === '23505') res.status(409).json(CONFLICT)
             else if (err.code === '23503') res.status(404).json(RESOURCE_NOT_FOUND)
             else next(err)
@@ -22,12 +22,12 @@ LikeRouter.delete('/', authMandatory, (req, res, next) => {
 
     pool.query(sql, [req.params.id, req.body.id])
         .then(() => res.status(204).send())
-        .catch(err => next(err))
+        .catch((err) => next(err))
 })
 
 LikeRouter.get('/', authOptional, async (req, res, next) => {
     try {
-        let selfHasPrivateLikesAppendix: Array<{id: number}> = []
+        let selfHasPrivateLikesAppendix: Array<{ id: number }> = []
         if (req.body.auth) {
             const appendixSql = `--sql
                 SELECT id FROM user_account 
@@ -35,7 +35,7 @@ LikeRouter.get('/', authOptional, async (req, res, next) => {
                 AND id IN (
                     SELECT user_account_id FROM post_like WHERE post_id = $2
                 )`
-            
+
             selfHasPrivateLikesAppendix = (await pool.query(appendixSql, [req.body.id, req.params.id])).rows
         }
 
@@ -46,9 +46,12 @@ LikeRouter.get('/', authOptional, async (req, res, next) => {
                 SELECT id FROM user_account WHERE NOT likes_visible
             )`
 
-        res.status(200).json((await pool.query(fetchSql, [req.params.id])).rows.concat(selfHasPrivateLikesAppendix).map(row => row.id))
-    } catch (err) { next(err) }
+        res.status(200).json(
+            (await pool.query(fetchSql, [req.params.id])).rows.concat(selfHasPrivateLikesAppendix).map((row) => row.id),
+        )
+    } catch (err) {
+        next(err)
+    }
 })
 
 export { LikeRouter }
-

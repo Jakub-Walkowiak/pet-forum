@@ -9,9 +9,13 @@ export const generateAccountEditQuery = (data: AccountEditData, user: number) =>
         data.followedVisible !== undefined ? `followed_visible = ${data.followedVisible}` : '',
         data.profilePictureId !== undefined ? `profile_picture_id = ${data.profilePictureId}` : '',
         data.bio !== undefined ? `bio = \'${data.bio}\'` : '',
-    ].filter(string => string !== '').join(',')
+    ]
+        .filter((string) => string !== '')
+        .join(',')
 
-    return setBlock.length === 0 ? '' : `--sql
+    return setBlock.length === 0
+        ? ''
+        : `--sql
         UPDATE user_account
         SET ${setBlock}
         WHERE id = ${user}`

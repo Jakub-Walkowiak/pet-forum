@@ -9,9 +9,11 @@ export const authMandatory = (req: Request, res: Response, next: NextFunction) =
     else {
         try {
             const payload = jwt.verify(req.cookies.login_token, secret)
-            req.body.id = (<{id: number}>payload).id
+            req.body.id = (<{ id: number }>payload).id
             next()
-        } catch { res.status(401).json(AUTHENTICATION_FAILED) }
+        } catch {
+            res.status(401).json(AUTHENTICATION_FAILED)
+        }
     }
 }
 
@@ -23,8 +25,10 @@ export const authOptional = (req: Request, res: Response, next: NextFunction) =>
         try {
             const payload = jwt.verify(req.cookies.login_token, secret)
             req.body.auth = true
-            req.body.id = (<{id: number}>payload).id
-        } catch { req.body.auth = false }
+            req.body.id = (<{ id: number }>payload).id
+        } catch {
+            req.body.auth = false
+        }
     }
 
     next()

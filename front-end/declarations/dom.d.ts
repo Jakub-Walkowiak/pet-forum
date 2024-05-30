@@ -1,3 +1,3 @@
 interface GlobalEventHandlersEventMap {
-    confirmModalDecided: CustomEvent<boolean>,
+  confirmModalDecided: CustomEvent<boolean>
 }

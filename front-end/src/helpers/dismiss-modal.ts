@@ -1,3 +1,3 @@
 export default function dismissModal() {
-    document.dispatchEvent(new CustomEvent('modaldismiss'))
+  document.dispatchEvent(new CustomEvent('modaldismiss'))
 }

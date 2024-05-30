@@ -10,7 +10,7 @@ FollowRouter.post('/', authMandatory, (req, res, next) => {
 
     pool.query(sql, [req.params.id, req.body.id])
         .then(() => res.status(204).send())
-        .catch(err => {
+        .catch((err) => {
             if (err.code === '23505') res.status(409).json(CONFLICT)
             else if (err.code === '23503') res.status(404).json(RESOURCE_NOT_FOUND)
             else if (err.code === '23514') res.status(403).json(FORBIDDEN)
@@ -23,8 +23,7 @@ FollowRouter.delete('/', authMandatory, (req, res, next) => {
 
     pool.query(sql, [req.params.id, req.body.id])
         .then(() => res.status(204).send())
-        .catch(err => next(err))
+        .catch((err) => next(err))
 })
 
 export { FollowRouter }
-

@@ -1,31 +1,31 @@
 export const NO_CONTENT = {
     code: 204,
-    message: 'Request success'
+    message: 'Request success',
 }
 
 export const CREATED = {
     code: 201,
-    message: 'Resource created successfully'
+    message: 'Resource created successfully',
 }
 
 export const BAD_REQUEST = {
     code: 400,
-    message: 'Invalid request body'
+    message: 'Invalid request body',
 }
 
 export const LOGIN_FAILED = {
     code: 401,
-    message: 'Incorrent password'
+    message: 'Incorrent password',
 }
 
 export const AUTHENTICATION_FAILED = {
     code: 401,
-    message: 'Invalid token'
+    message: 'Invalid token',
 }
 
 export const FORBIDDEN = {
     code: 403,
-    message: 'Forbidden'
+    message: 'Forbidden',
 }
 
 export const ENDPOINT_NOT_FOUND = {
@@ -35,7 +35,7 @@ export const ENDPOINT_NOT_FOUND = {
 
 export const RESOURCE_NOT_FOUND = {
     code: 404,
-    message: 'Resource not found'
+    message: 'Resource not found',
 }
 
 export const ACCOUNT_NOT_FOUND = {
@@ -45,7 +45,7 @@ export const ACCOUNT_NOT_FOUND = {
 
 export const CONFLICT = {
     code: 409,
-    message: 'Resource already exists'
+    message: 'Resource already exists',
 }
 
 export const INTERNAL_SERVER_ERROR = {

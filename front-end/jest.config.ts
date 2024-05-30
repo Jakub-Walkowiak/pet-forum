@@ -2,14 +2,14 @@ import type { Config } from 'jest'
 import nextJest from 'next/jest'
 
 const createJestConfig = nextJest({
-    dir: './',
+  dir: './',
 })
 
 const config: Config = {
-    collectCoverage: true,
-    coverageDirectory: "coverage",
-    coverageProvider: "v8",
-    testEnvironment: "jsdom",
-};
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
+  coverageProvider: 'v8',
+  testEnvironment: 'jsdom',
+}
 
 export default createJestConfig(config)

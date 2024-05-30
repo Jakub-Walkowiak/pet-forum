@@ -23,13 +23,14 @@ PetRouter.post('/', authMandatory, (req, res, next) => {
     const petSql = 'INSERT INTO pet (name, type_id, sex, profile_picture_id) VALUES ($1, $2, $3, $4) RETURNING id'
 
     pool.query(petSql, [name, type, sex, profilePictureId])
-        .then(result => {
-            const ownersData = owners.map(item => [item, result.rows[0].id])
+        .then((result) => {
+            const ownersData = owners.map((item) => [item, result.rows[0].id])
             const ownersSql = format('INSERT INTO pet_own (owner_id, pet_id) VALUES %L', ownersData)
 
             return pool.query(ownersSql)
-        }).then(() => res.status(201).json(CREATED))
-        .catch(async err => {
+        })
+        .then(() => res.status(201).json(CREATED))
+        .catch(async (err) => {
             if (err.code === '23505') res.status(409).send()
             else if (err.code === '23503') res.status(404).json(RESOURCE_NOT_FOUND)
             else next(err)
@@ -38,26 +39,28 @@ PetRouter.post('/', authMandatory, (req, res, next) => {
 
 PetRouter.delete('/:id(\\d+)', authMandatory, (req, res, next) => {
     authOwnership(req.params.id, req.body.id)
-        .then(result => {
+        .then((result) => {
             if (!result) res.status(403).json(FORBIDDEN)
             else {
                 const sql = 'DELETE FROM pet WHERE id = $1'
                 return pool.query(sql, [req.params.id])
             }
-        }).then(() => res.status(204).send())
-        .catch(err => next(err))
-})  
+        })
+        .then(() => res.status(204).send())
+        .catch((err) => next(err))
+})
 
 PetRouter.patch('/:id(\\d+)', authMandatory, (req, res, next) => {
     authOwnership(req.params.id, req.body.id)
-        .then(result => {
+        .then((result) => {
             if (!result) res.status(403).json(FORBIDDEN)
             else {
                 const sql = generatePetEditQuery(PetEditValidator.parse(req.body), req.params.id)
                 return pool.query(sql)
             }
-        }).then(() => res.status(204).send())
-        .catch(err => {
+        })
+        .then(() => res.status(204).send())
+        .catch((err) => {
             if (err.code === '23505') res.status(409).json(CONFLICT)
             else next(err)
         })
@@ -69,13 +72,15 @@ PetRouter.get('/', authOptional, async (req, res, next) => {
 
     if (data.followedBy) {
         const privacySql = 'SELECT followed_visible FROM user_account WHERE id = $1'
-        const shouldFetch = (req.body.auth && req.body.id === data.followedBy) || (await pool.query(privacySql, [data.followedBy])).rows[0].followed_visible
+        const shouldFetch =
+            (req.body.auth && req.body.id === data.followedBy) ||
+            (await pool.query(privacySql, [data.followedBy])).rows[0].followed_visible
         if (!shouldFetch) return res.status(403).json(FORBIDDEN)
     }
 
     pool.query(sql)
-        .then(result => res.status(200).json(result.rows.map(row => row.id)))
-        .catch(err => next(err))
+        .then((result) => res.status(200).json(result.rows.map((row) => row.id)))
+        .catch((err) => next(err))
 })
 
 PetRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
@@ -95,7 +100,7 @@ PetRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
         const ownersPromise = pool.query(ownersSql, [req.params.id])
 
         const petData = await petPromise
-        const owners = (await ownersPromise).rows.map(row => row.id)
+        const owners = (await ownersPromise).rows.map((row) => row.id)
         const owned = req.body.auth && owners.includes(req.body.id)
 
         let followed = false
@@ -103,11 +108,18 @@ PetRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
             const followedSql = 'SELECT Count(*) AS count FROM pet_follow WHERE follower_id = $1 AND pet_id = $2'
             if ((await pool.query(followedSql, [req.body.id, req.params.id])).rows[0].count > 0) followed = true
         }
-        
+
         if (petData.rowCount === 0) res.status(404).json(RESOURCE_NOT_FOUND)
-        else res.status(200).json({ ...petData.rows[0], owners, owned, followed })
-    } catch (err) { next(err) }
+        else
+            res.status(200).json({
+                ...petData.rows[0],
+                owners,
+                owned,
+                followed,
+            })
+    } catch (err) {
+        next(err)
+    }
 })
 
 export { PetRouter }
-

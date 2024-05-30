@@ -10,7 +10,13 @@ describe('/accounts', () => {
     }
 
     const agent = request.agent(app)
-    beforeAll(async () => await agent.post('/accounts/login/').send({ ...credExisting }).expect(204))
+    beforeAll(
+        async () =>
+            await agent
+                .post('/accounts/login/')
+                .send({ ...credExisting })
+                .expect(204),
+    )
 
     describe('/register POST', () => {
         const credTest = {
@@ -54,7 +60,10 @@ describe('/accounts', () => {
             it('for account names (409)', (done) => {
                 request(app)
                     .post('/accounts/register/')
-                    .send({ ...credTest, accountName: credExisting.accountName })
+                    .send({
+                        ...credTest,
+                        accountName: credExisting.accountName,
+                    })
                     .expect(409)
                     .expect({ emailDupe: false, accountNameDupe: true }, done)
             })
@@ -62,7 +71,11 @@ describe('/accounts', () => {
             it('for both at once (409)', (done) => {
                 request(app)
                     .post('/accounts/register/')
-                    .send({ ...credTest, accountName: credExisting.accountName, email: credExisting.email })
+                    .send({
+                        ...credTest,
+                        accountName: credExisting.accountName,
+                        email: credExisting.email,
+                    })
                     .expect(409)
                     .expect({ emailDupe: true, accountNameDupe: true }, done)
             })
@@ -85,10 +98,7 @@ describe('/accounts', () => {
 
         describe('validation', () => {
             it('should require email or account name (400)', (done) => {
-                request(app)
-                    .post('/accounts/login/')
-                    .send({ password: credExisting.password })
-                    .expect(400, done)
+                request(app).post('/accounts/login/').send({ password: credExisting.password }).expect(400, done)
             })
         })
 
@@ -144,9 +154,9 @@ describe('/accounts', () => {
                 email: 'delete@email.com',
                 accountName: 'delete',
             }
-            
+
             const agent = request.agent(app)
-    
+
             await agent
                 .post('/accounts/register/')
                 .send({ ...credTest })
@@ -156,10 +166,8 @@ describe('/accounts', () => {
                 .post('/accounts/login/')
                 .send({ ...credTest })
                 .expect(204)
-    
-            await agent
-                .delete('/accounts/')
-                .expect(204)
+
+            await agent.delete('/accounts/').expect(204)
         })
     })
 
@@ -173,15 +181,25 @@ describe('/accounts', () => {
         const agent = request.agent(app)
 
         beforeAll(async () => {
-            await agent.post('/accounts/register/').send({ ...credTest }).expect(201)
-            await agent.post('/accounts/login/').send({ ...credTest }).expect(204)
+            await agent
+                .post('/accounts/register/')
+                .send({ ...credTest })
+                .expect(201)
+            await agent
+                .post('/accounts/login/')
+                .send({ ...credTest })
+                .expect(204)
         })
 
-        it('should require authorization (401)', (done) => { request(app).patch('/accounts/').send({}).expect(401, done) })
+        it('should require authorization (401)', (done) => {
+            request(app).patch('/accounts/').send({}).expect(401, done)
+        })
 
-        it('should respond for empty body (204)', (done) => { agent.patch('/accounts/').send({}).expect(204, done) })
+        it('should respond for empty body (204)', (done) => {
+            agent.patch('/accounts/').send({}).expect(204, done)
+        })
 
-        it('should respond with data (204)', (done) => { 
+        it('should respond with data (204)', (done) => {
             const data = {
                 accountName: 'patch_new',
                 displayName: 'patch_display_new',
@@ -190,7 +208,10 @@ describe('/accounts', () => {
                 likesVisible: false,
             }
 
-            agent.patch('/accounts/').send({ ...data }).expect(204, done) 
+            agent
+                .patch('/accounts/')
+                .send({ ...data })
+                .expect(204, done)
         })
 
         describe('should prevent dupes and return info', () => {
@@ -213,13 +234,18 @@ describe('/accounts', () => {
             it('for both at once (409)', (done) => {
                 agent
                     .patch('/accounts/')
-                    .send({ accountName: credExisting.accountName, email: credExisting.email })
+                    .send({
+                        accountName: credExisting.accountName,
+                        email: credExisting.email,
+                    })
                     .expect(409)
                     .expect({ emailDupe: true, accountNameDupe: true }, done)
             })
         })
 
-        it('should prevent linking non-existent image (404)', (done) => { agent.patch('/accounts/').send({ profilePictureId: 999 }).expect(404, done) })
+        it('should prevent linking non-existent image (404)', (done) => {
+            agent.patch('/accounts/').send({ profilePictureId: 999 }).expect(404, done)
+        })
     })
 
     describe('/password PATCH', () => {
@@ -233,33 +259,32 @@ describe('/accounts', () => {
         const agent = request.agent(app)
 
         beforeAll(async () => {
-            await agent.post('/accounts/register/').send({ ...credTest }).expect(201)
-            await agent.post('/accounts/login/').send({ ...credTest }).expect(204)
+            await agent
+                .post('/accounts/register/')
+                .send({ ...credTest })
+                .expect(201)
+            await agent
+                .post('/accounts/login/')
+                .send({ ...credTest })
+                .expect(204)
         })
 
-        it('should require authorization (401)', (done) => { request(app).patch('/accounts/password/').send({}).expect(401, done) })
+        it('should require authorization (401)', (done) => {
+            request(app).patch('/accounts/password/').send({}).expect(401, done)
+        })
 
         describe('validation', () => {
-            it('should require current password (400)', (done) => { 
-                agent
-                    .patch('/accounts/password')
-                    .send({ newPassword })
-                    .expect(400, done)
+            it('should require current password (400)', (done) => {
+                agent.patch('/accounts/password').send({ newPassword }).expect(400, done)
             })
 
-            it('should require new password (400)', (done) => { 
-                agent
-                    .patch('/accounts/password')
-                    .send({ currentPassword: credTest.password })
-                    .expect(400, done)
+            it('should require new password (400)', (done) => {
+                agent.patch('/accounts/password').send({ currentPassword: credTest.password }).expect(400, done)
             })
         })
 
         it('should require correct password (403)', (done) => {
-            agent
-                .patch('/accounts/password')
-                .send({ currentPassword: newPassword, newPassword })
-                .expect(403, done)
+            agent.patch('/accounts/password').send({ currentPassword: newPassword, newPassword }).expect(403, done)
         })
 
         it('should respond on success (204)', (done) => {
@@ -272,79 +297,88 @@ describe('/accounts', () => {
 
     describe('/ GET', () => {
         it('should return array of ids (200)', () => {
-            return request(app).get('/accounts/').expect(200).then(res => {
-                expect(
-                    res.body instanceof Array 
-                    && res.body.every(id => typeof id === 'number')
-                ).toBeTruthy()
-            })
+            return request(app)
+                .get('/accounts/')
+                .expect(200)
+                .then((res) => {
+                    expect(res.body instanceof Array && res.body.every((id) => typeof id === 'number')).toBeTruthy()
+                })
         })
     })
 
     describe('/[id] GET', () => {
         it('should get account if exists (200)', (done) => {
-            request(app)
-                .get('/accounts/1')
-                .expect(200)
-                .expect('Content-Type', 'application/json; charset=utf-8', done)
+            request(app).get('/accounts/1').expect(200).expect('Content-Type', 'application/json; charset=utf-8', done)
         })
 
-        it('should respond if account doesn\'t exist (404)', (done) => { request(app).get('/accounts/999').expect(404, done) })
+        it("should respond if account doesn't exist (404)", (done) => {
+            request(app).get('/accounts/999').expect(404, done)
+        })
 
         describe('followed', () => {
-            it('should be false without auth (200)', () => 
+            it('should be false without auth (200)', () =>
                 request(app)
                     .get('/accounts/1')
                     .expect(200)
-                    .expect(res => expect(res.body.followed).toBeFalsy())
-            )
+                    .expect((res) => expect(res.body.followed).toBeFalsy()))
 
-            it('should be false if not followed (200)', () => 
+            it('should be false if not followed (200)', () =>
                 agent
                     .get('/accounts/1')
                     .expect(200)
-                    .expect(res => expect(res.body.followed).toBeFalsy())
-            )
+                    .expect((res) => expect(res.body.followed).toBeFalsy()))
 
-            it('should be true if followed (200)', () => 
+            it('should be true if followed (200)', () =>
                 agent
                     .get('/accounts/2')
                     .expect(200)
-                    .expect(res => expect(res.body.followed).toBeTruthy())
-            )
+                    .expect((res) => expect(res.body.followed).toBeTruthy()))
         })
     })
 
     describe('/email GET', () => {
-        it('should require authorization (401)', (done) => { request(app).get('/accounts/email').expect(401, done) })
+        it('should require authorization (401)', (done) => {
+            request(app).get('/accounts/email').expect(401, done)
+        })
 
-        it('should return an email when authorized (200)', () => 
+        it('should return an email when authorized (200)', () =>
             agent
                 .get('/accounts/email')
                 .expect(200)
-                .expect(res => 
-                    expect(() => z.string().email().parse(res.body)).not.toThrow()
-                ) 
-        )
+                .expect((res) => expect(() => z.string().email().parse(res.body)).not.toThrow()))
     })
 
     describe('/[id]/follow', () => {
         describe('/ POST', () => {
-            it('should require authorization (401)', (done) => { request(app).post('/accounts/1/follow/').expect(401, done) })
+            it('should require authorization (401)', (done) => {
+                request(app).post('/accounts/1/follow/').expect(401, done)
+            })
 
-            it('should respond (204)', (done) => { agent.post('/accounts/4/follow').expect(204, done) })
+            it('should respond (204)', (done) => {
+                agent.post('/accounts/4/follow').expect(204, done)
+            })
 
-            it('should prevent double follow (409)', (done) => { agent.post('/accounts/4/follow').expect(409, done) })
+            it('should prevent double follow (409)', (done) => {
+                agent.post('/accounts/4/follow').expect(409, done)
+            })
 
-            it('should prevent non-existent follow (404)', (done) => { agent.post('/accounts/999/follow').expect(404, done) })
+            it('should prevent non-existent follow (404)', (done) => {
+                agent.post('/accounts/999/follow').expect(404, done)
+            })
 
-            it('should prevent self-follow (403)', (done) => { agent.post('/accounts/1/follow').expect(403, done) })
+            it('should prevent self-follow (403)', (done) => {
+                agent.post('/accounts/1/follow').expect(403, done)
+            })
         })
 
         describe('/ DELETE', () => {
-            it('should require authorization (401)', (done) => { request(app).delete('/accounts/1/follow/').expect(401, done) })
+            it('should require authorization (401)', (done) => {
+                request(app).delete('/accounts/1/follow/').expect(401, done)
+            })
 
-            it('should respond (204)', (done) => { agent.delete('/accounts/4/follow').expect(204, done) })
+            it('should respond (204)', (done) => {
+                agent.delete('/accounts/4/follow').expect(204, done)
+            })
         })
     })
 })

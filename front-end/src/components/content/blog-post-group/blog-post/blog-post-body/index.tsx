@@ -16,94 +16,143 @@ import { AiFillHeart, AiOutlineHeart, AiOutlineMessage } from 'react-icons/ai'
 import BlogPostError from '../blog-post-error'
 
 interface BlogPostBodyProps {
-    data: BlogPostData,
-    handleLike: VoidFunction,
-    handleUnlike: VoidFunction,
-    showReplyCreator: (accountName: string) => void,
-    maximized?: boolean,
+  data: BlogPostData
+  handleLike: VoidFunction
+  handleUnlike: VoidFunction
+  showReplyCreator: (accountName: string) => void
+  maximized?: boolean
 }
 
-export default function BlogPostBody({ data, handleLike, handleUnlike, showReplyCreator, maximized = false }: BlogPostBodyProps) {
-    const [clientLike, setClientLike] = useState(data.liked)
-    const [likeTimeout, setLikeTimeout] = useState<NodeJS.Timeout>()
-    const profileData = useProfile(data.posterId)
-    const auth = useAuth()
+export default function BlogPostBody({
+  data,
+  handleLike,
+  handleUnlike,
+  showReplyCreator,
+  maximized = false,
+}: BlogPostBodyProps) {
+  const [clientLike, setClientLike] = useState(data.liked)
+  const [likeTimeout, setLikeTimeout] = useState<NodeJS.Timeout>()
+  const profileData = useProfile(data.posterId)
+  const auth = useAuth()
 
-    const replyTo = useBlogPost(data.replyTo)
-    const replyToPoster = useProfile(replyTo?.posterId)
+  const replyTo = useBlogPost(data.replyTo)
+  const replyToPoster = useProfile(replyTo?.posterId)
 
-    useEffect(() => setClientLike(data.liked), [data])
+  useEffect(() => setClientLike(data.liked), [data])
 
-    const onClick = () => {
-        if (!auth) {
-            showNotificationPopup(false, 'Login to like posts')
-            return
-        }
-
-        setClientLike(!clientLike)
-        clearTimeout(likeTimeout)
-        setLikeTimeout(setTimeout(() => {
-            if (data.liked === clientLike) data.liked ? handleUnlike() : handleLike()
-        }, 350))
+  const onClick = () => {
+    if (!auth) {
+      showNotificationPopup(false, 'Login to like posts')
+      return
     }
 
-    if (profileData !== undefined) return (
-        <>
-            {maximized 
-                ? <div className='flex gap-4'>
-                    <AccountProfilePicture id={data.posterId} sizeOverride={4}/>
-                    <div className='flex flex-col gap-x-1 col-span-7'>
-                        <AccountLabel id={data.posterId} displayName size='large' text={profileData.displayName}/>
-                        <AccountLabel id={data.posterId} size='large' text={profileData.accountName}/>
-                    </div>
-                </div> 
-                : <AccountProfilePicture id={data.posterId}/>}
-
-            <div className='w-full flex flex-col'>
-                {!maximized && <div className='grid grid-cols-8 gap-1'>
-                    <div className='items-center flex flex-wrap gap-x-1 w-full col-span-7'>
-                        <AccountLabel id={data.posterId} displayName text={profileData.displayName}/>
-                        <AccountLabel id={data.posterId} text={profileData.accountName}/>
-                    </div>
-                    
-                    <div className='col-span-1'><TimeLabel date={new Date(data.datePosted)}/></div>
-                </div>}
-
-                {replyTo && <div className={`grid grid-cols-1 w-full text-emerald-700 font-medium truncate ${maximized ? 'text-base' : 'text-sm'}`}>
-                    <div className='max-w-full font-medium truncate text-sm'>to @{replyToPoster !== undefined ? replyToPoster.accountName : '[could not find]'}</div>
-                </div>}
-                {!maximized && <div className='h-1'/>}
-
-                <div className={`mb-4 ${maximized ? 'text-lg' : 'text-base'} break-all`}>{data.contents}</div>
-
-                {data.pets.length > 0 && <ul className={`flex gap-2 flex-wrap list-none mb-3 text-zinc-500 text-${maximized ? 'lg' : 'base'}`}>Featuring: 
-                    {data.pets.map(id => (
-                        <li className={maximized ? '*:text-base' : ''} key={id}><PetProfilePicture sizeOverride={maximized ? 1.9 : 1.5} id={id}/></li>
-                    ))}
-                </ul>}
-
-                {data.tags.length > 0 && <ul className='flex gap-2 flex-wrap list-none mb-3'>
-                    {data.tags.map(id => (
-                        <li className={maximized ? '*:text-base' : ''} key={id}><TagLabel tagId={id}/></li>
-                    ))}
-                </ul>}
-
-                {data.images.length > 0 && <PostImages imageIds={data.images}/>}
-
-                <div className='flex gap-3 text-zinc-500 font-medium'>
-                    <div className={`${!clientLike ? 'hover:text-white' : 'text-red-600 hover:text-red-700'} ${maximized ? 'text-lg' : 'text-base'} cursor-pointer duration-200 flex gap-1 items-center`} onClick={e => { stopEvent(e); onClick() }}>
-                        {!clientLike
-                            ? <AiOutlineHeart className={maximized ? 'text-2xl' : 'text-xl'}/>
-                            : <AiFillHeart className={maximized ? 'text-2xl' : 'text-xl'}/>}
-                        {data.likeCount + (clientLike === data.liked ? 0 : clientLike ? 1 : -1)} {maximized && 'Likes'}
-                    </div>
-                    <div className={`${maximized ? 'text-lg' : 'text-base'}  cursor-pointer duration-200 hover:text-white flex gap-1 items-center`} onClick={e => { stopEvent(e); showReplyCreator(profileData.accountName) }}>
-                        <AiOutlineMessage className={maximized ? 'text-2xl' : 'text-xl'}/>{data.replyCount} {maximized && 'Replies'}
-                    </div>
-                    {maximized && <div className='flex-1'><TimeLabel date={new Date(data.datePosted)} mode='datetime'/></div>}
-                </div>
-            </div>
-        </>
+    setClientLike(!clientLike)
+    clearTimeout(likeTimeout)
+    setLikeTimeout(
+      setTimeout(() => {
+        if (data.liked === clientLike) data.liked ? handleUnlike() : handleLike()
+      }, 350),
     )
-    else return <BlogPostError/>
+  }
+
+  if (profileData !== undefined)
+    return (
+      <>
+        {maximized ? (
+          <div className='flex gap-4'>
+            <AccountProfilePicture id={data.posterId} sizeOverride={4} />
+            <div className='flex flex-col gap-x-1 col-span-7'>
+              <AccountLabel id={data.posterId} displayName size='large' text={profileData.displayName} />
+              <AccountLabel id={data.posterId} size='large' text={profileData.accountName} />
+            </div>
+          </div>
+        ) : (
+          <AccountProfilePicture id={data.posterId} />
+        )}
+
+        <div className='w-full flex flex-col'>
+          {!maximized && (
+            <div className='grid grid-cols-8 gap-1'>
+              <div className='items-center flex flex-wrap gap-x-1 w-full col-span-7'>
+                <AccountLabel id={data.posterId} displayName text={profileData.displayName} />
+                <AccountLabel id={data.posterId} text={profileData.accountName} />
+              </div>
+
+              <div className='col-span-1'>
+                <TimeLabel date={new Date(data.datePosted)} />
+              </div>
+            </div>
+          )}
+
+          {replyTo && (
+            <div
+              className={`grid grid-cols-1 w-full text-emerald-700 font-medium truncate ${maximized ? 'text-base' : 'text-sm'}`}
+            >
+              <div className='max-w-full font-medium truncate text-sm'>
+                to @{replyToPoster !== undefined ? replyToPoster.accountName : '[could not find]'}
+              </div>
+            </div>
+          )}
+          {!maximized && <div className='h-1' />}
+
+          <div className={`mb-4 ${maximized ? 'text-lg' : 'text-base'} break-all`}>{data.contents}</div>
+
+          {data.pets.length > 0 && (
+            <ul className={`flex gap-2 flex-wrap list-none mb-3 text-zinc-500 text-${maximized ? 'lg' : 'base'}`}>
+              Featuring:
+              {data.pets.map((id) => (
+                <li className={maximized ? '*:text-base' : ''} key={id}>
+                  <PetProfilePicture sizeOverride={maximized ? 1.9 : 1.5} id={id} />
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {data.tags.length > 0 && (
+            <ul className='flex gap-2 flex-wrap list-none mb-3'>
+              {data.tags.map((id) => (
+                <li className={maximized ? '*:text-base' : ''} key={id}>
+                  <TagLabel tagId={id} />
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {data.images.length > 0 && <PostImages imageIds={data.images} />}
+
+          <div className='flex gap-3 text-zinc-500 font-medium'>
+            <div
+              className={`${!clientLike ? 'hover:text-white' : 'text-red-600 hover:text-red-700'} ${maximized ? 'text-lg' : 'text-base'} cursor-pointer duration-200 flex gap-1 items-center`}
+              onClick={(e) => {
+                stopEvent(e)
+                onClick()
+              }}
+            >
+              {!clientLike ? (
+                <AiOutlineHeart className={maximized ? 'text-2xl' : 'text-xl'} />
+              ) : (
+                <AiFillHeart className={maximized ? 'text-2xl' : 'text-xl'} />
+              )}
+              {data.likeCount + (clientLike === data.liked ? 0 : clientLike ? 1 : -1)} {maximized && 'Likes'}
+            </div>
+            <div
+              className={`${maximized ? 'text-lg' : 'text-base'}  cursor-pointer duration-200 hover:text-white flex gap-1 items-center`}
+              onClick={(e) => {
+                stopEvent(e)
+                showReplyCreator(profileData.accountName)
+              }}
+            >
+              <AiOutlineMessage className={maximized ? 'text-2xl' : 'text-xl'} />
+              {data.replyCount} {maximized && 'Replies'}
+            </div>
+            {maximized && (
+              <div className='flex-1'>
+                <TimeLabel date={new Date(data.datePosted)} mode='datetime' />
+              </div>
+            )}
+          </div>
+        </div>
+      </>
+    )
+  else return <BlogPostError />
 }

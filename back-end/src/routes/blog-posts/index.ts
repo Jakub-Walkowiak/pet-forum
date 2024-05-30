@@ -17,13 +17,13 @@ BlogPostRouter.use('/tags', TagRouter)
 BlogPostRouter.post('/', authMandatory, async (req, res, next) => {
     try {
         const { contents, replyTo, pictures, tags, pets } = BlogPostAddValidator.parse(req.body)
-    
+
         const doQuery = () => {
             const postSql = 'INSERT INTO blog_post (poster_id, contents, reply_to) VALUES ($1, $2, $3) RETURNING id'
             let idCreated: number
 
             pool.query(postSql, [req.body.id, contents, replyTo])
-                .then(result => { 
+                .then((result) => {
                     idCreated = result.rows[0].id
 
                     let picturesPromise
@@ -31,44 +31,47 @@ BlogPostRouter.post('/', authMandatory, async (req, res, next) => {
                     let petsPromise
 
                     if (pictures !== undefined && pictures.length > 0) {
-                        const picturesData = pictures.map(item => [item, result.rows[0].id])
-                        const picturesSql = format('INSERT INTO blog_post_picture (picture_id, post_id) VALUES %L', picturesData)
+                        const picturesData = pictures.map((item) => [item, result.rows[0].id])
+                        const picturesSql = format(
+                            'INSERT INTO blog_post_picture (picture_id, post_id) VALUES %L',
+                            picturesData,
+                        )
                         picturesPromise = pool.query(picturesSql)
-                    } 
+                    }
 
                     if (tags !== undefined && tags.length > 0) {
-                        const tagsData = tags.map(item => [item, result.rows[0].id])
+                        const tagsData = tags.map((item) => [item, result.rows[0].id])
                         const tagsSql = format('INSERT INTO blog_tagged (tag_id, post_id) VALUES %L', tagsData)
                         tagsPromise = pool.query(tagsSql)
-                    } 
+                    }
 
                     if (pets !== undefined && pets.length > 0) {
-                        const petsData = pets.map(item => [item, result.rows[0].id])
+                        const petsData = pets.map((item) => [item, result.rows[0].id])
                         const petsSql = format('INSERT INTO blog_post_pet (pet_id, post_id) VALUES %L', petsData)
                         petsPromise = pool.query(petsSql)
                     }
 
                     return Promise.all([picturesPromise, tagsPromise, petsPromise])
-                }).then(() => res.status(201).json({ id: idCreated }))
-                .catch(err => {
+                })
+                .then(() => res.status(201).json({ id: idCreated }))
+                .catch((err) => {
                     if (err.code === '23503') res.status(404).json({ id: idCreated })
                     else next(err)
                 })
         }
-        
-        if (pets) { 
-            const notOwned = 
-                (await Promise.all(
-                    pets.map(pet => authOwnership(pet.toString(), req.body.id))
-                ))
+
+        if (pets) {
+            const notOwned = (await Promise.all(pets.map((pet) => authOwnership(pet.toString(), req.body.id))))
                 .map((owned, idx): [boolean, number] => [owned, idx])
-                .filter(([owned]) =>  !owned)
+                .filter(([owned]) => !owned)
                 .map(([_, idx]) => pets[idx])
 
             if (notOwned.length > 0) res.status(403).json(notOwned)
             else doQuery()
         } else doQuery()
-    } catch (err) { next(err) }
+    } catch (err) {
+        next(err)
+    }
 })
 
 BlogPostRouter.get('/', authOptional, async (req, res, next) => {
@@ -76,32 +79,34 @@ BlogPostRouter.get('/', authOptional, async (req, res, next) => {
         const data: BlogPostFetchData = BlogPostFetchValidator.parse(req.query)
         const sql = generateBlogPostFetchQuery(data, req.body.auth ? req.body.id : undefined)
 
-        if (data.likedBy !== undefined &&  (!req.body.auth || data.likedBy !== req.body.id)) {
+        if (data.likedBy !== undefined && (!req.body.auth || data.likedBy !== req.body.id)) {
             const verifyPrivacySql = 'SELECT likes_visible FROM user_account WHERE id = $1'
             const result = await pool.query(verifyPrivacySql, [data.likedBy])
-            if (result.rowCount && !(result.rows[0].likes_visible)) res.status(403).send(FORBIDDEN)
+            if (result.rowCount && !result.rows[0].likes_visible) res.status(403).send(FORBIDDEN)
         }
 
         pool.query(sql)
-            .then(result => res.status(200).json(result.rows.map(row => row.id)))
-            .catch(err => next(err))
-    } catch (err) { next(err) }
+            .then((result) => res.status(200).json(result.rows.map((row) => row.id)))
+            .catch((err) => next(err))
+    } catch (err) {
+        next(err)
+    }
 })
 
 BlogPostRouter.delete('/:id(\\d+)', authMandatory, (req, res, next) => {
     const idVerifySql = 'SELECT poster_id FROM blog_post WHERE id = $1'
 
     pool.query(idVerifySql, [req.params.id])
-        .then(result => {
+        .then((result) => {
             if (result.rowCount === 0) res.status(404).json(RESOURCE_NOT_FOUND)
             else if (result.rows[0].poster_id !== req.body.id) res.status(403).json(FORBIDDEN)
             else {
                 const deleteSql = 'DELETE FROM blog_post WHERE id = $1'
 
-                pool.query(deleteSql, [req.params.id])
-                    .then(() => res.status(204).send())
+                pool.query(deleteSql, [req.params.id]).then(() => res.status(204).send())
             }
-        }).catch(err => next(err))
+        })
+        .catch((err) => next(err))
 })
 
 BlogPostRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
@@ -115,7 +120,7 @@ BlogPostRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
                 like_count AS "likeCount"
             FROM blog_post WHERE id = $1`
         const postPromise = pool.query(postSql, [req.params.id])
-           
+
         const tagsSql = 'SELECT tag_id AS id FROM blog_tagged WHERE post_id = $1'
         const tagsPromise = pool.query(tagsSql, [req.params.id])
 
@@ -132,15 +137,23 @@ BlogPostRouter.get('/:id(\\d+)', authOptional, async (req, res, next) => {
         const likedPromise = pool.query(likedSql, [req.params.id, req.body.id])
 
         const postData = await postPromise
-        const tagsData = (await tagsPromise).rows.map(row => row.id)
-        const petsData = (await petsPromise).rows.map(row => row.id)
-        const picturesData = (await picturesPromise).rows.map(row => row.id)
+        const tagsData = (await tagsPromise).rows.map((row) => row.id)
+        const petsData = (await petsPromise).rows.map((row) => row.id)
+        const picturesData = (await picturesPromise).rows.map((row) => row.id)
         const liked = (await likedPromise).rows[0].count > 0
 
         if (postData.rowCount === 0) res.status(404).send(RESOURCE_NOT_FOUND)
-        else res.status(200).send({ ...postData.rows[0], tags: tagsData, images: picturesData, liked, pets: petsData })
-    } catch (err) { next(err) }
+        else
+            res.status(200).send({
+                ...postData.rows[0],
+                tags: tagsData,
+                images: picturesData,
+                liked,
+                pets: petsData,
+            })
+    } catch (err) {
+        next(err)
+    }
 })
 
 export { BlogPostRouter }
-

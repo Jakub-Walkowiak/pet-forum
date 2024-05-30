@@ -1,5 +1,5 @@
 export enum FormMode {
-    Login,
-    Register,
-    CreateProfile,
+  Login,
+  Register,
+  CreateProfile,
 }

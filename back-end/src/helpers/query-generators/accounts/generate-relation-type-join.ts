@@ -15,9 +15,12 @@ const generateFollowedJoin = (id: number) => {
 const generateRelationTypeJoin = (type: RelationType, id?: number) => {
     if (id === undefined) return ''
     switch (type) {
-        case RelationType.FOLLOWERS: return generateFollowersJoin(id)
-        case RelationType.FOLLOWED: return generateFollowedJoin(id)
-        case RelationType.MUTUALS: return generateFollowersJoin(id) + ' ' + generateFollowedJoin(id)
+        case RelationType.FOLLOWERS:
+            return generateFollowersJoin(id)
+        case RelationType.FOLLOWED:
+            return generateFollowedJoin(id)
+        case RelationType.MUTUALS:
+            return generateFollowersJoin(id) + ' ' + generateFollowedJoin(id)
     }
 }
 

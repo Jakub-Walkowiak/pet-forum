@@ -88,7 +88,7 @@ INSERT INTO blog_post (poster_id, reply_to, contents)
 VALUES
     (2, 1, 'so hard to imagine them being this small now'), -- 11
     (1, 5, 'Hey! Don''t be mean to him!'), -- 12
-    (2, 12, 'tell me you i''m wrong 😒'), -- 13
+    (2, 12, 'tell me i''m wrong 😒'), -- 13
     (3, 9, 'Even our big birds have their slow days!'), -- 14
     (3, 8, 'What beautiful eyes 😍😍😍'), -- 15
     (3, 10, 'The power of cooperation 🤝🤝🤝'); -- 16

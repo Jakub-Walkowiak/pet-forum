@@ -325,6 +325,10 @@ IF NEW.reply_to IS NOT NULL THEN
     SET reply_count = reply_count + 1
     WHERE id = NEW.poster_id;
 
+    UPDATE blog_post
+    SET reply_count = reply_count + 1
+    WHERE id = NEW.reply_to;
+
     RETURN NULL;
 ELSE 
     RETURN NULL;
@@ -337,6 +341,10 @@ IF OLD.reply_to IS NOT NULL THEN
     UPDATE user_account
     SET reply_count = reply_count - 1
     WHERE id = OLD.poster_id;
+
+    UPDATE blog_post
+    SET reply_count = reply_count - 1
+    WHERE id = OLD.reply_to;
 
     RETURN NULL;
 ELSE

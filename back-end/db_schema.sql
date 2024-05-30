@@ -100,7 +100,7 @@ CREATE TABLE blog_post (
     id serial PRIMARY KEY,
     poster_id int REFERENCES user_account(id)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    contents varchar(150),
+    contents varchar(300),
     reply_to int NULL,
 
     like_count int DEFAULT 0,

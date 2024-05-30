@@ -36,7 +36,7 @@ ImageRouter.get('/:id(\\d+)', (req, res, next) => {
     pool.query(sql, [req.params.id])
         .then(result => {
             if (result.rowCount === 0) res.status(404).send(RESOURCE_NOT_FOUND)
-            else res.status(200).sendFile(path.resolve('imgs/' + result.rows[0].picturePath + '.webp'))
+            else res.status(200).sendFile(path.resolve(`${process.env.NODE_ENV === 'test' ? process.env.IMGS_DIR_TEST : process.env.IMGS_DIR}/` + result.rows[0].picturePath + '.webp'))
         }).catch(err => next(err))
 })
 
